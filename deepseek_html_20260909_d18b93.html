@@ -13,354 +13,70 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #f0ebe6; min-height: 100vh; padding: 16px; display: flex; justify-content: center; align-items: flex-start; }
+        .app { max-width: 420px; width: 100%; background: white; border-radius: 28px; padding: 24px 20px 32px; box-shadow: 0 8px 40px rgba(0,0,0,0.08); }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid #f0ebe6; }
+        .header h1 { font-size: 22px; color: #1e1814; }
+        .header .status { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; background: #e8f5e9; color: #2e7d32; }
+        .event-card { background: #faf8f6; border-radius: 16px; padding: 16px; margin-bottom: 20px; }
+        .event-card h2 { font-size: 20px; color: #1e1814; margin-bottom: 4px; }
+        .event-card .details { font-size: 14px; color: #6b5a4e; }
+        .event-card .badge { display: inline-block; background: #b45f3a; color: white; padding: 2px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-top: 8px; }
         
-        body {
-            background: #f0ebe6;
-            min-height: 100vh;
-            padding: 16px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .tabs button { flex: 1; padding: 12px; border: none; background: #f0ebe6; border-radius: 12px; font-size: 14px; font-weight: 600; color: #6b5a4e; cursor: pointer; transition: 0.2s; }
+        .tabs button.active { background: #1e1814; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
         
-        .app {
-            max-width: 420px;
-            width: 100%;
-            background: white;
-            border-radius: 28px;
-            padding: 24px 20px 32px;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.08);
-        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-weight: 600; font-size: 14px; color: #2b1f17; margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 14px 16px; border: 2px solid #d6cdc4; border-radius: 12px; font-size: 16px; background: white; transition: 0.2s; }
+        .form-group input:focus { border-color: #b45f3a; outline: none; box-shadow: 0 0 0 3px rgba(180, 95, 58, 0.15); }
         
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid #f0ebe6;
-        }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 60px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; touch-action: manipulation; }
+        .btn-primary { background: #1e1814; color: white; }
+        .btn-primary:active { transform: scale(0.97); background: #3d2e24; }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-success { background: #2e7d32; color: white; }
+        .btn-danger { background: #c62828; color: white; }
         
-        .header h1 {
-            font-size: 22px;
-            color: #1e1814;
-        }
+        .message { margin: 16px 0; padding: 16px; border-radius: 12px; display: none; font-weight: 500; }
+        .message.success { display: block; background: #e8f5e9; border: 2px solid #a5d6a7; color: #1e5a24; }
+        .message.error { display: block; background: #ffebee; border: 2px solid #ef9a9a; color: #b71c1c; }
+        .message.info { display: block; background: #e3f2fd; border: 2px solid #90caf9; color: #0d47a1; }
         
-        .header .status {
-            font-size: 12px;
-            font-weight: 600;
-            padding: 4px 12px;
-            border-radius: 20px;
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
+        .qr-box { text-align: center; padding: 20px; background: white; border-radius: 16px; border: 2px dashed #d6cdc4; margin: 16px 0; }
+        .qr-box #qrcode { display: inline-block; padding: 16px; background: white; border-radius: 8px; }
+        .qr-box .pass-info { margin-top: 12px; font-size: 14px; color: #6b5a4e; }
+        .qr-box .pass-info strong { color: #1e1814; }
         
-        .event-card {
-            background: #faf8f6;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
+        .scanner-box { text-align: center; padding: 30px 20px; background: #faf8f6; border-radius: 16px; border: 2px dashed #d6cdc4; }
+        .scanner-box input { width: 100%; padding: 14px; border: 2px solid #d6cdc4; border-radius: 12px; font-size: 16px; text-align: center; margin: 12px 0; }
+        .scanner-result { margin-top: 16px; padding: 16px; border-radius: 12px; font-weight: 600; display: none; }
+        .scanner-result.valid { display: block; background: #e8f5e9; border: 2px solid #4caf50; color: #1e5a24; }
+        .scanner-result.invalid { display: block; background: #ffebee; border: 2px solid #ef5350; color: #b71c1c; }
         
-        .event-card h2 {
-            font-size: 20px;
-            color: #1e1814;
-            margin-bottom: 4px;
-        }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .stat-card { background: #faf8f6; padding: 16px; border-radius: 12px; text-align: center; }
+        .stat-card .number { font-size: 28px; font-weight: 700; color: #1e1814; }
+        .stat-card .label { font-size: 12px; color: #6b5a4e; margin-top: 4px; }
         
-        .event-card .details {
-            font-size: 14px;
-            color: #6b5a4e;
-        }
+        .house-list { max-height: 400px; overflow-y: auto; }
+        .house-item { display: flex; justify-content: space-between; padding: 12px 16px; background: #faf8f6; border-radius: 8px; margin-bottom: 6px; font-size: 14px; }
+        .house-item .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
+        .house-item .status-dot.paid { background: #4caf50; }
+        .house-item .status-dot.unpaid { background: #ef5350; }
+        .house-item .status-dot.registered { background: #ff9800; }
+        .house-item .status-dot.entered { background: #2196f3; }
         
-        .event-card .badge {
-            display: inline-block;
-            background: #b45f3a;
-            color: white;
-            padding: 2px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 8px;
-        }
-        
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .tabs button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            background: #f0ebe6;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #6b5a4e;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        
-        .tabs button.active {
-            background: #1e1814;
-            color: white;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* Forms */
-        .form-group {
-            margin-bottom: 16px;
-        }
-        
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            font-size: 14px;
-            color: #2b1f17;
-            margin-bottom: 6px;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #d6cdc4;
-            border-radius: 12px;
-            font-size: 16px;
-            background: white;
-            transition: 0.2s;
-        }
-        
-        .form-group input:focus {
-            border-color: #b45f3a;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(180, 95, 58, 0.15);
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 60px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            touch-action: manipulation;
-        }
-        
-        .btn-primary {
-            background: #1e1814;
-            color: white;
-        }
-        
-        .btn-primary:active {
-            transform: scale(0.97);
-            background: #3d2e24;
-        }
-        
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        .btn-success {
-            background: #2e7d32;
-            color: white;
-        }
-        
-        .btn-danger {
-            background: #c62828;
-            color: white;
-        }
-        
-        /* Messages */
-        .message {
-            margin: 16px 0;
-            padding: 16px;
-            border-radius: 12px;
-            display: none;
-            font-weight: 500;
-        }
-        
-        .message.success {
-            display: block;
-            background: #e8f5e9;
-            border: 2px solid #a5d6a7;
-            color: #1e5a24;
-        }
-        
-        .message.error {
-            display: block;
-            background: #ffebee;
-            border: 2px solid #ef9a9a;
-            color: #b71c1c;
-        }
-        
-        .message.info {
-            display: block;
-            background: #e3f2fd;
-            border: 2px solid #90caf9;
-            color: #0d47a1;
-        }
-        
-        /* QR Display */
-        .qr-box {
-            text-align: center;
-            padding: 20px;
-            background: white;
-            border-radius: 16px;
-            border: 2px dashed #d6cdc4;
-            margin: 16px 0;
-        }
-        
-        .qr-box #qrcode {
-            display: inline-block;
-            padding: 16px;
-            background: white;
-            border-radius: 8px;
-        }
-        
-        .qr-box .pass-info {
-            margin-top: 12px;
-            font-size: 14px;
-            color: #6b5a4e;
-        }
-        
-        .qr-box .pass-info strong {
-            color: #1e1814;
-        }
-        
-        /* Scanner */
-        .scanner-box {
-            text-align: center;
-            padding: 30px 20px;
-            background: #faf8f6;
-            border-radius: 16px;
-            border: 2px dashed #d6cdc4;
-        }
-        
-        .scanner-box input {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #d6cdc4;
-            border-radius: 12px;
-            font-size: 16px;
-            text-align: center;
-            margin: 12px 0;
-        }
-        
-        .scanner-result {
-            margin-top: 16px;
-            padding: 16px;
-            border-radius: 12px;
-            font-weight: 600;
-            display: none;
-        }
-        
-        .scanner-result.valid {
-            display: block;
-            background: #e8f5e9;
-            border: 2px solid #4caf50;
-            color: #1e5a24;
-        }
-        
-        .scanner-result.invalid {
-            display: block;
-            background: #ffebee;
-            border: 2px solid #ef5350;
-            color: #b71c1c;
-        }
-        
-        /* Admin Dashboard */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .stat-card {
-            background: #faf8f6;
-            padding: 16px;
-            border-radius: 12px;
-            text-align: center;
-        }
-        
-        .stat-card .number {
-            font-size: 28px;
-            font-weight: 700;
-            color: #1e1814;
-        }
-        
-        .stat-card .label {
-            font-size: 12px;
-            color: #6b5a4e;
-            margin-top: 4px;
-        }
-        
-        .house-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        .house-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 16px;
-            background: #faf8f6;
-            border-radius: 8px;
-            margin-bottom: 6px;
-            font-size: 14px;
-        }
-        
-        .house-item .status-dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-        
-        .house-item .status-dot.paid {
-            background: #4caf50;
-        }
-        
-        .house-item .status-dot.unpaid {
-            background: #ef5350;
-        }
-        
-        .house-item .status-dot.registered {
-            background: #ff9800;
-        }
-        
-        .house-item .status-dot.entered {
-            background: #2196f3;
-        }
-        
-        .hidden {
-            display: none !important;
-        }
-        
+        .hidden { display: none !important; }
         .mt-8 { margin-top: 8px; }
         .mb-8 { margin-bottom: 8px; }
         .text-center { text-align: center; }
         .text-sm { font-size: 13px; color: #6b5a4e; }
+        .loading { opacity: 0.6; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -425,8 +141,8 @@
     <div id="tab-scan" class="tab-content">
         <div class="scanner-box">
             <p style="font-weight: 600; margin-bottom: 12px;">📸 Scan QR Code</p>
-            <p class="text-sm">Enter the 6-digit code from the QR</p>
-            <input type="text" id="scanInput" placeholder="Enter code (e.g., 482916)" maxlength="6" />
+            <p class="text-sm">Enter the pass ID from the QR</p>
+            <input type="text" id="scanInput" placeholder="Enter pass ID (e.g., PASS-123456)" />
             <button class="btn btn-primary" id="scanBtn">🔍 Verify Entry</button>
         </div>
         
@@ -462,7 +178,7 @@
         </div>
         
         <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-            <button class="btn btn-primary" id="syncBtn" style="flex: 1; padding: 12px;">🔄 Sync Data</button>
+            <button class="btn btn-primary" id="syncBtn" style="flex: 1; padding: 12px;">🔄 Sync</button>
             <button class="btn btn-success" id="downloadBtn" style="flex: 1; padding: 12px;">📥 Report</button>
         </div>
         
@@ -475,15 +191,18 @@
 
 <script>
     // ============================================
-    // FIREBASE CONFIGURATION
+    // 🔥 FIREBASE CONFIGURATION - UPDATE THIS!
+    // ============================================
+    // Go to: https://console.firebase.google.com
+    // Create a project → Add web app → Copy config
     // ============================================
     const firebaseConfig = {
-        apiKey: "AIzaSyDemoKey",  // Replace with your actual keys
-        authDomain: "your-project.firebaseapp.com",
-        projectId: "your-project",
-        storageBucket: "your-project.appspot.com",
-        messagingSenderId: "123456789",
-        appId: "1:123456789:web:abcdef"
+        apiKey: "YOUR_API_KEY",           // ← Replace with your actual API Key
+        authDomain: "YOUR_PROJECT.firebaseapp.com",  // ← Replace
+        projectId: "YOUR_PROJECT_ID",     // ← Replace
+        storageBucket: "YOUR_PROJECT.appspot.com",   // ← Replace
+        messagingSenderId: "YOUR_SENDER_ID",         // ← Replace
+        appId: "YOUR_APP_ID"              // ← Replace
     };
 
     // Initialize Firebase
@@ -491,9 +210,8 @@
     const db = firebase.firestore();
 
     // ============================================
-    // SAMPLE DATA (if no Firebase, use this)
+    // 📋 PAID HOUSES LIST - UPDATE THIS!
     // ============================================
-    // This is your PAID HOUSES list (manage in Excel)
     const PAID_HOUSES = [
         { house: "101", amount: 1500 },
         { house: "102", amount: 1500 },
@@ -513,9 +231,8 @@
     // ============================================
     const state = {
         eventId: 'ganesh2026',
-        currentHouse: null,
         registrations: [],
-        entries: []
+        isLoading: false
     };
 
     // ============================================
@@ -573,10 +290,53 @@
     });
 
     // ============================================
-    // 2. REGISTER HOUSE & GENERATE QR
+    // 2. FIREBASE - LOAD DATA
+    // ============================================
+    async function loadRegistrations() {
+        try {
+            const snapshot = await db.collection('events')
+                .doc(state.eventId)
+                .collection('registrations')
+                .get();
+            
+            state.registrations = [];
+            snapshot.forEach(doc => {
+                state.registrations.push(doc.data());
+            });
+            
+            updateAdminDashboard();
+            loadRecentEntries();
+            return true;
+        } catch (error) {
+            console.error('Error loading registrations:', error);
+            return false;
+        }
+    }
+
+    // ============================================
+    // 3. FIREBASE - SAVE REGISTRATION
+    // ============================================
+    async function saveRegistrationToFirebase(registration) {
+        try {
+            await db.collection('events')
+                .doc(state.eventId)
+                .collection('registrations')
+                .doc(registration.house) // Use house number as document ID
+                .set(registration);
+            return true;
+        } catch (error) {
+            console.error('Error saving registration:', error);
+            return false;
+        }
+    }
+
+    // ============================================
+    // 4. REGISTER HOUSE & GENERATE QR (FIXED - WITH SECURE QR)
     // ============================================
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        if (state.isLoading) return;
         
         const house = houseInput.value.trim().toUpperCase();
         const name = nameInput.value.trim();
@@ -595,18 +355,22 @@
             return;
         }
         
-        // Check if already registered
+        // Check if already registered (check Firebase data)
         const existingReg = state.registrations.find(r => r.house === house);
         if (existingReg) {
             showMessage('registerMessage', `House ${house} is already registered for this event!`, 'error');
             return;
         }
         
-        // Generate unique pass ID
-        const passId = 'PASS-' + Date.now().toString().slice(-6) + Math.floor(Math.random() * 1000);
-        const qrCodeData = `${state.eventId}|${house}|${passId}`;
+        // Generate SECURE pass ID (random + timestamp)
+        const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+        const timePart = Date.now().toString().slice(-4);
+        const passId = `PASS-${randomPart}${timePart}`;
         
-        // Save registration
+        // 🔒 SECURE: QR contains ONLY the pass ID (no house info!)
+        const qrCodeData = passId;
+        
+        // Registration object
         const registration = {
             house,
             name,
@@ -619,62 +383,91 @@
             entryTime: null
         };
         
-        state.registrations.push(registration);
-        
-        // Show QR
-        showMessage('registerMessage', `✅ Registration successful for House ${house}!`, 'success');
-        
-        // Generate QR
-        qrBox.classList.remove('hidden');
-        document.getElementById('qrcode').innerHTML = '';
-        new QRCode(document.getElementById('qrcode'), {
-            text: qrCodeData,
-            width: 180,
-            height: 180,
-            colorDark: '#1e1814',
-            colorLight: '#ffffff'
-        });
-        
-        document.getElementById('passHouse').textContent = house;
-        document.getElementById('passId').textContent = passId;
-        
-        // Disable form
+        // Show loading
+        state.isLoading = true;
         registerBtn.disabled = true;
-        registerBtn.textContent = '✅ Registered!';
+        registerBtn.textContent = '⏳ Registering...';
         
-        // Update admin
-        updateAdminDashboard();
+        // Save to Firebase
+        const saved = await saveRegistrationToFirebase(registration);
         
-        // Store in Firebase (optional)
-        saveToFirebase(registration);
+        if (saved) {
+            // Add to local state
+            state.registrations.push(registration);
+            
+            // Show QR
+            showMessage('registerMessage', `✅ Registration successful for House ${house}!`, 'success');
+            
+            qrBox.classList.remove('hidden');
+            document.getElementById('qrcode').innerHTML = '';
+            new QRCode(document.getElementById('qrcode'), {
+                text: qrCodeData, // 🔒 Only pass ID, no house info!
+                width: 180,
+                height: 180,
+                colorDark: '#1e1814',
+                colorLight: '#ffffff'
+            });
+            
+            document.getElementById('passHouse').textContent = house;
+            document.getElementById('passId').textContent = passId;
+            
+            registerBtn.textContent = '✅ Registered!';
+            
+            // Update admin
+            updateAdminDashboard();
+            
+            // Clear form
+            houseInput.value = '';
+            nameInput.value = '';
+            mobileInput.value = '';
+            familyInput.value = '';
+        } else {
+            showMessage('registerMessage', '❌ Failed to register. Please check your internet connection.', 'error');
+            registerBtn.textContent = '🎟️ Get Digital Pass';
+            registerBtn.disabled = false;
+        }
+        
+        state.isLoading = false;
     });
 
     // ============================================
-    // 3. SCAN QR & VERIFY ENTRY
+    // 5. SCAN QR & VERIFY ENTRY (FIXED - SECURE)
     // ============================================
-    scanBtn.addEventListener('click', () => {
+    scanBtn.addEventListener('click', async () => {
         const code = scanInput.value.trim();
         if (!code) {
-            showScanResult('Please enter a code', 'invalid');
+            showScanResult('Please enter a pass ID', 'invalid');
             return;
         }
         
-        // Find registration by pass ID (contains the code)
-        const reg = state.registrations.find(r => r.passId.includes(code));
+        // 🔒 Find registration by pass ID (only matches passId)
+        const reg = state.registrations.find(r => r.passId === code);
         
         if (!reg) {
             showScanResult('❌ INVALID QR - No matching registration found', 'invalid');
             return;
         }
         
+        // ✅ Show house details (but only the scanner sees this)
+        const details = `
+            <p><strong>🏠 House:</strong> ${reg.house}</p>
+            <p><strong>👤 Resident:</strong> ${reg.name}</p>
+            <p><strong>📱 Mobile:</strong> ${reg.mobile}</p>
+            <p><strong>👨‍👩‍👦 Family:</strong> ${reg.family.join(', ') || 'None'}</p>
+            <p><strong>Status:</strong> ${reg.entered ? '❌ Already entered' : '✅ Valid - Not yet entered'}</p>
+        `;
+        
         if (reg.entered) {
             showScanResult(`❌ ALREADY ENTERED - House ${reg.house} entered at ${reg.entryTime}`, 'invalid');
             return;
         }
         
-        // Mark as entered
+        // ✅ Mark as entered
         reg.entered = true;
         reg.entryTime = new Date().toLocaleTimeString();
+        
+        // Update in Firebase
+        await saveRegistrationToFirebase(reg);
         
         showScanResult(`✅ VALID ENTRY - House ${reg.house} (${reg.name}) - Welcome!`, 'valid');
         
@@ -696,15 +489,15 @@
         scanResult.style.display = 'block';
         setTimeout(() => {
             scanResult.style.display = 'none';
-        }, 4000);
+        }, 6000);
     }
 
     // ============================================
-    // 4. ADMIN DASHBOARD
+    // 6. ADMIN DASHBOARD (LIVE FROM FIREBASE)
     // ============================================
     function updateAdminDashboard() {
         const totalHouses = PAID_HOUSES.length;
-        const paidHouses = PAID_HOUSES.length;
+        const paidHouses = PAID_HOUSES.filter(h => h.amount > 0).length;
         const registered = state.registrations.length;
         const entered = state.registrations.filter(r => r.entered).length;
         
@@ -722,7 +515,7 @@
                 const isEntered = reg?.entered || false;
                 
                 let status = 'unpaid';
-                let statusText = 'Not Registered';
+                let statusText = '⏳ Pending';
                 let statusColor = '#ef5350';
                 
                 if (isEntered) {
@@ -733,9 +526,6 @@
                     status = 'registered';
                     statusText = '📝 Registered';
                     statusColor = '#ff9800';
-                } else {
-                    statusText = '⏳ Pending';
-                    statusColor = '#ef5350';
                 }
                 
                 html += `
@@ -744,7 +534,7 @@
                             <span class="status-dot ${status}"></span>
                             House ${ph.house}
                         </span>
-                        <span style="font-weight: 500;">${statusText}</span>
+                        <span style="font-weight: 500; color: ${statusColor};">${statusText}</span>
                     </div>
                 `;
             });
@@ -753,7 +543,7 @@
     }
 
     // ============================================
-    // 5. RECENT ENTRIES
+    // 7. RECENT ENTRIES
     // ============================================
     function loadRecentEntries() {
         const entries = state.registrations.filter(r => r.entered);
@@ -763,7 +553,7 @@
         }
         
         let html = '';
-        entries.slice().reverse().forEach(r => {
+        entries.slice().reverse().slice(0, 10).forEach(r => {
             html += `
                 <div class="house-item">
                     <span>🏠 House ${r.house}</span>
@@ -776,7 +566,7 @@
     }
 
     // ============================================
-    // 6. UTILITY FUNCTIONS
+    // 8. UTILITY FUNCTIONS
     // ============================================
     function showMessage(id, text, type) {
         const el = document.getElementById(id);
@@ -789,52 +579,10 @@
     }
 
     // ============================================
-    // 7. FIREBASE (Optional - for multi-device sync)
-    // ============================================
-    function saveToFirebase(registration) {
-        // This saves data so it syncs across devices
-        // If you don't want to use Firebase, you can skip this
-        try {
-            db.collection('events').doc(state.eventId)
-                .collection('registrations').doc(registration.house)
-                .set(registration)
-                .catch(err => console.log('Firebase save skipped:', err));
-        } catch (e) {
-            // Firebase not configured - data stays in memory
-            console.log('Running in local-only mode');
-        }
-    }
-
-    // ============================================
-    // 8. LOAD FROM FIREBASE (Optional)
-    // ============================================
-    function loadFromFirebase() {
-        try {
-            db.collection('events').doc(state.eventId)
-                .collection('registrations')
-                .get()
-                .then(snapshot => {
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        const existing = state.registrations.find(r => r.house === data.house);
-                        if (!existing) {
-                            state.registrations.push(data);
-                        }
-                    });
-                    updateAdminDashboard();
-                    loadRecentEntries();
-                })
-                .catch(() => console.log('Firebase load skipped - using local data'));
-        } catch (e) {
-            console.log('Running in local-only mode');
-        }
-    }
-
-    // ============================================
-    // 9. DOWNLOAD REPORT
+    // 9. DOWNLOAD REPORT (FROM FIREBASE DATA)
     // ============================================
     document.getElementById('downloadBtn')?.addEventListener('click', () => {
-        let csv = 'House,Resident,Family,Registered,Entered,EntryTime\n';
+        let csv = 'House,Resident,Family,Registered,Entered,EntryTime,PassID\n';
         PAID_HOUSES.forEach(ph => {
             const reg = state.registrations.find(r => r.house === ph.house);
             const isRegistered = !!reg;
@@ -842,7 +590,8 @@
             const name = reg?.name || 'Not Registered';
             const family = reg?.family?.join('; ') || '';
             const entryTime = reg?.entryTime || '';
-            csv += `${ph.house},${name},"${family}",${isRegistered},${isEntered},"${entryTime}"\n`;
+            const passId = reg?.passId || '';
+            csv += `${ph.house},${name},"${family}",${isRegistered},${isEntered},"${entryTime}","${passId}"\n`;
         });
         
         const blob = new Blob([csv], { type: 'text/csv' });
@@ -857,18 +606,44 @@
     // ============================================
     // 10. SYNC BUTTON
     // ============================================
-    document.getElementById('syncBtn')?.addEventListener('click', () => {
-        // In a real app, this would pull from Excel
-        // For now, just reload the page
-        alert('🔄 Synced! Data is up to date.');
-        updateAdminDashboard();
-        loadRecentEntries();
+    document.getElementById('syncBtn')?.addEventListener('click', async () => {
+        const btn = document.getElementById('syncBtn');
+        btn.textContent = '⏳ Syncing...';
+        btn.disabled = true;
+        
+        await loadRegistrations();
+        
+        btn.textContent = '✅ Synced!';
+        setTimeout(() => {
+            btn.textContent = '🔄 Sync';
+            btn.disabled = false;
+        }, 2000);
     });
 
     // ============================================
-    // 11. INITIALIZATION
+    // 11. REAL-TIME LISTENER (LIVE UPDATES)
     // ============================================
-    window.addEventListener('load', () => {
+    function setupRealtimeListener() {
+        db.collection('events')
+            .doc(state.eventId)
+            .collection('registrations')
+            .onSnapshot((snapshot) => {
+                state.registrations = [];
+                snapshot.forEach(doc => {
+                    state.registrations.push(doc.data());
+                });
+                updateAdminDashboard();
+                loadRecentEntries();
+                console.log('🔄 Real-time update received:', state.registrations.length, 'registrations');
+            }, (error) => {
+                console.log('⚠️ Real-time listener error:', error);
+            });
+    }
+
+    // ============================================
+    // 12. INITIALIZATION
+    // ============================================
+    window.addEventListener('load', async () => {
         // Check online status
         const updateStatus = () => {
             const statusEl = document.getElementById('onlineStatus');
@@ -884,13 +659,17 @@
         window.addEventListener('online', updateStatus);
         window.addEventListener('offline', updateStatus);
         
-        // Load data
-        loadFromFirebase();
-        updateAdminDashboard();
-        loadRecentEntries();
+        // Load data from Firebase
+        await loadRegistrations();
+        
+        // Setup real-time listener
+        setupRealtimeListener();
         
         // Auto-focus house input
         houseInput.focus();
+        
+        console.log('🎟️ Society Pass Manager started!');
+        console.log('📊 Loaded:', state.registrations.length, 'registrations');
     });
 </script>
 </body>
