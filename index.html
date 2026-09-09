@@ -8,6 +8,9 @@
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    
+    <!-- SheetJS for Excel parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
         /* ============================================
@@ -39,7 +42,7 @@
         }
 
         /* ============================================
-           HEADER - Society Code Badge
+           HEADER
            ============================================ */
         .header {
             display: flex;
@@ -67,7 +70,7 @@
         }
 
         /* ============================================
-           STATUS BAR - Online/Offline
+           STATUS BAR
            ============================================ */
         .status-bar {
             display: flex;
@@ -89,7 +92,7 @@
         }
 
         /* ============================================
-           EVENT CARD - Orange theme
+           EVENT CARD
            ============================================ */
         .event-card {
             background: #faf6f0;
@@ -129,7 +132,7 @@
         }
 
         /* ============================================
-           PASSWORD GATE - Orange accent
+           PASSWORD GATE
            ============================================ */
         .password-gate {
             background: #faf6f0;
@@ -297,6 +300,84 @@
         }
 
         /* ============================================
+           EXCEL UPLOAD SECTION
+           ============================================ */
+        .excel-upload {
+            background: #faf6f0;
+            border-radius: 14px;
+            padding: 16px;
+            margin: 12px 0;
+            border: 2px dashed #d6cdc4;
+            text-align: center;
+        }
+        
+        .excel-upload .upload-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e1814;
+            margin-bottom: 6px;
+        }
+        
+        .excel-upload .upload-subtitle {
+            font-size: 12px;
+            color: #6b5a4e;
+            margin-bottom: 10px;
+        }
+        
+        .excel-upload input[type="file"] {
+            display: none;
+        }
+        
+        .excel-upload .file-label {
+            display: inline-block;
+            padding: 10px 24px;
+            background: #b45f3a;
+            color: white;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .excel-upload .file-label:hover {
+            background: #9e4f2e;
+        }
+        
+        .excel-upload .file-name {
+            font-size: 12px;
+            color: #6b5a4e;
+            margin-top: 8px;
+        }
+        
+        .excel-upload .upload-status {
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .excel-upload .upload-status.success {
+            display: block;
+            background: #e8f5e9;
+            color: #1e5a24;
+        }
+        
+        .excel-upload .upload-status.error {
+            display: block;
+            background: #ffebee;
+            color: #b71c1c;
+        }
+        
+        .excel-upload .upload-status.info {
+            display: block;
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        /* ============================================
            CATERING SECTION
            ============================================ */
         .catering-section {
@@ -435,7 +516,7 @@
         }
 
         /* ============================================
-           QR / PASS DISPLAY
+           PASS DISPLAY
            ============================================ */
         .pass-box {
             text-align: center;
@@ -559,7 +640,7 @@
          ============================================ -->
     <div class="status-bar">
         <span id="onlineStatus" class="online">● Online</span>
-        <span id="houseCount">🏠 106 Houses</span>
+        <span id="houseCount">🏠 Loading...</span>
     </div>
 
     <!-- ============================================
@@ -569,7 +650,7 @@
         <h2>Ganesh Mahotsav 2026</h2>
         <div class="details">📍 Clubhouse Lawn &amp; Main Pandal • 10 Sep – 28 Sep 2026</div>
         <div class="contribution">Contribution: ₹1,500</div>
-        <span class="verified-badge">✅ 106 Verified Houses Pre-Approved</span>
+        <span class="verified-badge" id="verifiedBadge">✅ Loading houses...</span>
     </div>
 
     <!-- ============================================
@@ -680,6 +761,26 @@
             </div>
         </div>
 
+        <!-- ============================================
+           EXCEL UPLOAD SECTION - NEW!
+           ============================================ -->
+        <div class="excel-upload">
+            <div class="upload-title">📊 Update Houses from Excel</div>
+            <div class="upload-subtitle">Upload an Excel file with columns: <strong>HOUSE NO.</strong> and <strong>AMOUNT</strong></div>
+            
+            <label class="file-label" for="excelFile">
+                📁 Choose Excel File (.xlsx, .xls)
+            </label>
+            <input type="file" id="excelFile" accept=".xlsx,.xls" />
+            
+            <div class="file-name" id="fileName">No file selected</div>
+            <div class="upload-status" id="uploadStatus"></div>
+            
+            <button class="scan-btn" onclick="processExcelFile()" style="margin-top:10px; background:#1e1814;" id="processExcelBtn">
+                🔄 Process & Update Houses
+            </button>
+        </div>
+
         <!-- Catering Section -->
         <div class="catering-section">
             <div class="section-title">🍽️ Catering &amp; Dinner Prasad Headcount</div>
@@ -712,7 +813,7 @@
             
             <div class="catering-row" style="margin-top: 8px; border-top: 2px solid #d6cdc4; padding-top: 8px;">
                 <span class="label">🏠 Pre-Approved Paid Houses</span>
-                <span class="value" id="statTotalHouses">106</span>
+                <span class="value" id="statTotalHouses">0</span>
             </div>
             <div class="catering-row">
                 <span class="label">💰 Contribution Fee</span>
@@ -764,34 +865,9 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 // ============================================
-// 📋 PAID HOUSES LIST - All 106 Houses
+// 📋 PAID HOUSES LIST - Loaded from Firebase
 // ============================================
-// This is generated dynamically from your data
-// For now, we use the same list as before
-const PAID_HOUSES = [];
-// Generate 1-106 with amount 1500
-for (let i = 1; i <= 106; i++) {
-    PAID_HOUSES.push({ house: String(i), amount: 1500 });
-}
-// Special cases (unpaid houses from your list)
-const UNPAID = ['4','5','6','7','11','13','17','18','19','24','26','29','30','31',
-    '34','36','37','40','41','42','43','44','45','46','48','49','51','52','53',
-    '55','56','58','59','61','62','65','66','67','68','69','72','73','74','75',
-    '78','80','82','83','85','90','92','93','95','96','99','100','102','103',
-    '104','105','107','108','109','110','111','114','115','116','119','121',
-    '122','123','124','125','126','128','129','132','138','139','141','142',
-    '144','146','148','153','154','157','160','161','163','164','165','167',
-    '168','169','170','171','172','173','174','177','178','179','181','182',
-    '184','188','189','190','191','192','193','194','197','198','200','202',
-    '203','204','205','209','211','215','221','222','223','224','227','228',
-    '233','234','236','237','238','239','240','246','250','252','255','256',
-    '258','259'
-];
-PAID_HOUSES.forEach(h => {
-    if (UNPAID.includes(h.house)) {
-        h.amount = 0;
-    }
-});
+let PAID_HOUSES = [];
 
 // ============================================
 // APP STATE
@@ -800,7 +876,8 @@ const state = {
     eventId: 'ganesh2026',
     unlocked: false,
     registrations: [],
-    isLoading: false
+    isLoading: false,
+    housesLoaded: false
 };
 
 // ============================================
@@ -810,6 +887,8 @@ const passwordInput = document.getElementById('eventPassword');
 const unlockBtn = document.getElementById('unlockBtn');
 const mainMessage = document.getElementById('mainMessage');
 const tabsContainer = document.getElementById('tabsContainer');
+const verifiedBadge = document.getElementById('verifiedBadge');
+const houseCount = document.getElementById('houseCount');
 
 // Tab contents
 const tabResident = document.getElementById('tab-resident');
@@ -853,8 +932,220 @@ const cateringRegular = document.getElementById('cateringRegular');
 const cateringRegularAdmitted = document.getElementById('cateringRegularAdmitted');
 const cateringRegularRegistered = document.getElementById('cateringRegularRegistered');
 
+// Excel upload
+const excelFileInput = document.getElementById('excelFile');
+const fileNameDisplay = document.getElementById('fileName');
+const uploadStatus = document.getElementById('uploadStatus');
+
 // ============================================
-// 1. PASSWORD GATE
+// 1. LOAD HOUSES FROM FIREBASE
+// ============================================
+async function loadHousesFromFirebase() {
+    try {
+        const snapshot = await db.collection('events')
+            .doc(state.eventId)
+            .collection('houses')
+            .get();
+        
+        PAID_HOUSES = [];
+        snapshot.forEach(doc => {
+            PAID_HOUSES.push(doc.data());
+        });
+        
+        // If no houses in Firebase, use fallback
+        if (PAID_HOUSES.length === 0) {
+            console.log('No houses in Firebase, using fallback data');
+            generateFallbackHouses();
+        }
+        
+        state.housesLoaded = true;
+        updateHouseDisplay();
+        updateAdminDashboard();
+        return true;
+    } catch (error) {
+        console.error('Error loading houses:', error);
+        // Use fallback if Firebase fails
+        generateFallbackHouses();
+        return false;
+    }
+}
+
+// ============================================
+// 2. GENERATE FALLBACK HOUSES (1-259)
+// ============================================
+function generateFallbackHouses() {
+    PAID_HOUSES = [];
+    for (let i = 1; i <= 259; i++) {
+        // Default: all houses are paid (amount: 1500)
+        let amount = 1500;
+        // Mark some as unpaid based on your list
+        const unpaidList = ['4','5','6','7','11','13','17','18','19','24','26','29','30','31',
+            '34','36','37','40','41','42','43','44','45','46','48','49','51','52','53',
+            '55','56','58','59','61','62','65','66','67','68','69','72','73','74','75',
+            '78','80','82','83','85','90','92','93','95','96','99','100','102','103',
+            '104','105','107','108','109','110','111','114','115','116','119','121',
+            '122','123','124','125','126','128','129','132','138','139','141','142',
+            '144','146','148','153','154','157','160','161','163','164','165','167',
+            '168','169','170','171','172','173','174','177','178','179','181','182',
+            '184','188','189','190','191','192','193','194','197','198','200','202',
+            '203','204','205','209','211','215','221','222','223','224','227','228',
+            '233','234','236','237','238','239','240','246','250','252','255','256',
+            '258','259'];
+        if (unpaidList.includes(String(i))) {
+            amount = 0;
+        }
+        PAID_HOUSES.push({ house: String(i), amount: amount });
+    }
+}
+
+// ============================================
+// 3. UPDATE HOUSE DISPLAY
+// ============================================
+function updateHouseDisplay() {
+    const paidCount = PAID_HOUSES.filter(h => h.amount > 0).length;
+    const totalCount = PAID_HOUSES.length;
+    verifiedBadge.textContent = `✅ ${paidCount} Verified Houses Pre-Approved`;
+    houseCount.textContent = `🏠 ${totalCount} Houses`;
+    statTotalHouses.textContent = paidCount;
+}
+
+// ============================================
+// 4. SAVE HOUSES TO FIREBASE
+// ============================================
+async function saveHousesToFirebase() {
+    try {
+        const batch = db.batch();
+        const housesRef = db.collection('events').doc(state.eventId).collection('houses');
+        
+        PAID_HOUSES.forEach(house => {
+            const docRef = housesRef.doc(house.house);
+            batch.set(docRef, house);
+        });
+        
+        await batch.commit();
+        console.log(`✅ Saved ${PAID_HOUSES.length} houses to Firebase`);
+        return true;
+    } catch (error) {
+        console.error('Error saving houses:', error);
+        return false;
+    }
+}
+
+// ============================================
+// 5. EXCEL FILE HANDLING
+// ============================================
+excelFileInput.addEventListener('change', function(e) {
+    if (this.files && this.files[0]) {
+        fileNameDisplay.textContent = `📄 ${this.files[0].name}`;
+        uploadStatus.className = 'upload-status info';
+        uploadStatus.textContent = `📄 File selected: ${this.files[0].name}. Click "Process & Update Houses" to import.`;
+        uploadStatus.style.display = 'block';
+    } else {
+        fileNameDisplay.textContent = 'No file selected';
+        uploadStatus.style.display = 'none';
+    }
+});
+
+// ============================================
+// 6. PROCESS EXCEL FILE
+// ============================================
+async function processExcelFile() {
+    const fileInput = document.getElementById('excelFile');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        uploadStatus.className = 'upload-status error';
+        uploadStatus.textContent = '❌ Please select an Excel file first.';
+        uploadStatus.style.display = 'block';
+        return;
+    }
+    
+    const btn = document.getElementById('processExcelBtn');
+    btn.textContent = '⏳ Processing...';
+    btn.disabled = true;
+    
+    try {
+        const data = await file.arrayBuffer();
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+        
+        // Parse the data
+        const newHouses = [];
+        let processed = 0;
+        let skipped = 0;
+        
+        jsonData.forEach(row => {
+            // Try to find HOUSE NO. and AMOUNT columns (case insensitive)
+            const houseKeys = Object.keys(row).filter(k => 
+                k.toLowerCase().includes('house') || 
+                k.toLowerCase().includes('flat') || 
+                k.toLowerCase().includes('no')
+            );
+            const amountKeys = Object.keys(row).filter(k => 
+                k.toLowerCase().includes('amount') || 
+                k.toLowerCase().includes('amt') || 
+                k.toLowerCase().includes('paid')
+            );
+            
+            if (houseKeys.length > 0 && amountKeys.length > 0) {
+                const houseNo = String(row[houseKeys[0]]).trim();
+                const amount = parseFloat(row[amountKeys[0]]) || 0;
+                
+                if (houseNo && !isNaN(amount)) {
+                    newHouses.push({ house: houseNo, amount: amount });
+                    processed++;
+                } else {
+                    skipped++;
+                }
+            } else {
+                skipped++;
+            }
+        });
+        
+        if (newHouses.length === 0) {
+            uploadStatus.className = 'upload-status error';
+            uploadStatus.textContent = '❌ No valid data found. Please ensure columns are: HOUSE NO. and AMOUNT';
+            uploadStatus.style.display = 'block';
+            btn.textContent = '🔄 Process & Update Houses';
+            btn.disabled = false;
+            return;
+        }
+        
+        // Replace PAID_HOUSES with new data
+        PAID_HOUSES = newHouses;
+        
+        // Save to Firebase
+        await saveHousesToFirebase();
+        
+        // Update UI
+        updateHouseDisplay();
+        updateAdminDashboard();
+        
+        uploadStatus.className = 'upload-status success';
+        uploadStatus.textContent = `✅ Successfully imported ${processed} houses (${skipped} rows skipped)`;
+        uploadStatus.style.display = 'block';
+        
+        // Clear file input
+        fileInput.value = '';
+        fileNameDisplay.textContent = 'No file selected';
+        
+        // Refresh house list
+        loadRegistrations();
+        
+    } catch (error) {
+        console.error('Excel processing error:', error);
+        uploadStatus.className = 'upload-status error';
+        uploadStatus.textContent = `❌ Error processing file: ${error.message}`;
+        uploadStatus.style.display = 'block';
+    }
+    
+    btn.textContent = '🔄 Process & Update Houses';
+    btn.disabled = false;
+}
+
+// ============================================
+// 7. PASSWORD GATE
 // ============================================
 const CORRECT_PASSWORD = 'Ganesh@2026';
 
@@ -879,13 +1170,14 @@ passwordInput.addEventListener('keydown', (e) => {
 function unlockPortal() {
     // Hide password gate
     document.querySelector('.password-gate').style.display = 'none';
-    document.querySelector('.event-card .verified-badge').textContent = '✅ 106 Verified Houses • Portal Unlocked';
+    document.querySelector('.event-card .verified-badge').textContent = '✅ Portal Unlocked';
     
     // Show tabs
     tabsContainer.style.display = 'flex';
     tabResident.style.display = 'block';
     
     // Load data
+    loadHousesFromFirebase();
     loadRegistrations();
     setupRealtimeListener();
     
@@ -896,7 +1188,7 @@ function unlockPortal() {
 }
 
 // ============================================
-// 2. TAB SWITCHING
+// 8. TAB SWITCHING
 // ============================================
 document.querySelectorAll('.tabs button').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -913,7 +1205,7 @@ document.querySelectorAll('.tabs button').forEach(tab => {
 });
 
 // ============================================
-// 3. FIREBASE - LOAD DATA
+// 9. FIREBASE - LOAD REGISTRATIONS
 // ============================================
 async function loadRegistrations() {
     try {
@@ -937,7 +1229,7 @@ async function loadRegistrations() {
 }
 
 // ============================================
-// 4. FIREBASE - SAVE REGISTRATION
+// 10. FIREBASE - SAVE REGISTRATION
 // ============================================
 async function saveRegistrationToFirebase(registration) {
     try {
@@ -954,7 +1246,7 @@ async function saveRegistrationToFirebase(registration) {
 }
 
 // ============================================
-// 5. REGISTER HOUSE
+// 11. REGISTER HOUSE
 // ============================================
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -999,9 +1291,9 @@ registerForm.addEventListener('submit', async (e) => {
         registeredAt: new Date().toISOString(),
         entered: false,
         entryTime: null,
-        foodPreference: 'regular', // Default
+        foodPreference: 'regular',
         swaminarayanCount: 0,
-        memberCount: family.length + 1 // Resident + family
+        memberCount: family.length + 1
     };
     
     state.isLoading = true;
@@ -1038,7 +1330,7 @@ registerForm.addEventListener('submit', async (e) => {
 });
 
 // ============================================
-// 6. SCANNER
+// 12. SCANNER
 // ============================================
 scanBtn.addEventListener('click', async () => {
     const code = scanInput.value.trim();
@@ -1081,10 +1373,9 @@ function showScanResult(message, type) {
 }
 
 // ============================================
-// 7. ADMIN DASHBOARD
+// 13. ADMIN DASHBOARD
 // ============================================
 function updateAdminDashboard() {
-    const totalHouses = PAID_HOUSES.length;
     const paidHouses = PAID_HOUSES.filter(h => h.amount > 0).length;
     const registered = state.registrations.length;
     const entered = state.registrations.filter(r => r.entered).length;
@@ -1094,14 +1385,14 @@ function updateAdminDashboard() {
     statAdmitted.textContent = entered;
     statPending.textContent = pending;
     statRegistered.textContent = registered;
-    statHousesIn.textContent = entered; // Houses In = admitted houses
+    statHousesIn.textContent = entered;
     statTotalHouses.textContent = paidHouses;
     statPassesIssued.textContent = registered;
     
     // Footer
     footerStats.textContent = `${registered} houses registered • ${entered} entries`;
     
-    // Catering (simplified - calculate from registrations)
+    // Catering
     let jainMeals = 0;
     let regularMeals = 0;
     let jainAdmitted = 0;
@@ -1142,11 +1433,11 @@ function updateAdminDashboard() {
             </div>
         `;
     });
-    houseStatusList.innerHTML = html || '<p class="text-sm">No houses found</p>';
+    houseStatusList.innerHTML = html || '<p class="text-sm">No houses found. Upload an Excel file to import houses.</p>';
 }
 
 // ============================================
-// 8. RECENT ENTRIES
+// 14. RECENT ENTRIES
 // ============================================
 function loadRecentEntries() {
     const entries = state.registrations.filter(r => r.entered).slice(-5).reverse();
@@ -1168,7 +1459,7 @@ function loadRecentEntries() {
 }
 
 // ============================================
-// 9. UTILITY FUNCTIONS
+// 15. UTILITY FUNCTIONS
 // ============================================
 function showMessage(id, text, type) {
     const el = document.getElementById(id);
@@ -1181,18 +1472,18 @@ function showMessage(id, text, type) {
 }
 
 // ============================================
-// 10. ADMIN ACTIONS
+// 16. ADMIN ACTIONS
 // ============================================
 function exportCSV() {
-    let csv = 'House,Resident,Family,Registered,Entered,EntryTime,PassID\n';
-    PAID_HOUSES.filter(h => h.amount > 0).forEach(ph => {
+    let csv = 'House,Amount,Resident,Family,Registered,Entered,EntryTime,PassID\n';
+    PAID_HOUSES.forEach(ph => {
         const reg = state.registrations.find(r => r.house === ph.house);
         const name = reg?.name || 'Not Registered';
         const family = reg?.family?.join('; ') || '';
         const entered = reg?.entered ? 'Yes' : 'No';
         const entryTime = reg?.entryTime || '';
         const passId = reg?.passId || '';
-        csv += `${ph.house},${name},"${family}",${reg ? 'Yes' : 'No'},${entered},"${entryTime}","${passId}"\n`;
+        csv += `${ph.house},${ph.amount},${name},"${family}",${reg ? 'Yes' : 'No'},${entered},"${entryTime}","${passId}"\n`;
     });
     
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -1207,7 +1498,7 @@ function exportCSV() {
 function syncData() {
     const btn = document.querySelector('[onclick="syncData()"]');
     btn.textContent = '⏳ Syncing...';
-    loadRegistrations().then(() => {
+    Promise.all([loadHousesFromFirebase(), loadRegistrations()]).then(() => {
         btn.textContent = '🔄 Sync';
         showMessage('mainMessage', '✅ Data synced successfully!', 'success');
         setTimeout(() => { mainMessage.style.display = 'none'; }, 2000);
@@ -1230,7 +1521,7 @@ function resetEvent() {
 }
 
 // ============================================
-// 11. REAL-TIME LISTENER
+// 17. REAL-TIME LISTENER
 // ============================================
 function setupRealtimeListener() {
     db.collection('events')
@@ -1250,7 +1541,7 @@ function setupRealtimeListener() {
 }
 
 // ============================================
-// 12. INITIALIZATION
+// 18. INITIALIZATION
 // ============================================
 window.addEventListener('load', () => {
     // Online/Offline status
@@ -1268,11 +1559,11 @@ window.addEventListener('load', () => {
     window.addEventListener('online', updateStatus);
     window.addEventListener('offline', updateStatus);
     
-    // Pre-fill password with demo for quick testing
+    // Pre-fill password
     passwordInput.value = CORRECT_PASSWORD;
     
     console.log('🎟️ GM2026 Society Pass Manager loaded');
-    console.log('🏠 Houses:', PAID_HOUSES.filter(h => h.amount > 0).length, 'paid out of', PAID_HOUSES.length);
+    console.log('📊 Excel import ready - Upload .xlsx files to update houses');
 });
 </script>
 </body>
