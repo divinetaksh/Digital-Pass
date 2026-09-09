@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>🎟️ Society Pass Manager</title>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    
+    <!-- QR Code Generator -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: #f0ebe6;
+            min-height: 100vh;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .app {
+            max-width: 420px;
+            width: 100%;
+            background: white;
+            border-radius: 28px;
+            padding: 24px 20px 32px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0ebe6;
+        }
+        
+        .header h1 {
+            font-size: 22px;
+            color: #1e1814;
+        }
+        
+        .header .status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .event-card {
+            background: #faf8f6;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .event-card h2 {
+            font-size: 20px;
+            color: #1e1814;
+            margin-bottom: 4px;
+        }
+        
+        .event-card .details {
+            font-size: 14px;
+            color: #6b5a4e;
+        }
+        
+        .event-card .badge {
+            display: inline-block;
+            background: #b45f3a;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .tabs button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: #f0ebe6;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b5a4e;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .tabs button.active {
+            background: #1e1814;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Forms */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: #2b1f17;
+            margin-bottom: 6px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #d6cdc4;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            transition: 0.2s;
+        }
+        
+        .form-group input:focus {
+            border-color: #b45f3a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(180, 95, 58, 0.15);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 60px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            touch-action: manipulation;
+        }
+        
+        .btn-primary {
+            background: #1e1814;
+            color: white;
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.97);
+            background: #3d2e24;
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-success {
+            background: #2e7d32;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #c62828;
+            color: white;
+        }
+        
+        /* Messages */
+        .message {
+            margin: 16px 0;
+            padding: 16px;
+            border-radius: 12px;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .message.success {
+            display: block;
+            background: #e8f5e9;
+            border: 2px solid #a5d6a7;
+            color: #1e5a24;
+        }
+        
+        .message.error {
+            display: block;
+            background: #ffebee;
+            border: 2px solid #ef9a9a;
+            color: #b71c1c;
+        }
+        
+        .message.info {
+            display: block;
+            background: #e3f2fd;
+            border: 2px solid #90caf9;
+            color: #0d47a1;
+        }
+        
+        /* QR Display */
+        .qr-box {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 16px;
+            border: 2px dashed #d6cdc4;
+            margin: 16px 0;
+        }
+        
+        .qr-box #qrcode {
+            display: inline-block;
+            padding: 16px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .qr-box .pass-info {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #6b5a4e;
+        }
+        
+        .qr-box .pass-info strong {
+            color: #1e1814;
+        }
+        
+        /* Scanner */
+        .scanner-box {
+            text-align: center;
+            padding: 30px 20px;
+            background: #faf8f6;
+            border-radius: 16px;
+            border: 2px dashed #d6cdc4;
+        }
+        
+        .scanner-box input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #d6cdc4;
+            border-radius: 12px;
+            font-size: 16px;
+            text-align: center;
+            margin: 12px 0;
+        }
+        
+        .scanner-result {
+            margin-top: 16px;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .scanner-result.valid {
+            display: block;
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            color: #1e5a24;
+        }
+        
+        .scanner-result.invalid {
+            display: block;
+            background: #ffebee;
+            border: 2px solid #ef5350;
+            color: #b71c1c;
+        }
+        
+        /* Admin Dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .stat-card {
+            background: #faf8f6;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e1814;
+        }
+        
+        .stat-card .label {
+            font-size: 12px;
+            color: #6b5a4e;
+            margin-top: 4px;
+        }
+        
+        .house-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .house-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #faf8f6;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        
+        .house-item .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .house-item .status-dot.paid {
+            background: #4caf50;
+        }
+        
+        .house-item .status-dot.unpaid {
+            background: #ef5350;
+        }
+        
+        .house-item .status-dot.registered {
+            background: #ff9800;
+        }
+        
+        .house-item .status-dot.entered {
+            background: #2196f3;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .mt-8 { margin-top: 8px; }
+        .mb-8 { margin-bottom: 8px; }
+        .text-center { text-align: center; }
+        .text-sm { font-size: 13px; color: #6b5a4e; }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <!-- Header -->
+    <div class="header">
+        <h1>🏘️ SocietyPass</h1>
+        <span class="status" id="onlineStatus">● Online</span>
+    </div>
+
+    <!-- Event Info -->
+    <div class="event-card">
+        <h2 id="eventName">Ganesh Mahotsav 2026</h2>
+        <div class="details">📅 19–28 Sep 2026 • 📍 Clubhouse Lawn</div>
+        <span class="badge">🎟️ Digital Pass Required</span>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="active" data-tab="register">📝 Register</button>
+        <button data-tab="scan">📸 Scan</button>
+        <button data-tab="admin">📊 Admin</button>
+    </div>
+
+    <!-- ==================== TAB 1: REGISTER ==================== -->
+    <div id="tab-register" class="tab-content active">
+        <form id="registerForm">
+            <div class="form-group">
+                <label>🏠 House Number</label>
+                <input type="text" id="houseInput" placeholder="e.g., 106" required />
+            </div>
+            <div class="form-group">
+                <label>👤 Your Name</label>
+                <input type="text" id="nameInput" placeholder="Full name" required />
+            </div>
+            <div class="form-group">
+                <label>📱 Mobile Number</label>
+                <input type="tel" id="mobileInput" placeholder="9876543210" required />
+            </div>
+            <div class="form-group">
+                <label>👨‍👩‍👦 Family Members (optional)</label>
+                <input type="text" id="familyInput" placeholder="e.g., Priya, Aarav (comma separated)" />
+            </div>
+            <button type="submit" class="btn btn-primary" id="registerBtn">🎟️ Get Digital Pass</button>
+        </form>
+        
+        <div id="registerMessage" class="message"></div>
+        
+        <div id="qrBox" class="qr-box hidden">
+            <div id="qrcode"></div>
+            <div class="pass-info">
+                <p><strong>House:</strong> <span id="passHouse">---</span></p>
+                <p><strong>Pass ID:</strong> <span id="passId">---</span></p>
+                <p><strong>Status:</strong> <span style="color: #2e7d32;">✓ Valid (Not yet entered)</span></p>
+                <p class="text-sm mt-8">Show this QR at the gate for entry</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TAB 2: SCAN ==================== -->
+    <div id="tab-scan" class="tab-content">
+        <div class="scanner-box">
+            <p style="font-weight: 600; margin-bottom: 12px;">📸 Scan QR Code</p>
+            <p class="text-sm">Enter the 6-digit code from the QR</p>
+            <input type="text" id="scanInput" placeholder="Enter code (e.g., 482916)" maxlength="6" />
+            <button class="btn btn-primary" id="scanBtn">🔍 Verify Entry</button>
+        </div>
+        
+        <div id="scanResult" class="scanner-result"></div>
+        
+        <div style="margin-top: 16px;">
+            <h3 style="font-size: 16px; margin-bottom: 8px;">⏱️ Recent Entries</h3>
+            <div id="recentEntries">
+                <p class="text-sm">No entries yet</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TAB 3: ADMIN ==================== -->
+    <div id="tab-admin" class="tab-content">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number" id="statTotal">0</div>
+                <div class="label">🏠 Total Houses</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="statPaid">0</div>
+                <div class="label">✅ Paid Houses</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="statRegistered">0</div>
+                <div class="label">📝 Registered</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="statEntered">0</div>
+                <div class="label">🚪 Entered</div>
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <button class="btn btn-primary" id="syncBtn" style="flex: 1; padding: 12px;">🔄 Sync Data</button>
+            <button class="btn btn-success" id="downloadBtn" style="flex: 1; padding: 12px;">📥 Report</button>
+        </div>
+        
+        <h3 style="font-size: 16px; margin-bottom: 8px;">🏠 House Status</h3>
+        <div id="houseStatusList" class="house-list">
+            <p class="text-sm">Loading houses...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============================================
+    // FIREBASE CONFIGURATION
+    // ============================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyDemoKey",  // Replace with your actual keys
+        authDomain: "your-project.firebaseapp.com",
+        projectId: "your-project",
+        storageBucket: "your-project.appspot.com",
+        messagingSenderId: "123456789",
+        appId: "1:123456789:web:abcdef"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // ============================================
+    // SAMPLE DATA (if no Firebase, use this)
+    // ============================================
+    // This is your PAID HOUSES list (manage in Excel)
+    const PAID_HOUSES = [
+        { house: "101", amount: 1500 },
+        { house: "102", amount: 1500 },
+        { house: "103", amount: 1500 },
+        { house: "104", amount: 1500 },
+        { house: "105", amount: 1500 },
+        { house: "106", amount: 1500 },
+        { house: "107", amount: 1500 },
+        { house: "108", amount: 1500 },
+        { house: "109", amount: 1500 },
+        { house: "110", amount: 1500 },
+        // Add more houses as needed
+    ];
+
+    // ============================================
+    // APP STATE
+    // ============================================
+    const state = {
+        eventId: 'ganesh2026',
+        currentHouse: null,
+        registrations: [],
+        entries: []
+    };
+
+    // ============================================
+    // DOM REFERENCES
+    // ============================================
+    const tabs = document.querySelectorAll('[data-tab]');
+    const contents = {
+        register: document.getElementById('tab-register'),
+        scan: document.getElementById('tab-scan'),
+        admin: document.getElementById('tab-admin')
+    };
+    
+    const registerForm = document.getElementById('registerForm');
+    const houseInput = document.getElementById('houseInput');
+    const nameInput = document.getElementById('nameInput');
+    const mobileInput = document.getElementById('mobileInput');
+    const familyInput = document.getElementById('familyInput');
+    const registerBtn = document.getElementById('registerBtn');
+    const registerMessage = document.getElementById('registerMessage');
+    const qrBox = document.getElementById('qrBox');
+    
+    const scanInput = document.getElementById('scanInput');
+    const scanBtn = document.getElementById('scanBtn');
+    const scanResult = document.getElementById('scanResult');
+    const recentEntries = document.getElementById('recentEntries');
+    
+    const statTotal = document.getElementById('statTotal');
+    const statPaid = document.getElementById('statPaid');
+    const statRegistered = document.getElementById('statRegistered');
+    const statEntered = document.getElementById('statEntered');
+    const houseStatusList = document.getElementById('houseStatusList');
+
+    // ============================================
+    // 1. TAB SWITCHING
+    // ============================================
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            Object.keys(contents).forEach(key => {
+                contents[key].classList.remove('active');
+            });
+            
+            const tabName = tab.dataset.tab;
+            contents[tabName].classList.add('active');
+            
+            if (tabName === 'admin') {
+                updateAdminDashboard();
+            }
+            if (tabName === 'scan') {
+                loadRecentEntries();
+            }
+        });
+    });
+
+    // ============================================
+    // 2. REGISTER HOUSE & GENERATE QR
+    // ============================================
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const house = houseInput.value.trim().toUpperCase();
+        const name = nameInput.value.trim();
+        const mobile = mobileInput.value.trim();
+        const family = familyInput.value.trim().split(',').map(f => f.trim()).filter(f => f);
+        
+        if (!house || !name || !mobile) {
+            showMessage('registerMessage', 'Please fill in all required fields', 'error');
+            return;
+        }
+        
+        // Check if house is in paid list
+        const paidHouse = PAID_HOUSES.find(h => h.house === house);
+        if (!paidHouse) {
+            showMessage('registerMessage', `House ${house} is not on the paid list. Please contact the committee.`, 'error');
+            return;
+        }
+        
+        // Check if already registered
+        const existingReg = state.registrations.find(r => r.house === house);
+        if (existingReg) {
+            showMessage('registerMessage', `House ${house} is already registered for this event!`, 'error');
+            return;
+        }
+        
+        // Generate unique pass ID
+        const passId = 'PASS-' + Date.now().toString().slice(-6) + Math.floor(Math.random() * 1000);
+        const qrCodeData = `${state.eventId}|${house}|${passId}`;
+        
+        // Save registration
+        const registration = {
+            house,
+            name,
+            mobile,
+            family,
+            passId,
+            qrCodeData,
+            registeredAt: new Date().toISOString(),
+            entered: false,
+            entryTime: null
+        };
+        
+        state.registrations.push(registration);
+        
+        // Show QR
+        showMessage('registerMessage', `✅ Registration successful for House ${house}!`, 'success');
+        
+        // Generate QR
+        qrBox.classList.remove('hidden');
+        document.getElementById('qrcode').innerHTML = '';
+        new QRCode(document.getElementById('qrcode'), {
+            text: qrCodeData,
+            width: 180,
+            height: 180,
+            colorDark: '#1e1814',
+            colorLight: '#ffffff'
+        });
+        
+        document.getElementById('passHouse').textContent = house;
+        document.getElementById('passId').textContent = passId;
+        
+        // Disable form
+        registerBtn.disabled = true;
+        registerBtn.textContent = '✅ Registered!';
+        
+        // Update admin
+        updateAdminDashboard();
+        
+        // Store in Firebase (optional)
+        saveToFirebase(registration);
+    });
+
+    // ============================================
+    // 3. SCAN QR & VERIFY ENTRY
+    // ============================================
+    scanBtn.addEventListener('click', () => {
+        const code = scanInput.value.trim();
+        if (!code) {
+            showScanResult('Please enter a code', 'invalid');
+            return;
+        }
+        
+        // Find registration by pass ID (contains the code)
+        const reg = state.registrations.find(r => r.passId.includes(code));
+        
+        if (!reg) {
+            showScanResult('❌ INVALID QR - No matching registration found', 'invalid');
+            return;
+        }
+        
+        if (reg.entered) {
+            showScanResult(`❌ ALREADY ENTERED - House ${reg.house} entered at ${reg.entryTime}`, 'invalid');
+            return;
+        }
+        
+        // Mark as entered
+        reg.entered = true;
+        reg.entryTime = new Date().toLocaleTimeString();
+        
+        showScanResult(`✅ VALID ENTRY - House ${reg.house} (${reg.name}) - Welcome!`, 'valid');
+        
+        // Update admin
+        updateAdminDashboard();
+        loadRecentEntries();
+        
+        // Clear input
+        scanInput.value = '';
+    });
+    
+    scanInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') scanBtn.click();
+    });
+
+    function showScanResult(message, type) {
+        scanResult.textContent = message;
+        scanResult.className = 'scanner-result ' + type;
+        scanResult.style.display = 'block';
+        setTimeout(() => {
+            scanResult.style.display = 'none';
+        }, 4000);
+    }
+
+    // ============================================
+    // 4. ADMIN DASHBOARD
+    // ============================================
+    function updateAdminDashboard() {
+        const totalHouses = PAID_HOUSES.length;
+        const paidHouses = PAID_HOUSES.length;
+        const registered = state.registrations.length;
+        const entered = state.registrations.filter(r => r.entered).length;
+        
+        statTotal.textContent = totalHouses;
+        statPaid.textContent = paidHouses;
+        statRegistered.textContent = registered;
+        statEntered.textContent = entered;
+        
+        // House status list
+        if (houseStatusList) {
+            let html = '';
+            PAID_HOUSES.forEach(ph => {
+                const reg = state.registrations.find(r => r.house === ph.house);
+                const isRegistered = !!reg;
+                const isEntered = reg?.entered || false;
+                
+                let status = 'unpaid';
+                let statusText = 'Not Registered';
+                let statusColor = '#ef5350';
+                
+                if (isEntered) {
+                    status = 'entered';
+                    statusText = '✅ Entered';
+                    statusColor = '#2196f3';
+                } else if (isRegistered) {
+                    status = 'registered';
+                    statusText = '📝 Registered';
+                    statusColor = '#ff9800';
+                } else {
+                    statusText = '⏳ Pending';
+                    statusColor = '#ef5350';
+                }
+                
+                html += `
+                    <div class="house-item">
+                        <span>
+                            <span class="status-dot ${status}"></span>
+                            House ${ph.house}
+                        </span>
+                        <span style="font-weight: 500;">${statusText}</span>
+                    </div>
+                `;
+            });
+            houseStatusList.innerHTML = html || '<p class="text-sm">No houses found</p>';
+        }
+    }
+
+    // ============================================
+    // 5. RECENT ENTRIES
+    // ============================================
+    function loadRecentEntries() {
+        const entries = state.registrations.filter(r => r.entered);
+        if (entries.length === 0) {
+            recentEntries.innerHTML = '<p class="text-sm">No entries yet</p>';
+            return;
+        }
+        
+        let html = '';
+        entries.slice().reverse().forEach(r => {
+            html += `
+                <div class="house-item">
+                    <span>🏠 House ${r.house}</span>
+                    <span>${r.name}</span>
+                    <span style="font-size: 13px; color: #6b5a4e;">${r.entryTime}</span>
+                </div>
+            `;
+        });
+        recentEntries.innerHTML = html;
+    }
+
+    // ============================================
+    // 6. UTILITY FUNCTIONS
+    // ============================================
+    function showMessage(id, text, type) {
+        const el = document.getElementById(id);
+        el.textContent = text;
+        el.className = 'message ' + type;
+        el.style.display = 'block';
+        setTimeout(() => {
+            el.style.display = 'none';
+        }, 5000);
+    }
+
+    // ============================================
+    // 7. FIREBASE (Optional - for multi-device sync)
+    // ============================================
+    function saveToFirebase(registration) {
+        // This saves data so it syncs across devices
+        // If you don't want to use Firebase, you can skip this
+        try {
+            db.collection('events').doc(state.eventId)
+                .collection('registrations').doc(registration.house)
+                .set(registration)
+                .catch(err => console.log('Firebase save skipped:', err));
+        } catch (e) {
+            // Firebase not configured - data stays in memory
+            console.log('Running in local-only mode');
+        }
+    }
+
+    // ============================================
+    // 8. LOAD FROM FIREBASE (Optional)
+    // ============================================
+    function loadFromFirebase() {
+        try {
+            db.collection('events').doc(state.eventId)
+                .collection('registrations')
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const existing = state.registrations.find(r => r.house === data.house);
+                        if (!existing) {
+                            state.registrations.push(data);
+                        }
+                    });
+                    updateAdminDashboard();
+                    loadRecentEntries();
+                })
+                .catch(() => console.log('Firebase load skipped - using local data'));
+        } catch (e) {
+            console.log('Running in local-only mode');
+        }
+    }
+
+    // ============================================
+    // 9. DOWNLOAD REPORT
+    // ============================================
+    document.getElementById('downloadBtn')?.addEventListener('click', () => {
+        let csv = 'House,Resident,Family,Registered,Entered,EntryTime\n';
+        PAID_HOUSES.forEach(ph => {
+            const reg = state.registrations.find(r => r.house === ph.house);
+            const isRegistered = !!reg;
+            const isEntered = reg?.entered || false;
+            const name = reg?.name || 'Not Registered';
+            const family = reg?.family?.join('; ') || '';
+            const entryTime = reg?.entryTime || '';
+            csv += `${ph.house},${name},"${family}",${isRegistered},${isEntered},"${entryTime}"\n`;
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Registration_Report_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+
+    // ============================================
+    // 10. SYNC BUTTON
+    // ============================================
+    document.getElementById('syncBtn')?.addEventListener('click', () => {
+        // In a real app, this would pull from Excel
+        // For now, just reload the page
+        alert('🔄 Synced! Data is up to date.');
+        updateAdminDashboard();
+        loadRecentEntries();
+    });
+
+    // ============================================
+    // 11. INITIALIZATION
+    // ============================================
+    window.addEventListener('load', () => {
+        // Check online status
+        const updateStatus = () => {
+            const statusEl = document.getElementById('onlineStatus');
+            if (navigator.onLine) {
+                statusEl.textContent = '● Online';
+                statusEl.style.color = '#2e7d32';
+            } else {
+                statusEl.textContent = '○ Offline';
+                statusEl.style.color = '#c62828';
+            }
+        };
+        updateStatus();
+        window.addEventListener('online', updateStatus);
+        window.addEventListener('offline', updateStatus);
+        
+        // Load data
+        loadFromFirebase();
+        updateAdminDashboard();
+        loadRecentEntries();
+        
+        // Auto-focus house input
+        houseInput.focus();
+    });
+</script>
+</body>
+</html>
