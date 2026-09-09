@@ -65,7 +65,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Offline Ready Badge */
         .offline-badge {
             display: inline-block;
             background: #e8f5e9;
@@ -77,7 +76,6 @@
             margin-bottom: 8px;
         }
 
-        /* Status Bar */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -87,10 +85,7 @@
             color: #6b5a4e;
         }
         
-        .status-bar .online {
-            color: #2e7d32;
-            font-weight: 600;
-        }
+        .status-bar .online { color: #2e7d32; font-weight: 600; }
 
         /* Event Card */
         .event-card {
@@ -130,7 +125,7 @@
             margin-top: 6px;
         }
 
-        /* Tabs - Pill Style */
+        /* Tabs */
         .tabs {
             display: flex;
             gap: 4px;
@@ -159,13 +154,8 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         /* Password Gate */
         .password-gate {
@@ -197,25 +187,12 @@
             font-size: 16px;
             background: white;
             margin-bottom: 10px;
-            transition: 0.2s;
         }
         
         .password-gate input:focus {
             border-color: #b45f3a;
             outline: none;
             box-shadow: 0 0 0 3px rgba(180, 95, 58, 0.15);
-        }
-        
-        .password-gate .demo-btn {
-            background: #f0ebe6;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #6b5a4e;
-            cursor: pointer;
-            margin-bottom: 10px;
         }
         
         .password-gate .unlock-btn {
@@ -236,16 +213,94 @@
             background: #9e4f2e;
         }
         
-        .password-gate .unlock-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
         .password-gate .hint {
             font-size: 11px;
             color: #9a887a;
             margin-top: 8px;
             text-align: center;
+        }
+
+        /* Password Popup */
+        .password-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            backdrop-filter: blur(4px);
+        }
+        
+        .password-popup.show { display: flex; }
+        
+        .password-popup .popup-box {
+            background: white;
+            border-radius: 24px;
+            padding: 30px 24px;
+            max-width: 360px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .password-popup .popup-box .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        
+        .password-popup .popup-box h3 {
+            font-size: 18px;
+            color: #1e1814;
+            margin-bottom: 4px;
+        }
+        
+        .password-popup .popup-box p {
+            font-size: 13px;
+            color: #6b5a4e;
+            margin-bottom: 16px;
+        }
+        
+        .password-popup .popup-box input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #d6cdc4;
+            border-radius: 12px;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .password-popup .popup-box input:focus {
+            border-color: #b45f3a;
+            outline: none;
+        }
+        
+        .password-popup .popup-box .popup-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 60px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #1e1814;
+            color: white;
+            transition: 0.2s;
+        }
+        
+        .password-popup .popup-box .popup-btn:active {
+            transform: scale(0.97);
+        }
+        
+        .password-popup .popup-box .popup-error {
+            font-size: 13px;
+            color: #c62828;
+            margin-top: 8px;
+            display: none;
         }
 
         /* ============================================
@@ -269,7 +324,7 @@
             margin-bottom: 6px;
         }
         
-        .form-group input, .form-group select {
+        .form-group input {
             width: 100%;
             padding: 12px 14px;
             border: 2px solid #d6cdc4;
@@ -279,7 +334,7 @@
             transition: 0.2s;
         }
         
-        .form-group input:focus, .form-group select:focus {
+        .form-group input:focus {
             border-color: #b45f3a;
             outline: none;
             box-shadow: 0 0 0 3px rgba(180, 95, 58, 0.15);
@@ -308,7 +363,7 @@
             color: #b45f3a;
         }
 
-        /* Family Member Counter - STARTS AT 0 */
+        /* Family Member Counter */
         .member-counter {
             display: flex;
             align-items: center;
@@ -363,68 +418,56 @@
         
         .attending-persons strong {
             color: #b45f3a;
+            font-size: 20px;
         }
 
-        /* Food Preference */
-        .food-options {
-            display: flex;
-            flex-direction: column;
+        /* Food Preference - 3 Cards in Row */
+        .food-options-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 8px;
             margin: 6px 0;
         }
         
         .food-option {
-            padding: 12px 16px;
+            padding: 12px 8px;
             border: 2px solid #d6cdc4;
             border-radius: 12px;
             cursor: pointer;
             transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            text-align: center;
+            background: white;
         }
         
         .food-option:hover {
             border-color: #b45f3a;
+            transform: translateY(-2px);
         }
         
         .food-option.selected {
             border-color: #b45f3a;
             background: #faf6f0;
-        }
-        
-        .food-option .radio {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 2px solid #d6cdc4;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        
-        .food-option.selected .radio {
-            border-color: #b45f3a;
-        }
-        
-        .food-option.selected .radio::after {
-            content: "";
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #b45f3a;
+            box-shadow: 0 2px 12px rgba(180, 95, 58, 0.15);
         }
         
         .food-option .food-label {
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 12px;
+            font-weight: 700;
             color: #1e1814;
+            display: block;
         }
         
         .food-option .food-sub {
-            font-size: 12px;
+            font-size: 10px;
             color: #6b5a4e;
+            display: block;
+            margin-top: 2px;
+        }
+        
+        .food-option .food-icon {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 4px;
         }
 
         .swaminarayan-section {
@@ -445,12 +488,6 @@
             color: #2b1f17;
             display: block;
             margin-bottom: 4px;
-        }
-        
-        .swaminarayan-section .hint {
-            font-size: 12px;
-            color: #6b5a4e;
-            margin-bottom: 6px;
         }
         
         .swaminarayan-section input {
@@ -480,18 +517,203 @@
             padding: 4px 0;
         }
         
-        .catering-summary .row .label {
-            color: #6b5a4e;
+        .catering-summary .row .label { color: #6b5a4e; }
+        .catering-summary .row .value { font-weight: 600; color: #1e1814; }
+
+        /* ============================================
+           ADMIN KPI CARDS - MATCHING SCREENSHOT
+           ============================================ */
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
         }
         
-        .catering-summary .row .value {
+        .kpi-header .title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e1814;
+        }
+        
+        .kpi-header .live-badge {
+            font-size: 11px;
+            font-weight: 600;
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 2px 12px;
+            border-radius: 12px;
+        }
+        
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .kpi-card {
+            background: #1e1814;
+            border-radius: 14px;
+            padding: 14px 12px;
+            text-align: center;
+        }
+        
+        .kpi-card .number {
+            font-size: 26px;
+            font-weight: 700;
+            color: #f5e6d3;
+        }
+        
+        .kpi-card .number.green { color: #4caf50; }
+        .kpi-card .number.orange { color: #ff9800; }
+        .kpi-card .number.blue { color: #42a5f5; }
+        .kpi-card .number.gold { color: #ffd700; }
+        
+        .kpi-card .label {
+            font-size: 10px;
+            color: #9a887a;
+            margin-top: 2px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .kpi-card .sub {
+            font-size: 14px;
+            font-weight: 600;
+            color: #f5e6d3;
+            margin-top: 2px;
+        }
+        
+        .kpi-summary {
+            font-size: 12px;
+            color: #6b5a4e;
+            text-align: center;
+            padding: 8px 0;
+            border-top: 1px solid #f0ebe6;
+            margin-top: 4px;
+        }
+        
+        .kpi-summary span {
             font-weight: 600;
             color: #1e1814;
         }
 
-        /* ============================================
-           SCANNER - Camera & Live Data
-           ============================================ */
+        /* Catering Section */
+        .catering-section {
+            background: #faf6f0;
+            border-radius: 14px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        
+        .catering-section .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e1814;
+            margin-bottom: 10px;
+        }
+        
+        .catering-section .catering-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0ebe6;
+        }
+        
+        .catering-section .catering-item:last-child {
+            border-bottom: none;
+        }
+        
+        .catering-section .catering-item .item-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e1814;
+        }
+        
+        .catering-section .catering-item .item-title .sub {
+            font-weight: 400;
+            font-size: 11px;
+            color: #6b5a4e;
+        }
+        
+        .catering-section .catering-item .item-counts {
+            display: flex;
+            gap: 16px;
+            margin-top: 4px;
+            font-size: 13px;
+        }
+        
+        .catering-section .catering-item .item-counts .count {
+            color: #6b5a4e;
+        }
+        
+        .catering-section .catering-item .item-counts .count .num {
+            font-weight: 600;
+            color: #1e1814;
+        }
+        
+        .catering-section .catering-item .item-counts .count .num.green { color: #2e7d32; }
+        .catering-section .catering-item .item-counts .count .num.orange { color: #b45f3a; }
+
+        /* Excel Upload */
+        .excel-upload {
+            background: #faf6f0;
+            border-radius: 14px;
+            padding: 16px;
+            margin: 12px 0;
+            border: 2px dashed #d6cdc4;
+            text-align: center;
+        }
+        
+        .excel-upload .upload-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e1814;
+            margin-bottom: 6px;
+        }
+        
+        .excel-upload input[type="file"] { display: none; }
+        
+        .excel-upload .file-label {
+            display: inline-block;
+            padding: 10px 24px;
+            background: #b45f3a;
+            color: white;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .excel-upload .file-label:hover { background: #9e4f2e; }
+        .excel-upload .file-name {
+            font-size: 12px;
+            color: #6b5a4e;
+            margin-top: 8px;
+        }
+        
+        .excel-upload .upload-status {
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .excel-upload .upload-status.success {
+            display: block;
+            background: #e8f5e9;
+            color: #1e5a24;
+        }
+        
+        .excel-upload .upload-status.error {
+            display: block;
+            background: #ffebee;
+            color: #b71c1c;
+        }
+
+        /* Scanner */
         .scanner-container {
             background: #1e1814;
             border-radius: 16px;
@@ -515,7 +737,6 @@
             padding: 2px 12px;
             border-radius: 12px;
             font-size: 11px;
-            font-weight: 600;
         }
         
         #scanner-video {
@@ -551,7 +772,6 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
         }
         
         .scanner-controls .scan-btn {
@@ -559,24 +779,12 @@
             color: white;
         }
         
-        .scanner-controls .scan-btn:active {
-            transform: scale(0.97);
-        }
-        
-        .scanner-controls .scan-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
+        .scanner-controls .scan-btn:active { transform: scale(0.97); }
         .scanner-controls .upload-btn {
             background: #f0ebe6;
             color: #6b5a4e;
         }
-        
-        .scanner-controls .upload-btn:active {
-            transform: scale(0.97);
-        }
-        
+
         .manual-input {
             display: flex;
             gap: 8px;
@@ -602,7 +810,6 @@
             cursor: pointer;
         }
 
-        /* Scanner Result - Live Data Display */
         .scanner-live-data {
             background: #faf6f0;
             border-radius: 12px;
@@ -629,185 +836,11 @@
             border-bottom: 1px solid #f0ebe6;
         }
         
-        .scanner-live-data .data-row:last-child {
-            border-bottom: none;
-        }
-        
-        .scanner-live-data .data-row .label {
-            color: #6b5a4e;
-        }
-        
-        .scanner-live-data .data-row .value {
-            font-weight: 600;
-            color: #1e1814;
-        }
-        
-        .scanner-live-data .status-valid {
-            color: #2e7d32;
-            font-weight: 700;
-        }
-        
-        .scanner-live-data .status-invalid {
-            color: #c62828;
-            font-weight: 700;
-        }
-
-        /* ============================================
-           ADMIN DASHBOARD - Dark KPI Cards
-           ============================================ */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-        
-        .kpi-card {
-            background: #1e1814;
-            border-radius: 14px;
-            padding: 14px 12px;
-            text-align: center;
-        }
-        
-        .kpi-card .number {
-            font-size: 28px;
-            font-weight: 700;
-            color: #f5e6d3;
-        }
-        
-        .kpi-card .number.green { color: #4caf50; }
-        .kpi-card .number.orange { color: #ff9800; }
-        .kpi-card .number.red { color: #ef5350; }
-        .kpi-card .number.blue { color: #42a5f5; }
-        .kpi-card .number.gold { color: #ffd700; }
-        
-        .kpi-card .label {
-            font-size: 11px;
-            color: #9a887a;
-            margin-top: 4px;
-            font-weight: 500;
-        }
-        
-        .kpi-card .sub {
-            font-size: 10px;
-            color: #6b5a4e;
-            margin-top: 2px;
-        }
-
-        /* Excel Upload */
-        .excel-upload {
-            background: #faf6f0;
-            border-radius: 14px;
-            padding: 16px;
-            margin: 12px 0;
-            border: 2px dashed #d6cdc4;
-            text-align: center;
-        }
-        
-        .excel-upload .upload-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #1e1814;
-            margin-bottom: 6px;
-        }
-        
-        .excel-upload .upload-subtitle {
-            font-size: 12px;
-            color: #6b5a4e;
-            margin-bottom: 10px;
-        }
-        
-        .excel-upload input[type="file"] {
-            display: none;
-        }
-        
-        .excel-upload .file-label {
-            display: inline-block;
-            padding: 10px 24px;
-            background: #b45f3a;
-            color: white;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        
-        .excel-upload .file-label:hover {
-            background: #9e4f2e;
-        }
-        
-        .excel-upload .file-name {
-            font-size: 12px;
-            color: #6b5a4e;
-            margin-top: 8px;
-        }
-        
-        .excel-upload .upload-status {
-            font-size: 13px;
-            font-weight: 500;
-            margin-top: 8px;
-            padding: 8px;
-            border-radius: 8px;
-            display: none;
-        }
-        
-        .excel-upload .upload-status.success {
-            display: block;
-            background: #e8f5e9;
-            color: #1e5a24;
-        }
-        
-        .excel-upload .upload-status.error {
-            display: block;
-            background: #ffebee;
-            color: #b71c1c;
-        }
-        
-        .excel-upload .upload-status.info {
-            display: block;
-            background: #e3f2fd;
-            color: #0d47a1;
-        }
-
-        /* Catering Section */
-        .catering-section {
-            background: #faf6f0;
-            border-radius: 14px;
-            padding: 16px;
-            margin: 12px 0;
-        }
-        
-        .catering-section .section-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #1e1814;
-            margin-bottom: 10px;
-        }
-        
-        .catering-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid #f0ebe6;
-            font-size: 13px;
-        }
-        
-        .catering-row:last-child {
-            border-bottom: none;
-        }
-        
-        .catering-row .label {
-            color: #6b5a4e;
-        }
-        
-        .catering-row .value {
-            font-weight: 600;
-            color: #1e1814;
-        }
-        
-        .catering-row .value.green { color: #2e7d32; }
-        .catering-row .value.orange { color: #b45f3a; }
+        .scanner-live-data .data-row:last-child { border-bottom: none; }
+        .scanner-live-data .data-row .label { color: #6b5a4e; }
+        .scanner-live-data .data-row .value { font-weight: 600; color: #1e1814; }
+        .scanner-live-data .status-valid { color: #2e7d32; font-weight: 700; }
+        .scanner-live-data .status-invalid { color: #c62828; font-weight: 700; }
 
         /* House List */
         .house-list {
@@ -831,7 +864,6 @@
             font-weight: 600;
             font-size: 12px;
         }
-        
         .house-item .status.pending { color: #ef5350; }
         .house-item .status.registered { color: #ff9800; }
         .house-item .status.entered { color: #2e7d32; }
@@ -863,10 +895,7 @@
             color: #6b5a4e;
         }
         
-        .pass-box .pass-detail strong {
-            color: #1e1814;
-        }
-        
+        .pass-box .pass-detail strong { color: #1e1814; }
         .pass-box .valid-badge {
             display: inline-block;
             background: #e8f5e9;
@@ -901,18 +930,9 @@
             border: 2px solid #ef9a9a;
             color: #b71c1c;
         }
-        
-        .message.info {
-            display: block;
-            background: #e3f2fd;
-            border: 2px solid #90caf9;
-            color: #0d47a1;
-        }
 
         .hidden { display: none !important; }
         .mt-8 { margin-top: 8px; }
-        .mb-8 { margin-bottom: 8px; }
-        .text-center { text-align: center; }
         .text-sm { font-size: 12px; color: #6b5a4e; }
         
         .btn-sm {
@@ -926,7 +946,6 @@
             cursor: pointer;
         }
 
-        /* Footer */
         .footer {
             margin-top: 16px;
             padding-top: 12px;
@@ -937,6 +956,47 @@
         .footer .text-sm {
             font-size: 11px;
             color: #9a887a;
+        }
+
+        /* Event Selector */
+        .event-selector {
+            display: flex;
+            gap: 8px;
+            margin: 8px 0;
+            flex-wrap: wrap;
+        }
+        
+        .event-selector button {
+            padding: 6px 14px;
+            border: 2px solid #d6cdc4;
+            border-radius: 20px;
+            background: white;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b5a4e;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .event-selector button.active {
+            border-color: #b45f3a;
+            background: #faf6f0;
+            color: #b45f3a;
+        }
+        
+        .event-selector button:hover {
+            border-color: #b45f3a;
+        }
+        
+        .add-event-btn {
+            padding: 6px 14px;
+            border: 2px dashed #b45f3a;
+            border-radius: 20px;
+            background: transparent;
+            font-size: 12px;
+            font-weight: 600;
+            color: #b45f3a;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -949,10 +1009,8 @@
         <span class="code-badge">Code: GM2026</span>
     </div>
 
-    <!-- Offline Ready -->
     <div class="offline-badge">⚡ OFFLINE READY</div>
 
-    <!-- Status Bar -->
     <div class="status-bar">
         <span id="onlineStatus" class="online">● Online</span>
         <span id="houseCount">🏠 Loading...</span>
@@ -960,9 +1018,9 @@
 
     <!-- Event Card -->
     <div class="event-card">
-        <h2>Ganesh Mahotsav 2026</h2>
-        <div class="details">📍 Clubhouse Lawn &amp; Main Pandal • 10 Sep – 28 Sep 2026</div>
-        <div class="contribution">Contribution: ₹1,500</div>
+        <h2 id="eventNameDisplay">Ganesh Mahotsav 2026</h2>
+        <div class="details" id="eventDetails">📍 Clubhouse Lawn • 10 Sep – 28 Sep 2026</div>
+        <div class="contribution" id="eventContribution">Contribution: ₹1,500</div>
         <span class="verified-badge" id="verifiedBadge">✅ Loading houses...</span>
     </div>
 
@@ -970,20 +1028,11 @@
     <div class="password-gate">
         <div class="gate-title">🔐 Event Access Gate</div>
         <div class="gate-subtitle">Enter the access password shared by your society committee or floor coordinator to generate your digital event pass.</div>
-        
         <input type="password" id="eventPassword" placeholder="e.g. Ganesh@2026" />
-        
-        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-            <button class="demo-btn" onclick="useDemoPassword()">Use Demo Password</button>
-            <span style="font-size: 11px; color: #9a887a; align-self: center;">Password: Ganesh@2026</span>
-        </div>
-        
-        <button class="unlock-btn" id="unlockBtn" onclick="handleUnlock()">🔓 Unlock Pass Portal →</button>
-        
+        <button class="unlock-btn" onclick="handleUnlock()">🔓 Unlock Pass Portal →</button>
         <div class="hint">Password configured by committee: Ganesh@2026</div>
     </div>
 
-    <!-- Main Message -->
     <div id="mainMessage" class="message"></div>
 
     <!-- Tabs -->
@@ -993,20 +1042,19 @@
         <button data-tab="admin">📊 Admin</button>
     </div>
 
-    <!-- ==================== TAB 1: RESIDENT PORTAL ==================== -->
+    <!-- ==================== TAB 1: RESIDENT ==================== -->
     <div id="tab-resident" class="tab-content active" style="display:none;">
         <form id="registerForm">
             <div class="form-group">
                 <label>🏠 House Number (1 to 259) *</label>
                 <p class="hint">ONLY NUMBERS 1 TO 259 (NO A OR B)</p>
                 <input type="text" id="houseInput" placeholder="Enter your house number" required />
-                
                 <div class="quick-select">
-                    <button type="button" onclick="quickSelect('101')">House 101</button>
-                    <button type="button" onclick="quickSelect('102')">House 102</button>
-                    <button type="button" onclick="quickSelect('201')">House 201</button>
-                    <button type="button" onclick="quickSelect('202')">House 202</button>
-                    <button type="button" onclick="quickSelect('301')">House 301</button>
+                    <button type="button" onclick="quickSelect('101')">101</button>
+                    <button type="button" onclick="quickSelect('102')">102</button>
+                    <button type="button" onclick="quickSelect('201')">201</button>
+                    <button type="button" onclick="quickSelect('202')">202</button>
+                    <button type="button" onclick="quickSelect('301')">301</button>
                 </div>
             </div>
 
@@ -1018,45 +1066,34 @@
             <div class="form-group">
                 <label>👨‍👩‍👦 Attending Family Members (Dinner Count) *</label>
                 <p class="hint">Tap the + button to add each attending family member.</p>
-                
                 <div class="member-counter">
                     <button type="button" onclick="changeFamilyCount(-1)">−</button>
                     <span class="count" id="familyCount">0</span>
                     <button type="button" onclick="changeFamilyCount(1)">+</button>
                     <span class="label">Attending Persons</span>
                 </div>
-                
-                <div class="attending-persons">
-                    <strong id="totalPersonsDisplay">1</strong> PERSONS
-                </div>
+                <div class="attending-persons"><strong id="totalPersonsDisplay">0</strong> PERSONS</div>
                 <p class="hint" style="margin-top:4px;">Volunteers scan this pass at the gate to admit your entire family for dinner and venue entry.</p>
             </div>
 
             <div class="form-group">
                 <label>🍽️ Prasad / Dinner Dietary Preference</label>
                 <p class="hint">100% Pure Veg</p>
-                
-                <div class="food-options">
+                <div class="food-options-row">
                     <div class="food-option selected" data-value="regular" onclick="selectFood(this)">
-                        <div class="radio"></div>
-                        <div>
-                            <div class="food-label">Regular Pure Veg</div>
-                            <div class="food-sub">All Regular</div>
-                        </div>
+                        <span class="food-icon">🟢</span>
+                        <span class="food-label">Regular Pure Veg</span>
+                        <span class="food-sub">All Regular</span>
                     </div>
                     <div class="food-option" data-value="swaminarayan" onclick="selectFood(this)">
-                        <div class="radio"></div>
-                        <div>
-                            <div class="food-label">Swaminarayan / Jain</div>
-                            <div class="food-sub">No Onion & Garlic</div>
-                        </div>
+                        <span class="food-icon">🟡</span>
+                        <span class="food-label">Swaminarayan / Jain</span>
+                        <span class="food-sub">No Onion & Garlic</span>
                     </div>
                     <div class="food-option" data-value="mixed" onclick="selectFood(this)">
-                        <div class="radio"></div>
-                        <div>
-                            <div class="food-label">Mixed Dietary</div>
-                            <div class="food-sub">Split counts</div>
-                        </div>
+                        <span class="food-icon">🔄</span>
+                        <span class="food-label">Mixed Dietary</span>
+                        <span class="food-sub">Split counts</span>
                     </div>
                 </div>
             </div>
@@ -1085,12 +1122,11 @@
         <div id="registerMessage" class="message"></div>
 
         <div id="passBox" class="pass-box hidden">
-            <h3 style="font-size: 18px; color: #1e1814;">🎟️ Your Digital Pass</h3>
+            <h3 style="font-size:18px;color:#1e1814;">🎟️ Your Digital Pass</h3>
             <div class="pass-code" id="passCodeDisplay">---</div>
             <div class="pass-detail"><strong>House:</strong> <span id="passHouse">---</span></div>
-            <div class="pass-detail"><strong>Family Members:</strong> <span id="passFamilyCount">---</span></div>
-            <div class="pass-detail"><strong>Food:</strong> <span id="passFood">---</span></div>
             <div class="pass-detail"><strong>Total Persons:</strong> <span id="passMemberCount">---</span></div>
+            <div class="pass-detail"><strong>Food:</strong> <span id="passFood">---</span></div>
             <div class="valid-badge">✅ Valid (Not yet entered)</div>
             <p class="text-sm mt-8">Show this code at the gate for entry</p>
         </div>
@@ -1098,172 +1134,186 @@
 
     <!-- ==================== TAB 2: SCANNER ==================== -->
     <div id="tab-scanner" class="tab-content" style="display:none;">
-        <!-- Scanner Container - Dark Background -->
         <div class="scanner-container">
             <div class="scanner-title">
                 <span>📸 Volunteer QR Scanner</span>
                 <span class="gate-badge">Active Gate: GM2026</span>
             </div>
-            
-            <!-- Live Scanner Preview -->
             <div id="scanner-video">
                 <span>📷 Camera Offline<br><span style="font-size:12px;color:#9a887a;">Tap below to activate</span></span>
             </div>
-            
-            <!-- Scanner Controls -->
             <div class="scanner-controls">
                 <button class="scan-btn" id="startScannerBtn" onclick="startScanner()">📷 Start Camera Scanner</button>
             </div>
-            
-            <!-- Manual Input -->
             <div class="manual-input">
                 <input type="text" id="scanInput" placeholder="Enter pass code manually..." />
                 <button onclick="manualScan()">Verify</button>
             </div>
         </div>
 
-        <!-- Live Scanner Result -->
         <div id="scannerLiveData" class="scanner-live-data">
-            <div class="data-row">
-                <span class="label">🏠 House</span>
-                <span class="value" id="scanHouse">---</span>
-            </div>
-            <div class="data-row">
-                <span class="label">👤 Resident</span>
-                <span class="value" id="scanName">---</span>
-            </div>
-            <div class="data-row">
-                <span class="label">👨‍👩‍👦 Family Members</span>
-                <span class="value" id="scanFamily">---</span>
-            </div>
-            <div class="data-row">
-                <span class="label">🍽️ Food Preference</span>
-                <span class="value" id="scanFood">---</span>
-            </div>
-            <div class="data-row">
-                <span class="label">👥 Total Persons</span>
-                <span class="value" id="scanTotal">---</span>
-            </div>
-            <div class="data-row">
-                <span class="label">📋 Status</span>
-                <span class="value" id="scanStatus">---</span>
-            </div>
+            <div class="data-row"><span class="label">🏠 House</span><span class="value" id="scanHouse">---</span></div>
+            <div class="data-row"><span class="label">👤 Resident</span><span class="value" id="scanName">---</span></div>
+            <div class="data-row"><span class="label">👥 Total Persons</span><span class="value" id="scanTotal">---</span></div>
+            <div class="data-row"><span class="label">🍽️ Food</span><span class="value" id="scanFood">---</span></div>
+            <div class="data-row"><span class="label">📋 Status</span><span class="value" id="scanStatus">---</span></div>
             <button class="unlock-btn" id="admitBtn" style="margin-top:12px; display:none;" onclick="admitScanned()">✅ Admit Family</button>
         </div>
 
-        <!-- Recent Entries -->
-        <div style="margin-top: 16px;">
-            <h3 style="font-size: 14px; margin-bottom: 8px;">⏱️ Recent Entries</h3>
-            <div id="recentEntries">
-                <p class="text-sm">No entries yet</p>
-            </div>
+        <div style="margin-top:16px;">
+            <h3 style="font-size:14px;margin-bottom:8px;">⏱️ Recent Entries</h3>
+            <div id="recentEntries"><p class="text-sm">No entries yet</p></div>
         </div>
     </div>
 
-    <!-- ==================== TAB 3: ADMIN DASHBOARD ==================== -->
+    <!-- ==================== TAB 3: ADMIN ==================== -->
     <div id="tab-admin" class="tab-content" style="display:none;">
+        <!-- Event Selector -->
+        <div style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <span style="font-size:13px;font-weight:600;color:#1e1814;">📅 Select Event:</span>
+                <button class="add-event-btn" onclick="showAddEvent()">+ Add Event</button>
+            </div>
+            <div class="event-selector" id="eventSelector"></div>
+        </div>
+
         <!-- KPI Cards -->
+        <div class="kpi-header">
+            <span class="title">📊 REAL-TIME GATE ATTENDANCE & ADMISSION METRICS</span>
+            <span class="live-badge">🟢 LIVE SYNC ACTIVE</span>
+        </div>
+        <div style="font-size:11px;color:#6b5a4e;margin-bottom:10px;">— <span id="kpiEventName">Ganesh Mahotsav 2026</span></div>
+
         <div class="kpi-grid">
             <div class="kpi-card">
                 <div class="number green" id="statAdmitted">0</div>
-                <div class="label">🚪 Admitted Inside</div>
+                <div class="label">ADMITTED INSIDE</div>
+                <div class="sub" id="statAdmittedPercent">0%</div>
             </div>
             <div class="kpi-card">
                 <div class="number orange" id="statPending">0</div>
-                <div class="label">⏳ Pending / Left</div>
+                <div class="label">PENDING / LEFT</div>
+                <div class="sub" id="statPendingPercent">0%</div>
             </div>
             <div class="kpi-card">
                 <div class="number blue" id="statRegistered">0</div>
-                <div class="label">📝 Total Registered</div>
+                <div class="label">TOTAL REGISTERED</div>
+                <div class="sub" id="statRegisteredPercent">0%</div>
             </div>
             <div class="kpi-card">
                 <div class="number gold" id="statHousesIn">0</div>
-                <div class="label">🏠 Houses In</div>
-                <div class="sub" id="statHousesSub">0 / 106 Flats</div>
+                <div class="label">HOUSES IN</div>
+                <div class="sub" id="statHousesSub">0 / 0 Flats</div>
             </div>
+        </div>
+
+        <div class="kpi-summary">
+            Admitted: <span id="summaryAdmitted">0</span> • 
+            Pending: <span id="summaryPending">0</span> • 
+            Society Houses: <span id="summaryHouses">0</span>
         </div>
 
         <!-- Excel Upload -->
         <div class="excel-upload">
             <div class="upload-title">📊 Update Houses from Excel</div>
             <div class="upload-subtitle">Upload an Excel file with columns: <strong>HOUSE NO.</strong> and <strong>AMOUNT</strong></div>
-            
-            <label class="file-label" for="excelFile">
-                📁 Choose Excel File (.xlsx, .xls)
-            </label>
+            <label class="file-label" for="excelFile">📁 Choose Excel File (.xlsx, .xls)</label>
             <input type="file" id="excelFile" accept=".xlsx,.xls" />
-            
             <div class="file-name" id="fileName">No file selected</div>
             <div class="upload-status" id="uploadStatus"></div>
-            
-            <button class="scan-btn" onclick="processExcelFile()" style="margin-top:10px; background:#1e1814; border:none; border-radius:30px; padding:12px 24px; color:white; font-weight:600; cursor:pointer; width:100%;" id="processExcelBtn">
-                🔄 Process & Update Houses
-            </button>
+            <button class="scan-btn" onclick="processExcelFile()" style="margin-top:10px; background:#1e1814; border:none; border-radius:30px; padding:12px; color:white; font-weight:600; cursor:pointer; width:100%;">🔄 Process & Update Houses</button>
         </div>
 
-        <!-- Catering Section -->
+        <!-- Catering -->
         <div class="catering-section">
-            <div class="section-title">🍽️ Catering &amp; Dinner Prasad Headcount</div>
+            <div class="section-title">🍽️ CATERING & DINNER PRASAD HEADCOUNT <span style="font-weight:400;font-size:11px;color:#6b5a4e;">(KITCHEN COMMITTEE)</span></div>
             
-            <div class="catering-row">
-                <span class="label">🟡 Swaminarayan / Jain (No Onion &amp; Garlic)</span>
-                <span class="value orange" id="cateringJain">0</span>
+            <div class="catering-item">
+                <div class="item-title">1. SWAMINARAYAN / JAIN <span class="sub">(NO ONION & GARLIC)</span></div>
+                <div class="item-counts">
+                    <span class="count">Admitted / In: <span class="num orange" id="cateringJainAdmitted">0</span></span>
+                    <span class="count">Meals Registered: <span class="num" id="cateringJainRegistered">0</span></span>
+                </div>
             </div>
-            <div class="catering-row" style="padding-left: 20px;">
-                <span class="label">Admitted / In</span>
-                <span class="value" id="cateringJainAdmitted">0</span>
-            </div>
-            <div class="catering-row" style="padding-left: 20px;">
-                <span class="label">Meals Registered</span>
-                <span class="value" id="cateringJainRegistered">0</span>
-            </div>
-            
-            <div class="catering-row" style="margin-top: 6px;">
-                <span class="label">🟢 Regular Pure Veg (Standard)</span>
-                <span class="value green" id="cateringRegular">0</span>
-            </div>
-            <div class="catering-row" style="padding-left: 20px;">
-                <span class="label">Admitted / In</span>
-                <span class="value" id="cateringRegularAdmitted">0</span>
-            </div>
-            <div class="catering-row" style="padding-left: 20px;">
-                <span class="label">Meals Registered</span>
-                <span class="value" id="cateringRegularRegistered">0</span>
-            </div>
-            
-            <div class="catering-row" style="margin-top: 8px; border-top: 2px solid #d6cdc4; padding-top: 8px;">
-                <span class="label">🏠 Pre-Approved Paid Houses</span>
-                <span class="value" id="statTotalHouses">0</span>
-            </div>
-            <div class="catering-row">
-                <span class="label">💰 Contribution Fee</span>
-                <span class="value orange">₹1,500</span>
-            </div>
-            <div class="catering-row">
-                <span class="label">🎟️ Passes Issued</span>
-                <span class="value blue" id="statPassesIssued">0</span>
+            <div class="catering-item">
+                <div class="item-title">2. REGULAR PURE VEG <span class="sub">(STANDARD)</span></div>
+                <div class="item-counts">
+                    <span class="count">Admitted / In: <span class="num green" id="cateringRegularAdmitted">0</span></span>
+                    <span class="count">Meals Registered: <span class="num" id="cateringRegularRegistered">0</span></span>
+                </div>
             </div>
         </div>
 
         <!-- Admin Actions -->
-        <div style="display: flex; gap: 8px; margin: 12px 0;">
-            <button class="btn-sm" onclick="exportCSV()" style="flex:1; padding:10px; border-radius:10px; background:#b45f3a; color:white; border:none; font-weight:600;">📥 Export CSV</button>
-            <button class="btn-sm" onclick="syncData()" style="flex:1; padding:10px; border-radius:10px; background:#1e1814; color:white; border:none; font-weight:600;">🔄 Sync</button>
-            <button class="btn-sm" onclick="resetEvent()" style="flex:1; padding:10px; border-radius:10px; background:#c62828; color:white; border:none; font-weight:600;">🗑️ Reset</button>
+        <div style="display:flex;gap:8px;margin:12px 0;">
+            <button class="btn-sm" onclick="exportCSV()" style="flex:1;padding:10px;border-radius:10px;background:#b45f3a;color:white;border:none;font-weight:600;">📥 Export CSV</button>
+            <button class="btn-sm" onclick="syncData()" style="flex:1;padding:10px;border-radius:10px;background:#1e1814;color:white;border:none;font-weight:600;">🔄 Sync</button>
+            <button class="btn-sm" onclick="resetEvent()" style="flex:1;padding:10px;border-radius:10px;background:#c62828;color:white;border:none;font-weight:600;">🗑️ Reset</button>
         </div>
 
-        <!-- House Status List -->
-        <h3 style="font-size: 14px; margin-bottom: 8px;">🏠 House Status</h3>
-        <div class="house-list" id="houseStatusList">
-            <p class="text-sm">Loading houses...</p>
-        </div>
+        <!-- House Status -->
+        <h3 style="font-size:14px;margin-bottom:8px;">🏠 House Status</h3>
+        <div class="house-list" id="houseStatusList"><p class="text-sm">Loading houses...</p></div>
     </div>
 
     <!-- Footer -->
     <div class="footer">
         <p class="text-sm">🔒 TAKSH DIVINE • Ganesh Mahotsav 2026</p>
-        <p class="text-sm">Offline-First Residential Pass & Gate Verification</p>
         <p class="text-sm" id="footerStats">0 houses registered • 0 entries</p>
+    </div>
+</div>
+
+<!-- ============================================
+     PASSWORD POPUPS
+     ============================================ -->
+<div class="password-popup" id="adminPopup">
+    <div class="popup-box">
+        <div class="icon">🔐</div>
+        <h3>Admin Access</h3>
+        <p>Enter the admin password to access the Admin Panel</p>
+        <input type="password" id="adminPasswordInput" placeholder="Enter password" />
+        <button class="popup-btn" onclick="verifyAdminPassword()">Unlock Admin</button>
+        <div class="popup-error" id="adminError">❌ Incorrect password</div>
+    </div>
+</div>
+
+<div class="password-popup" id="scannerPopup">
+    <div class="popup-box">
+        <div class="icon">🔐</div>
+        <h3>Scanner Access</h3>
+        <p>Enter the scanner password to access the Scanner</p>
+        <input type="password" id="scannerPasswordInput" placeholder="Enter password" />
+        <button class="popup-btn" onclick="verifyScannerPassword()">Unlock Scanner</button>
+        <div class="popup-error" id="scannerError">❌ Incorrect password</div>
+    </div>
+</div>
+
+<!-- ============================================
+     ADD EVENT POPUP
+     ============================================ -->
+<div class="password-popup" id="addEventPopup">
+    <div class="popup-box" style="text-align:left;">
+        <div class="icon" style="text-align:center;">📅</div>
+        <h3 style="text-align:center;">Add New Event</h3>
+        <div class="form-group" style="margin-top:12px;">
+            <label>Event Name *</label>
+            <input type="text" id="newEventName" placeholder="e.g. Navratri 2026" />
+        </div>
+        <div class="form-group">
+            <label>Event Date</label>
+            <input type="text" id="newEventDate" placeholder="e.g. 10-20 Oct 2026" />
+        </div>
+        <div class="form-group">
+            <label>Venue</label>
+            <input type="text" id="newEventVenue" placeholder="e.g. Clubhouse Lawn" />
+        </div>
+        <div class="form-group">
+            <label>Contribution Amount (₹)</label>
+            <input type="number" id="newEventContribution" placeholder="1500" />
+        </div>
+        <button class="popup-btn" onclick="createNewEvent()" style="margin-top:8px;">✅ Create Event</button>
+        <button class="popup-btn" onclick="closeAddEvent()" style="margin-top:8px;background:#f0ebe6;color:#6b5a4e;">Cancel</button>
+        <div class="popup-error" id="addEventError" style="display:none;text-align:center;">❌ Please fill in all required fields</div>
     </div>
 </div>
 
@@ -1284,32 +1334,31 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 // ============================================
-// 📋 PAID HOUSES LIST
+// 📋 APP STATE
 // ============================================
 let PAID_HOUSES = [];
 let html5QrCode = null;
 let scannedRegistration = null;
 let isScannerRunning = false;
 
-// ============================================
-// APP STATE
-// ============================================
 const state = {
-    eventId: 'ganesh2026',
+    currentEventId: 'gm2026',
+    events: [],
     unlocked: false,
     registrations: [],
     isLoading: false,
-    housesLoaded: false,
     foodPreference: 'regular',
-    familyCount: 0,  // STARTS AT 0
-    totalMembers: 1
+    familyCount: 0,  // TOTAL persons including primary
+    totalPersons: 0
 };
+
+const ADMIN_PASSWORD = '1234';
+const SCANNER_PASSWORD = '1111';
 
 // ============================================
 // DOM REFERENCES
 // ============================================
 const passwordInput = document.getElementById('eventPassword');
-const unlockBtn = document.getElementById('unlockBtn');
 const mainMessage = document.getElementById('mainMessage');
 const tabsContainer = document.getElementById('tabsContainer');
 const verifiedBadge = document.getElementById('verifiedBadge');
@@ -1328,9 +1377,8 @@ const registerMessage = document.getElementById('registerMessage');
 const passBox = document.getElementById('passBox');
 const passCodeDisplay = document.getElementById('passCodeDisplay');
 const passHouse = document.getElementById('passHouse');
-const passFamilyCount = document.getElementById('passFamilyCount');
-const passFood = document.getElementById('passFood');
 const passMemberCount = document.getElementById('passMemberCount');
+const passFood = document.getElementById('passFood');
 
 const familyCountDisplay = document.getElementById('familyCount');
 const totalPersonsDisplay = document.getElementById('totalPersonsDisplay');
@@ -1340,25 +1388,31 @@ const cateringAllocation = document.getElementById('cateringAllocation');
 const swaminarayanSection = document.getElementById('swaminarayanSection');
 
 const scanInput = document.getElementById('scanInput');
-const scanResult = document.getElementById('scanResult');
 const recentEntries = document.getElementById('recentEntries');
 const scannerLiveData = document.getElementById('scannerLiveData');
 const startScannerBtn = document.getElementById('startScannerBtn');
+
+const eventSelector = document.getElementById('eventSelector');
 
 const statAdmitted = document.getElementById('statAdmitted');
 const statPending = document.getElementById('statPending');
 const statRegistered = document.getElementById('statRegistered');
 const statHousesIn = document.getElementById('statHousesIn');
 const statHousesSub = document.getElementById('statHousesSub');
+const statAdmittedPercent = document.getElementById('statAdmittedPercent');
+const statPendingPercent = document.getElementById('statPendingPercent');
+const statRegisteredPercent = document.getElementById('statRegisteredPercent');
 const statTotalHouses = document.getElementById('statTotalHouses');
 const statPassesIssued = document.getElementById('statPassesIssued');
 const houseStatusList = document.getElementById('houseStatusList');
 const footerStats = document.getElementById('footerStats');
+const kpiEventName = document.getElementById('kpiEventName');
+const summaryAdmitted = document.getElementById('summaryAdmitted');
+const summaryPending = document.getElementById('summaryPending');
+const summaryHouses = document.getElementById('summaryHouses');
 
-const cateringJain = document.getElementById('cateringJain');
 const cateringJainAdmitted = document.getElementById('cateringJainAdmitted');
 const cateringJainRegistered = document.getElementById('cateringJainRegistered');
-const cateringRegular = document.getElementById('cateringRegular');
 const cateringRegularAdmitted = document.getElementById('cateringRegularAdmitted');
 const cateringRegularRegistered = document.getElementById('cateringRegularRegistered');
 
@@ -1366,23 +1420,25 @@ const excelFileInput = document.getElementById('excelFile');
 const fileNameDisplay = document.getElementById('fileName');
 const uploadStatus = document.getElementById('uploadStatus');
 
-// Scanner display elements
 const scanHouse = document.getElementById('scanHouse');
 const scanName = document.getElementById('scanName');
-const scanFamily = document.getElementById('scanFamily');
-const scanFood = document.getElementById('scanFood');
 const scanTotal = document.getElementById('scanTotal');
+const scanFood = document.getElementById('scanFood');
 const scanStatus = document.getElementById('scanStatus');
 const admitBtn = document.getElementById('admitBtn');
 
+const eventNameDisplay = document.getElementById('eventNameDisplay');
+const eventDetails = document.getElementById('eventDetails');
+const eventContribution = document.getElementById('eventContribution');
+
 // ============================================
-// 1. FAMILY MEMBER COUNTER - STARTS AT 0
+// 1. FAMILY COUNTER - STARTS AT 0 (TOTAL PERSONS)
 // ============================================
 function changeFamilyCount(delta) {
     state.familyCount = Math.max(0, state.familyCount + delta);
+    state.totalPersons = state.familyCount;
     familyCountDisplay.textContent = state.familyCount;
-    state.totalMembers = state.familyCount + 1;
-    totalPersonsDisplay.textContent = state.totalMembers;
+    totalPersonsDisplay.textContent = state.familyCount;
     updateCateringSummary();
 }
 
@@ -1394,7 +1450,7 @@ function quickSelect(house) {
 }
 
 // ============================================
-// 3. FOOD PREFERENCE
+// 3. FOOD PREFERENCE - 3 CARDS IN ROW
 // ============================================
 function selectFood(el) {
     document.querySelectorAll('.food-option').forEach(opt => opt.classList.remove('selected'));
@@ -1415,12 +1471,17 @@ function selectFood(el) {
 }
 
 function updateCateringSummary() {
-    const total = state.totalMembers;
+    const total = state.familyCount;
     const swaminarayanCount = parseInt(swaminarayanCountInput.value) || 0;
     const regularCount = Math.max(0, total - swaminarayanCount);
     
-    cateringAllocation.textContent = 
-        `${swaminarayanCount} Swaminarayan/Jain + ${regularCount} Regular`;
+    if (state.foodPreference === 'regular') {
+        cateringAllocation.textContent = `0 Swaminarayan/Jain + ${total} Regular`;
+    } else if (state.foodPreference === 'swaminarayan') {
+        cateringAllocation.textContent = `${total} Swaminarayan/Jain + 0 Regular`;
+    } else {
+        cateringAllocation.textContent = `${swaminarayanCount} Swaminarayan/Jain + ${regularCount} Regular`;
+    }
 }
 
 swaminarayanCountInput.addEventListener('input', updateCateringSummary);
@@ -1428,10 +1489,10 @@ swaminarayanCountInput.addEventListener('input', updateCateringSummary);
 // ============================================
 // 4. LOAD HOUSES FROM FIREBASE
 // ============================================
-async function loadHousesFromFirebase() {
+async function loadHousesFromFirebase(eventId) {
     try {
         const snapshot = await db.collection('events')
-            .doc(state.eventId)
+            .doc(eventId || state.currentEventId)
             .collection('houses')
             .get();
         
@@ -1441,11 +1502,9 @@ async function loadHousesFromFirebase() {
         });
         
         if (PAID_HOUSES.length === 0) {
-            console.log('No houses in Firebase, using fallback data');
             generateFallbackHouses();
         }
         
-        state.housesLoaded = true;
         updateHouseDisplay();
         updateAdminDashboard();
         return true;
@@ -1484,8 +1543,6 @@ function updateHouseDisplay() {
     const totalCount = PAID_HOUSES.length;
     verifiedBadge.textContent = `✅ ${paidCount} Verified Houses Pre-Approved`;
     houseCount.textContent = `🏠 ${totalCount} Houses`;
-    statTotalHouses.textContent = paidCount;
-    statHousesSub.textContent = `0 / ${paidCount} Flats`;
 }
 
 // ============================================
@@ -1495,18 +1552,13 @@ excelFileInput.addEventListener('change', function(e) {
     if (this.files && this.files[0]) {
         fileNameDisplay.textContent = `📄 ${this.files[0].name}`;
         uploadStatus.className = 'upload-status info';
-        uploadStatus.textContent = `📄 File selected: ${this.files[0].name}. Click "Process & Update Houses" to import.`;
+        uploadStatus.textContent = `📄 File selected. Click "Process & Update Houses" to import.`;
         uploadStatus.style.display = 'block';
-    } else {
-        fileNameDisplay.textContent = 'No file selected';
-        uploadStatus.style.display = 'none';
     }
 });
 
 async function processExcelFile() {
-    const fileInput = document.getElementById('excelFile');
-    const file = fileInput.files[0];
-    
+    const file = excelFileInput.files[0];
     if (!file) {
         uploadStatus.className = 'upload-status error';
         uploadStatus.textContent = '❌ Please select an Excel file first.';
@@ -1514,7 +1566,7 @@ async function processExcelFile() {
         return;
     }
     
-    const btn = document.getElementById('processExcelBtn');
+    const btn = document.querySelector('#processExcelBtn');
     btn.textContent = '⏳ Processing...';
     btn.disabled = true;
     
@@ -1525,27 +1577,19 @@ async function processExcelFile() {
         const jsonData = XLSX.utils.sheet_to_json(firstSheet);
         
         const newHouses = [];
-        let processed = 0;
-        
         jsonData.forEach(row => {
             const houseKeys = Object.keys(row).filter(k => 
-                k.toLowerCase().includes('house') || 
-                k.toLowerCase().includes('flat') || 
-                k.toLowerCase().includes('no')
+                k.toLowerCase().includes('house') || k.toLowerCase().includes('flat') || k.toLowerCase().includes('no')
             );
             const amountKeys = Object.keys(row).filter(k => 
-                k.toLowerCase().includes('amount') || 
-                k.toLowerCase().includes('amt') || 
-                k.toLowerCase().includes('paid')
+                k.toLowerCase().includes('amount') || k.toLowerCase().includes('amt') || k.toLowerCase().includes('paid')
             );
             
             if (houseKeys.length > 0 && amountKeys.length > 0) {
                 const houseNo = String(row[houseKeys[0]]).trim();
                 const amount = parseFloat(row[amountKeys[0]]) || 0;
-                
                 if (houseNo && !isNaN(amount)) {
                     newHouses.push({ house: houseNo, amount: amount });
-                    processed++;
                 }
             }
         });
@@ -1554,29 +1598,26 @@ async function processExcelFile() {
             uploadStatus.className = 'upload-status error';
             uploadStatus.textContent = '❌ No valid data found. Please ensure columns are: HOUSE NO. and AMOUNT';
             uploadStatus.style.display = 'block';
-            btn.textContent = '🔄 Process & Update Houses';
-            btn.disabled = false;
             return;
         }
         
         PAID_HOUSES = newHouses;
-        await saveHousesToFirebase();
+        await saveHousesToFirebase(state.currentEventId);
         
         updateHouseDisplay();
         updateAdminDashboard();
         
         uploadStatus.className = 'upload-status success';
-        uploadStatus.textContent = `✅ Successfully imported ${processed} houses`;
+        uploadStatus.textContent = `✅ Successfully imported ${newHouses.length} houses`;
         uploadStatus.style.display = 'block';
         
-        fileInput.value = '';
+        excelFileInput.value = '';
         fileNameDisplay.textContent = 'No file selected';
-        loadRegistrations();
+        loadRegistrations(state.currentEventId);
         
     } catch (error) {
-        console.error('Excel processing error:', error);
         uploadStatus.className = 'upload-status error';
-        uploadStatus.textContent = `❌ Error processing file: ${error.message}`;
+        uploadStatus.textContent = `❌ Error: ${error.message}`;
         uploadStatus.style.display = 'block';
     }
     
@@ -1584,18 +1625,15 @@ async function processExcelFile() {
     btn.disabled = false;
 }
 
-async function saveHousesToFirebase() {
+async function saveHousesToFirebase(eventId) {
     try {
         const batch = db.batch();
-        const housesRef = db.collection('events').doc(state.eventId).collection('houses');
-        
+        const housesRef = db.collection('events').doc(eventId || state.currentEventId).collection('houses');
         PAID_HOUSES.forEach(house => {
             const docRef = housesRef.doc(house.house);
             batch.set(docRef, house);
         });
-        
         await batch.commit();
-        console.log(`✅ Saved ${PAID_HOUSES.length} houses to Firebase`);
         return true;
     } catch (error) {
         console.error('Error saving houses:', error);
@@ -1607,10 +1645,6 @@ async function saveHousesToFirebase() {
 // 6. PASSWORD GATE
 // ============================================
 const CORRECT_PASSWORD = 'Ganesh@2026';
-
-function useDemoPassword() {
-    passwordInput.value = CORRECT_PASSWORD;
-}
 
 function handleUnlock() {
     const entered = passwordInput.value.trim();
@@ -1633,40 +1667,99 @@ function unlockPortal() {
     tabsContainer.style.display = 'flex';
     tabResident.style.display = 'block';
     
-    loadHousesFromFirebase();
-    loadRegistrations();
+    loadHousesFromFirebase(state.currentEventId);
+    loadRegistrations(state.currentEventId);
+    loadEvents();
     setupRealtimeListener();
     
     showMessage('mainMessage', '🔓 Portal unlocked! You can now register for the event.', 'success');
-    setTimeout(() => {
-        mainMessage.style.display = 'none';
-    }, 3000);
+    setTimeout(() => { mainMessage.style.display = 'none'; }, 3000);
 }
 
 // ============================================
-// 7. TAB SWITCHING
+// 7. TAB SWITCHING WITH PASSWORD PROTECTION
 // ============================================
 document.querySelectorAll('.tabs button').forEach(tab => {
     tab.addEventListener('click', () => {
-        document.querySelectorAll('.tabs button').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        
         const tabName = tab.dataset.tab;
-        document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-        document.getElementById('tab-' + tabName).style.display = 'block';
         
-        if (tabName === 'admin') updateAdminDashboard();
-        if (tabName === 'scanner') loadRecentEntries();
+        if (tabName === 'admin') {
+            document.getElementById('adminPopup').classList.add('show');
+            document.getElementById('adminPasswordInput').focus();
+            return;
+        }
+        
+        if (tabName === 'scanner') {
+            document.getElementById('scannerPopup').classList.add('show');
+            document.getElementById('scannerPasswordInput').focus();
+            return;
+        }
+        
+        switchTab(tabName);
     });
 });
 
+function switchTab(tabName) {
+    document.querySelectorAll('.tabs button').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.tabs button[data-tab="${tabName}"]`).classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+    document.getElementById('tab-' + tabName).style.display = 'block';
+    
+    if (tabName === 'admin') { updateAdminDashboard(); loadEvents(); }
+    if (tabName === 'scanner') loadRecentEntries();
+}
+
 // ============================================
-// 8. FIREBASE - LOAD REGISTRATIONS
+// 8. PASSWORD VERIFICATION
 // ============================================
-async function loadRegistrations() {
+function verifyAdminPassword() {
+    const input = document.getElementById('adminPasswordInput');
+    const error = document.getElementById('adminError');
+    if (input.value === ADMIN_PASSWORD) {
+        document.getElementById('adminPopup').classList.remove('show');
+        error.style.display = 'none';
+        input.value = '';
+        switchTab('admin');
+    } else {
+        error.style.display = 'block';
+        input.value = '';
+        input.focus();
+    }
+}
+
+function verifyScannerPassword() {
+    const input = document.getElementById('scannerPasswordInput');
+    const error = document.getElementById('scannerError');
+    if (input.value === SCANNER_PASSWORD) {
+        document.getElementById('scannerPopup').classList.remove('show');
+        error.style.display = 'none';
+        input.value = '';
+        switchTab('scanner');
+    } else {
+        error.style.display = 'block';
+        input.value = '';
+        input.focus();
+    }
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        if (document.getElementById('adminPopup').classList.contains('show')) {
+            verifyAdminPassword();
+        }
+        if (document.getElementById('scannerPopup').classList.contains('show')) {
+            verifyScannerPassword();
+        }
+    }
+});
+
+// ============================================
+// 9. FIREBASE - LOAD REGISTRATIONS
+// ============================================
+async function loadRegistrations(eventId) {
     try {
         const snapshot = await db.collection('events')
-            .doc(state.eventId)
+            .doc(eventId || state.currentEventId)
             .collection('registrations')
             .get();
         
@@ -1684,10 +1777,10 @@ async function loadRegistrations() {
     }
 }
 
-async function saveRegistrationToFirebase(registration) {
+async function saveRegistrationToFirebase(registration, eventId) {
     try {
         await db.collection('events')
-            .doc(state.eventId)
+            .doc(eventId || state.currentEventId)
             .collection('registrations')
             .doc(registration.house)
             .set(registration);
@@ -1699,7 +1792,7 @@ async function saveRegistrationToFirebase(registration) {
 }
 
 // ============================================
-// 9. REGISTER HOUSE
+// 10. REGISTER HOUSE
 // ============================================
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1709,12 +1802,17 @@ registerForm.addEventListener('submit', async (e) => {
     const house = houseInput.value.trim().toUpperCase();
     const name = nameInput.value.trim();
     const mobile = mobileInput.value.trim();
+    const totalPersons = state.familyCount;
+    
+    if (totalPersons === 0) {
+        showMessage('registerMessage', '❌ Please add at least 1 person (including yourself).', 'error');
+        return;
+    }
     
     const selectedFood = document.querySelector('.food-option.selected');
     const foodPreference = selectedFood ? selectedFood.dataset.value : 'regular';
     const swaminarayanCount = parseInt(swaminarayanCountInput.value) || 0;
-    const totalMembers = state.totalMembers;
-    const regularCount = Math.max(0, totalMembers - swaminarayanCount);
+    const regularCount = Math.max(0, totalPersons - swaminarayanCount);
     
     if (!house || !name) {
         showMessage('registerMessage', 'Please fill in all required fields', 'error');
@@ -1722,17 +1820,14 @@ registerForm.addEventListener('submit', async (e) => {
     }
     
     const paidHouse = PAID_HOUSES.find(h => h.house === house);
-    
     if (!paidHouse) {
-        showMessage('registerMessage', 
-            `❌ House ${house} is not found in the society list.\n\nPlease contact the committee to add your house.`, 
-            'error');
+        showMessage('registerMessage', `❌ House ${house} is not found in the society list.`, 'error');
         return;
     }
     
     if (paidHouse.amount <= 0) {
         showMessage('registerMessage', 
-            `❌ Festival Contribution Required (₹1,500)\n\nHouse ${house} has not submitted the society festival contribution.\n\nPay Festival Contribution immediately to unlock your pass.\n\n💡 Already Paid? Please contact your committee coordinator to update your house number in the list.`, 
+            `❌ Festival Contribution Required (₹1,500)\n\nHouse ${house} has not submitted the society festival contribution.\n\nPay Festival Contribution immediately to unlock your pass.\n\n💡 Already Paid? Please contact your committee coordinator.`, 
             'error');
         return;
     }
@@ -1744,15 +1839,13 @@ registerForm.addEventListener('submit', async (e) => {
     }
     
     const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const timePart = Date.now().toString().slice(-4);
-    const passId = `PASS-${randomPart}${timePart}`;
+    const passId = `PASS-${randomPart}${Date.now().toString().slice(-4)}`;
     
     const registration = {
         house,
         name,
         mobile: mobile || '',
-        familyCount: state.familyCount,
-        totalMembers: totalMembers,
+        totalPersons: totalPersons,
         foodPreference: foodPreference,
         swaminarayanCount: swaminarayanCount,
         regularCount: regularCount,
@@ -1767,7 +1860,7 @@ registerForm.addEventListener('submit', async (e) => {
     registerBtn.disabled = true;
     registerBtn.textContent = '⏳ Registering...';
     
-    const saved = await saveRegistrationToFirebase(registration);
+    const saved = await saveRegistrationToFirebase(registration, state.currentEventId);
     
     if (saved) {
         state.registrations.push(registration);
@@ -1777,22 +1870,21 @@ registerForm.addEventListener('submit', async (e) => {
         passBox.classList.remove('hidden');
         passCodeDisplay.textContent = passId;
         passHouse.textContent = house;
-        passFamilyCount.textContent = state.familyCount;
+        passMemberCount.textContent = totalPersons;
         passFood.textContent = foodPreference === 'regular' ? 'Regular Pure Veg' : 
                                foodPreference === 'swaminarayan' ? 'Swaminarayan/Jain' : 'Mixed';
-        passMemberCount.textContent = totalMembers;
         
         registerBtn.textContent = '✅ Registered!';
-        
         updateAdminDashboard();
         
+        // Reset form
         houseInput.value = '';
         nameInput.value = '';
         mobileInput.value = '';
         state.familyCount = 0;
+        state.totalPersons = 0;
         familyCountDisplay.textContent = '0';
-        state.totalMembers = 1;
-        totalPersonsDisplay.textContent = '1';
+        totalPersonsDisplay.textContent = '0';
         swaminarayanCountInput.value = '0';
     } else {
         showMessage('registerMessage', '❌ Failed to register. Please try again.', 'error');
@@ -1804,7 +1896,7 @@ registerForm.addEventListener('submit', async (e) => {
 });
 
 // ============================================
-// 10. QR SCANNER - Camera & Manual
+// 11. QR SCANNER
 // ============================================
 async function startScanner() {
     const scannerDiv = document.getElementById('scanner-video');
@@ -1820,14 +1912,9 @@ async function startScanner() {
         
         html5QrCode = new Html5Qrcode("scanner-video");
         
-        const config = {
-            fps: 10,
-            qrbox: { width: 250, height: 250 }
-        };
-        
         await html5QrCode.start(
             { facingMode: "environment" },
-            config,
+            { fps: 10, qrbox: { width: 250, height: 250 } },
             onScanSuccess,
             onScanError
         );
@@ -1837,19 +1924,13 @@ async function startScanner() {
         isScannerRunning = true;
         
     } catch (error) {
-        console.error('Camera error:', error);
         startScannerBtn.textContent = '📷 Start Camera Scanner';
         startScannerBtn.disabled = false;
-        scannerDiv.innerHTML = `
-            <span>❌ Camera unavailable<br>
-            <span style="font-size:12px;color:#9a887a;">${error.message || 'Please allow camera access'}</span>
-            </span>
-        `;
+        scannerDiv.innerHTML = `<span>❌ Camera unavailable<br><span style="font-size:12px;color:#9a887a;">${error.message || 'Please allow camera access'}</span></span>`;
     }
 }
 
-function onScanSuccess(decodedText, decodedResult) {
-    // Stop scanner after successful scan to prevent multiple scans
+function onScanSuccess(decodedText) {
     if (html5QrCode && isScannerRunning) {
         html5QrCode.stop();
         isScannerRunning = false;
@@ -1857,14 +1938,10 @@ function onScanSuccess(decodedText, decodedResult) {
         startScannerBtn.style.background = '#b45f3a';
         startScannerBtn.disabled = false;
     }
-    
-    // Process the scanned code
     processScannedCode(decodedText);
 }
 
-function onScanError(err) {
-    // Ignore errors - they happen continuously during scanning
-}
+function onScanError(err) { /* Ignore - happens continuously */ }
 
 function manualScan() {
     const code = scanInput.value.trim();
@@ -1877,7 +1954,6 @@ function manualScan() {
 }
 
 function processScannedCode(code) {
-    // Find registration by pass ID
     const reg = state.registrations.find(r => r.passId === code);
     
     if (!reg) {
@@ -1890,20 +1966,18 @@ function processScannedCode(code) {
         return;
     }
     
-    // Show live data
     scannedRegistration = reg;
     scannerLiveData.classList.add('show');
     scanHouse.textContent = reg.house;
     scanName.textContent = reg.name;
-    scanFamily.textContent = reg.familyCount || 0;
+    scanTotal.textContent = reg.totalPersons || 1;
     scanFood.textContent = reg.foodPreference === 'regular' ? 'Regular Pure Veg' : 
                            reg.foodPreference === 'swaminarayan' ? 'Swaminarayan/Jain' : 'Mixed';
-    scanTotal.textContent = reg.totalMembers || 1;
     scanStatus.textContent = '✅ Valid - Not yet entered';
     scanStatus.style.color = '#2e7d32';
     
     admitBtn.style.display = 'block';
-    admitBtn.textContent = `✅ Admit Family (${reg.totalMembers || 1} persons)`;
+    admitBtn.textContent = `✅ Admit Family (${reg.totalPersons || 1} persons)`;
 }
 
 function showScannerResult(message, isValid) {
@@ -1916,21 +1990,17 @@ function showScannerResult(message, isValid) {
 async function admitScanned() {
     if (!scannedRegistration) return;
     
-    const reg = scannedRegistration;
+    scannedRegistration.entered = true;
+    scannedRegistration.entryTime = new Date().toLocaleTimeString();
+    await saveRegistrationToFirebase(scannedRegistration, state.currentEventId);
     
-    // Mark as entered
-    reg.entered = true;
-    reg.entryTime = new Date().toLocaleTimeString();
-    await saveRegistrationToFirebase(reg);
-    
-    scanStatus.textContent = `✅ ENTRY GRANTED - ${reg.totalMembers || 1} persons admitted`;
+    scanStatus.textContent = `✅ ENTRY GRANTED - ${scannedRegistration.totalPersons || 1} persons admitted`;
     scanStatus.style.color = '#2e7d32';
     admitBtn.style.display = 'none';
     
     updateAdminDashboard();
     loadRecentEntries();
     
-    // Reset scanner state
     setTimeout(() => {
         scannerLiveData.classList.remove('show');
         scannedRegistration = null;
@@ -1941,31 +2011,40 @@ async function admitScanned() {
 }
 
 // ============================================
-// 11. ADMIN DASHBOARD
+// 12. ADMIN DASHBOARD
 // ============================================
 function updateAdminDashboard() {
     const paidHouses = PAID_HOUSES.filter(h => h.amount > 0).length;
     const registered = state.registrations.length;
     const entered = state.registrations.filter(r => r.entered).length;
     const pending = registered - entered;
+    const registeredPercent = registered > 0 ? 100 : 0;
+    const admittedPercent = registered > 0 ? Math.round((entered / registered) * 100) : 0;
+    const pendingPercent = registered > 0 ? Math.round((pending / registered) * 100) : 0;
     
+    // KPI Cards
     statAdmitted.textContent = entered;
+    statAdmittedPercent.textContent = admittedPercent + '%';
     statPending.textContent = pending;
+    statPendingPercent.textContent = pendingPercent + '%';
     statRegistered.textContent = registered;
+    statRegisteredPercent.textContent = registeredPercent + '%';
     statHousesIn.textContent = entered;
     statHousesSub.textContent = `${entered} / ${paidHouses} Flats`;
-    statTotalHouses.textContent = paidHouses;
     statPassesIssued.textContent = registered;
+    
+    // Summary
+    summaryAdmitted.textContent = entered;
+    summaryPending.textContent = pending;
+    summaryHouses.textContent = `${entered} / ${paidHouses}`;
     
     footerStats.textContent = `${registered} houses registered • ${entered} entries`;
     
-    // Catering calculations
-    let jainMeals = 0, regularMeals = 0;
-    let jainAdmitted = 0, regularAdmitted = 0;
-    
+    // Catering
+    let jainMeals = 0, regularMeals = 0, jainAdmitted = 0, regularAdmitted = 0;
     state.registrations.forEach(r => {
         const jainCount = r.swaminarayanCount || 0;
-        const regularCount = r.regularCount || (r.totalMembers - jainCount);
+        const regularCount = r.regularCount || (r.totalPersons - jainCount);
         jainMeals += jainCount;
         regularMeals += regularCount;
         if (r.entered) {
@@ -1974,10 +2053,8 @@ function updateAdminDashboard() {
         }
     });
     
-    cateringJain.textContent = jainMeals;
     cateringJainAdmitted.textContent = jainAdmitted;
     cateringJainRegistered.textContent = jainMeals;
-    cateringRegular.textContent = regularMeals;
     cateringRegularAdmitted.textContent = regularAdmitted;
     cateringRegularRegistered.textContent = regularMeals;
     
@@ -1990,19 +2067,101 @@ function updateAdminDashboard() {
         let statusClass = 'pending';
         if (reg?.entered) { statusText = '✅ Entered'; statusClass = 'entered'; }
         else if (reg) { statusText = '📝 Registered'; statusClass = 'registered'; }
-        
-        html += `
-            <div class="house-item">
-                <span>🏠 House ${ph.house}</span>
-                <span class="status ${statusClass}">${statusText}</span>
-            </div>
-        `;
+        html += `<div class="house-item"><span>🏠 House ${ph.house}</span><span class="status ${statusClass}">${statusText}</span></div>`;
     });
-    houseStatusList.innerHTML = html || '<p class="text-sm">No houses found. Upload Excel file to import.</p>';
+    houseStatusList.innerHTML = html || '<p class="text-sm">No houses found.</p>';
 }
 
 // ============================================
-// 12. RECENT ENTRIES
+// 13. EVENT MANAGEMENT
+// ============================================
+async function loadEvents() {
+    try {
+        const snapshot = await db.collection('events').get();
+        state.events = [];
+        snapshot.forEach(doc => {
+            state.events.push({ id: doc.id, ...doc.data() });
+        });
+        renderEventSelector();
+    } catch (error) {
+        console.error('Error loading events:', error);
+    }
+}
+
+function renderEventSelector() {
+    let html = '';
+    state.events.forEach(ev => {
+        const active = ev.id === state.currentEventId ? 'active' : '';
+        html += `<button class="${active}" onclick="switchEvent('${ev.id}')">${ev.name || ev.id}</button>`;
+    });
+    html += `<button class="add-event-btn" onclick="showAddEvent()">+ Add</button>`;
+    eventSelector.innerHTML = html || '<p class="text-sm">No events found</p>';
+}
+
+async function switchEvent(eventId) {
+    state.currentEventId = eventId;
+    const event = state.events.find(e => e.id === eventId);
+    if (event) {
+        eventNameDisplay.textContent = event.name || eventId;
+        eventDetails.textContent = event.venue ? `📍 ${event.venue} • ${event.date || ''}` : '';
+        eventContribution.textContent = `Contribution: ₹${event.contribution || '1,500'}`;
+        kpiEventName.textContent = event.name || eventId;
+    }
+    await loadHousesFromFirebase(eventId);
+    await loadRegistrations(eventId);
+    renderEventSelector();
+    updateAdminDashboard();
+}
+
+function showAddEvent() {
+    document.getElementById('addEventPopup').classList.add('show');
+    document.getElementById('addEventError').style.display = 'none';
+    document.getElementById('newEventName').value = '';
+    document.getElementById('newEventDate').value = '';
+    document.getElementById('newEventVenue').value = '';
+    document.getElementById('newEventContribution').value = '';
+}
+
+function closeAddEvent() {
+    document.getElementById('addEventPopup').classList.remove('show');
+}
+
+async function createNewEvent() {
+    const name = document.getElementById('newEventName').value.trim();
+    const date = document.getElementById('newEventDate').value.trim();
+    const venue = document.getElementById('newEventVenue').value.trim();
+    const contribution = parseInt(document.getElementById('newEventContribution').value) || 1500;
+    
+    if (!name) {
+        document.getElementById('addEventError').style.display = 'block';
+        return;
+    }
+    
+    const eventId = name.toLowerCase().replace(/\s/g, '') + Date.now().toString().slice(-4);
+    
+    try {
+        await db.collection('events').doc(eventId).set({
+            id: eventId,
+            name: name,
+            date: date || 'TBD',
+            venue: venue || 'TBD',
+            contribution: contribution,
+            createdAt: new Date().toISOString()
+        });
+        
+        closeAddEvent();
+        await loadEvents();
+        await switchEvent(eventId);
+        showMessage('mainMessage', `✅ Event "${name}" created successfully!`, 'success');
+        setTimeout(() => { mainMessage.style.display = 'none'; }, 3000);
+    } catch (error) {
+        document.getElementById('addEventError').textContent = `❌ Error: ${error.message}`;
+        document.getElementById('addEventError').style.display = 'block';
+    }
+}
+
+// ============================================
+// 14. RECENT ENTRIES
 // ============================================
 function loadRecentEntries() {
     const entries = state.registrations.filter(r => r.entered).slice(-5).reverse();
@@ -2012,49 +2171,39 @@ function loadRecentEntries() {
     }
     let html = '';
     entries.forEach(r => {
-        html += `
-            <div class="house-item">
-                <span>🏠 House ${r.house}</span>
-                <span>${r.name}</span>
-                <span style="font-size: 11px; color: #6b5a4e;">${r.entryTime}</span>
-            </div>
-        `;
+        html += `<div class="house-item"><span>🏠 House ${r.house}</span><span>${r.name}</span><span style="font-size:11px;color:#6b5a4e;">${r.entryTime}</span></div>`;
     });
     recentEntries.innerHTML = html;
 }
 
 // ============================================
-// 13. UTILITY FUNCTIONS
+// 15. UTILITY FUNCTIONS
 // ============================================
 function showMessage(id, text, type) {
     const el = document.getElementById(id);
     el.textContent = text;
     el.className = 'message ' + type;
     el.style.display = 'block';
-    setTimeout(() => {
-        el.style.display = 'none';
-    }, 6000);
+    setTimeout(() => { el.style.display = 'none'; }, 6000);
 }
 
 // ============================================
-// 14. ADMIN ACTIONS
+// 16. ADMIN ACTIONS
 // ============================================
 function exportCSV() {
-    let csv = 'House,Amount,Resident,Family Members,Total Members,Food Preference,Jain Count,Regular Count,Registered,Entered,EntryTime,PassID\n';
+    let csv = 'House,Amount,Resident,Total Persons,Food Preference,Jain Count,Regular Count,Registered,Entered,EntryTime,PassID\n';
     PAID_HOUSES.forEach(ph => {
         const reg = state.registrations.find(r => r.house === ph.house);
         const name = reg?.name || 'Not Registered';
-        const familyCount = reg?.familyCount || 0;
-        const totalMembers = reg?.totalMembers || 0;
+        const total = reg?.totalPersons || 0;
         const foodPref = reg?.foodPreference || '-';
         const jainCount = reg?.swaminarayanCount || 0;
         const regularCount = reg?.regularCount || 0;
         const entered = reg?.entered ? 'Yes' : 'No';
         const entryTime = reg?.entryTime || '';
         const passId = reg?.passId || '';
-        csv += `${ph.house},${ph.amount},${name},${familyCount},${totalMembers},${foodPref},${jainCount},${regularCount},${reg ? 'Yes' : 'No'},${entered},"${entryTime}","${passId}"\n`;
+        csv += `${ph.house},${ph.amount},${name},${total},${foodPref},${jainCount},${regularCount},${reg ? 'Yes' : 'No'},${entered},"${entryTime}","${passId}"\n`;
     });
-    
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -2065,20 +2214,17 @@ function exportCSV() {
 }
 
 function syncData() {
-    const btn = document.querySelector('[onclick="syncData()"]');
-    btn.textContent = '⏳ Syncing...';
-    Promise.all([loadHousesFromFirebase(), loadRegistrations()]).then(() => {
-        btn.textContent = '🔄 Sync';
-        showMessage('mainMessage', '✅ Data synced successfully!', 'success');
-        setTimeout(() => { mainMessage.style.display = 'none'; }, 2000);
-    });
+    loadHousesFromFirebase(state.currentEventId);
+    loadRegistrations(state.currentEventId);
+    showMessage('mainMessage', '✅ Data synced!', 'success');
+    setTimeout(() => { mainMessage.style.display = 'none'; }, 2000);
 }
 
 function resetEvent() {
     if (confirm('⚠️ This will clear ALL registrations for this event. Are you sure?')) {
         if (confirm('Really? This cannot be undone.')) {
             state.registrations.forEach(r => {
-                db.collection('events').doc(state.eventId)
+                db.collection('events').doc(state.currentEventId)
                     .collection('registrations').doc(r.house).delete();
             });
             state.registrations = [];
@@ -2090,11 +2236,11 @@ function resetEvent() {
 }
 
 // ============================================
-// 15. REAL-TIME LISTENER
+// 17. REAL-TIME LISTENER
 // ============================================
 function setupRealtimeListener() {
     db.collection('events')
-        .doc(state.eventId)
+        .doc(state.currentEventId)
         .collection('registrations')
         .onSnapshot((snapshot) => {
             state.registrations = [];
@@ -2103,34 +2249,26 @@ function setupRealtimeListener() {
             });
             updateAdminDashboard();
             loadRecentEntries();
-            console.log('🔄 Real-time update:', state.registrations.length, 'registrations');
         }, (error) => {
             console.log('⚠️ Listener error:', error);
         });
 }
 
 // ============================================
-// 16. INITIALIZATION
+// 18. INITIALIZATION
 // ============================================
 window.addEventListener('load', () => {
     const updateStatus = () => {
         const statusEl = document.getElementById('onlineStatus');
-        if (navigator.onLine) {
-            statusEl.textContent = '● Online';
-            statusEl.style.color = '#2e7d32';
-        } else {
-            statusEl.textContent = '○ Offline';
-            statusEl.style.color = '#c62828';
-        }
+        statusEl.textContent = navigator.onLine ? '● Online' : '○ Offline';
+        statusEl.style.color = navigator.onLine ? '#2e7d32' : '#c62828';
     };
     updateStatus();
     window.addEventListener('online', updateStatus);
     window.addEventListener('offline', updateStatus);
     
-    passwordInput.value = CORRECT_PASSWORD;
-    
+    passwordInput.value = 'Ganesh@2026';
     console.log('🎟️ GM2026 Society Pass Manager loaded');
-    console.log('🏠 Houses loaded:', PAID_HOUSES.length);
 });
 </script>
 </body>
