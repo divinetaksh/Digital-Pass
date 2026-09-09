@@ -8,9 +8,6 @@
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
-    
-    <!-- QR Code Generator -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -48,7 +45,18 @@
         .message.info { display: block; background: #e3f2fd; border: 2px solid #90caf9; color: #0d47a1; }
         
         .qr-box { text-align: center; padding: 20px; background: white; border-radius: 16px; border: 2px dashed #d6cdc4; margin: 16px 0; }
-        .qr-box #qrcode { display: inline-block; padding: 16px; background: white; border-radius: 8px; }
+        .qr-box .pass-code { 
+            font-size: 28px; 
+            font-weight: bold; 
+            letter-spacing: 3px;
+            background: #f5f3f0;
+            padding: 16px;
+            border-radius: 12px;
+            margin: 12px auto;
+            font-family: monospace;
+            display: inline-block;
+            border: 2px solid #1e1814;
+        }
         .qr-box .pass-info { margin-top: 12px; font-size: 14px; color: #6b5a4e; }
         .qr-box .pass-info strong { color: #1e1814; }
         
@@ -127,12 +135,13 @@
         <div id="registerMessage" class="message"></div>
         
         <div id="qrBox" class="qr-box hidden">
-            <div id="qrcode"></div>
+            <h3>🎟️ Your Digital Pass</h3>
+            <p style="font-size:13px;color:#999;margin-bottom:8px;">Show this code at the gate</p>
+            <div class="pass-code" id="passCodeDisplay">---</div>
             <div class="pass-info">
                 <p><strong>House:</strong> <span id="passHouse">---</span></p>
-                <p><strong>Pass ID:</strong> <span id="passId">---</span></p>
+                <p><strong>Family:</strong> <span id="passFamily">---</span></p>
                 <p><strong>Status:</strong> <span style="color: #2e7d32;">✓ Valid (Not yet entered)</span></p>
-                <p class="text-sm mt-8">Show this QR at the gate for entry</p>
             </div>
         </div>
     </div>
@@ -142,7 +151,7 @@
         <div class="scanner-box">
             <p style="font-weight: 600; margin-bottom: 12px;">📸 Scan QR Code</p>
             <p class="text-sm">Enter the pass ID from the QR</p>
-            <input type="text" id="scanInput" placeholder="Enter pass ID (e.g., PASS-123456)" />
+            <input type="text" id="scanInput" placeholder="Enter pass ID (e.g., PASS-ABC123456)" />
             <button class="btn btn-primary" id="scanBtn">🔍 Verify Entry</button>
         </div>
         
@@ -191,20 +200,17 @@
 
 <script>
     // ============================================
-    // 🔥 FIREBASE CONFIGURATION - UPDATE THIS!
-    // ============================================
-    // Go to: https://console.firebase.google.com
-    // Create a project → Add web app → Copy config
+    // 🔥 FIREBASE CONFIGURATION
     // ============================================
     const firebaseConfig = {
-  apiKey: "AIzaSyB64rWX_go03-qU2cmQTSHxg-Fwqj7l-1E",
-  authDomain: "society-pass-5d3b8.firebaseapp.com",
-  projectId: "society-pass-5d3b8",
-  storageBucket: "society-pass-5d3b8.firebasestorage.app",
-  messagingSenderId: "10647144729",
-  appId: "1:10647144729:web:337a3cb4a73973fd471d88"
-};
-    // Initialize Firebase
+        apiKey: "AIzaSyB64rWX_go03-qU2cmQTShxg-Fwqj7L-1E",
+        authDomain: "society-pass-5d3b8.firebaseapp.com",
+        projectId: "society-pass-5d3b8",
+        storageBucket: "society-pass-5d3b8.firebasestorage.app",
+        messagingSenderId: "10647144729",
+        appId: "1:10647144729:web:337a3cb4a73973fd471d88"
+    };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
@@ -212,267 +218,136 @@
     // 📋 PAID HOUSES LIST - UPDATE THIS!
     // ============================================
     const PAID_HOUSES = [
-        
-{ house:"1",amount: 1500 },
-{ house:"2",amount: 1500 },
-{ house:"3",amount: 1500 },
-{ house:"4",amount: 0 },
-{ house:"5",amount: 0 },
-{ house:"6",amount: 0 },
-{ house:"7",amount: 0 },
-{ house:"8",amount: 1500 },
-{ house:"9",amount: 1500 },
-{ house:"10",amount: 1500 },
-{ house:"11",amount: 0 },
-{ house:"12",amount: 1500 },
-{ house:"13",amount: 0 },
-{ house:"14",amount: 1500 },
-{ house:"15",amount: 1500 },
-{ house:"16",amount: 1500 },
-{ house:"17",amount: 0 },
-{ house:"18",amount: 0 },
-{ house:"19",amount: 0 },
-{ house:"20",amount: 1500 },
-{ house:"21",amount: 1500 },
-{ house:"22",amount: 1500 },
-{ house:"23",amount: 1500 },
-{ house:"24",amount: 0 },
-{ house:"25",amount: 1500 },
-{ house:"26",amount: 0 },
-{ house:"27",amount: 1500 },
-{ house:"28",amount: 1500 },
-{ house:"29",amount: 0 },
-{ house:"30",amount: 0 },
-{ house:"31",amount: 0 },
-{ house:"32",amount: 1500 },
-{ house:"33",amount: 1500 },
-{ house:"34",amount: 0 },
-{ house:"35",amount: 1500 },
-{ house:"36",amount: 0 },
-{ house:"37",amount: 0 },
-{ house:"38",amount: 1500 },
-{ house:"39",amount: 1500 },
-{ house:"40",amount: 0 },
-{ house:"41",amount: 0 },
-{ house:"42",amount: 0 },
-{ house:"43",amount: 0 },
-{ house:"44",amount: 0 },
-{ house:"45",amount: 0 },
-{ house:"46",amount: 0 },
-{ house:"47",amount: 1500 },
-{ house:"48",amount: 0 },
-{ house:"49",amount: 0 },
-{ house:"50",amount: 1500 },
-{ house:"51",amount: 0 },
-{ house:"52",amount: 0 },
-{ house:"53",amount: 0 },
-{ house:"54",amount: 1500 },
-{ house:"55",amount: 0 },
-{ house:"56",amount: 0 },
-{ house:"57",amount: 1500 },
-{ house:"58",amount: 0 },
-{ house:"59",amount: 0 },
-{ house:"60",amount: 1500 },
-{ house:"61",amount: 0 },
-{ house:"62",amount: 0 },
-{ house:"63",amount: 1500 },
-{ house:"64",amount: 1500 },
-{ house:"65",amount: 0 },
-{ house:"66",amount: 0 },
-{ house:"67",amount: 0 },
-{ house:"68",amount: 0 },
-{ house:"69",amount: 0 },
-{ house:"70",amount: 1500 },
-{ house:"71",amount: 1500 },
-{ house:"72",amount: 0 },
-{ house:"73",amount: 0 },
-{ house:"74",amount: 0 },
-{ house:"75",amount: 0 },
-{ house:"76",amount: 1500 },
-{ house:"77",amount: 1500 },
-{ house:"78",amount: 0 },
-{ house:"79",amount: 1500 },
-{ house:"80",amount: 0 },
-{ house:"81",amount: 1500 },
-{ house:"82",amount: 0 },
-{ house:"83",amount: 0 },
-{ house:"84",amount: 1500 },
-{ house:"85",amount: 0 },
-{ house:"86",amount: 1500 },
-{ house:"87",amount: 1500 },
-{ house:"88",amount: 1500 },
-{ house:"89",amount: 1500 },
-{ house:"90",amount: 0 },
-{ house:"91",amount: 1500 },
-{ house:"92",amount: 0 },
-{ house:"93",amount: 0 },
-{ house:"94",amount: 1500 },
-{ house:"95",amount: 0 },
-{ house:"96",amount: 0 },
-{ house:"97",amount: 1500 },
-{ house:"98",amount: 1500 },
-{ house:"99",amount: 0 },
-{ house:"100",amount: 0 },
-{ house:"101",amount: 1500 },
-{ house:"102",amount: 0 },
-{ house:"103",amount: 0 },
-{ house:"104",amount: 0 },
-{ house:"105",amount: 0 },
-{ house:"106",amount: 1500 },
-{ house:"107",amount: 0 },
-{ house:"108",amount: 0 },
-{ house:"109",amount: 0 },
-{ house:"110",amount: 0 },
-{ house:"111",amount: 0 },
-{ house:"112",amount: 1500 },
-{ house:"113",amount: 1500 },
-{ house:"114",amount: 0 },
-{ house:"115",amount: 0 },
-{ house:"116",amount: 0 },
-{ house:"117",amount: 1500 },
-{ house:"118",amount: 1500 },
-{ house:"119",amount: 0 },
-{ house:"120",amount: 1500 },
-{ house:"121",amount: 0 },
-{ house:"122",amount: 0 },
-{ house:"123",amount: 0 },
-{ house:"124",amount: 0 },
-{ house:"125",amount: 0 },
-{ house:"126",amount: 0 },
-{ house:"127",amount: 1500 },
-{ house:"128",amount: 0 },
-{ house:"129",amount: 0 },
-{ house:"130",amount: 1500 },
-{ house:"131",amount: 1500 },
-{ house:"132",amount: 0 },
-{ house:"133",amount: 1500 },
-{ house:"134",amount: 1500 },
-{ house:"135",amount: 1500 },
-{ house:"136",amount: 1500 },
-{ house:"137",amount: 1500 },
-{ house:"138",amount: 0 },
-{ house:"139",amount: 0 },
-{ house:"140",amount: 1500 },
-{ house:"141",amount: 0 },
-{ house:"142",amount: 0 },
-{ house:"143",amount: 1500 },
-{ house:"144",amount: 0 },
-{ house:"145",amount: 1500 },
-{ house:"146",amount: 0 },
-{ house:"147",amount: 1500 },
-{ house:"148",amount: 0 },
-{ house:"149",amount: 1500 },
-{ house:"150",amount: 1500 },
-{ house:"151",amount: 1500 },
-{ house:"152",amount: 1500 },
-{ house:"153",amount: 0 },
-{ house:"154",amount: 0 },
-{ house:"155",amount: 1500 },
-{ house:"156",amount: 1500 },
-{ house:"157",amount: 0 },
-{ house:"158",amount: 1500 },
-{ house:"159",amount: 1500 },
-{ house:"160",amount: 0 },
-{ house:"161",amount: 0 },
-{ house:"162",amount: 1500 },
-{ house:"163",amount: 0 },
-{ house:"164",amount: 0 },
-{ house:"165",amount: 0 },
-{ house:"166",amount: 1500 },
-{ house:"167",amount: 0 },
-{ house:"168",amount: 0 },
-{ house:"169",amount: 0 },
-{ house:"170",amount: 0 },
-{ house:"171",amount: 0 },
-{ house:"172",amount: 0 },
-{ house:"173",amount: 0 },
-{ house:"174",amount: 0 },
-{ house:"175",amount: 1500 },
-{ house:"176",amount: 1500 },
-{ house:"177",amount: 0 },
-{ house:"178",amount: 0 },
-{ house:"179",amount: 0 },
-{ house:"180",amount: 1500 },
-{ house:"181",amount: 0 },
-{ house:"182",amount: 0 },
-{ house:"183",amount: 1500 },
-{ house:"184",amount: 0 },
-{ house:"185",amount: 1500 },
-{ house:"186",amount: 1500 },
-{ house:"187",amount: 1500 },
-{ house:"188",amount: 0 },
-{ house:"189",amount: 0 },
-{ house:"190",amount: 0 },
-{ house:"191",amount: 0 },
-{ house:"192",amount: 0 },
-{ house:"193",amount: 0 },
-{ house:"194",amount: 0 },
-{ house:"195",amount: 1500 },
-{ house:"196",amount: 1500 },
-{ house:"197",amount: 0 },
-{ house:"198",amount: 0 },
-{ house:"199",amount: 1500 },
-{ house:"200",amount: 0 },
-{ house:"201",amount: 1500 },
-{ house:"202",amount: 0 },
-{ house:"203",amount: 0 },
-{ house:"204",amount: 0 },
-{ house:"205",amount: 0 },
-{ house:"206",amount: 1500 },
-{ house:"207",amount: 1500 },
-{ house:"208",amount: 1500 },
-{ house:"209",amount: 0 },
-{ house:"210",amount: 1500 },
-{ house:"211",amount: 0 },
-{ house:"212",amount: 1500 },
-{ house:"213",amount: 1500 },
-{ house:"214",amount: 1500 },
-{ house:"215",amount: 0 },
-{ house:"216",amount: 1500 },
-{ house:"217",amount: 1500 },
-{ house:"218",amount: 1500 },
-{ house:"219",amount: 1500 },
-{ house:"220",amount: 1500 },
-{ house:"221",amount: 0 },
-{ house:"222",amount: 0 },
-{ house:"223",amount: 0 },
-{ house:"224",amount: 0 },
-{ house:"225",amount: 1500 },
-{ house:"226",amount: 1500 },
-{ house:"227",amount: 0 },
-{ house:"228",amount: 0 },
-{ house:"229",amount: 1500 },
-{ house:"230",amount: 1500 },
-{ house:"231",amount: 1500 },
-{ house:"232",amount: 1500 },
-{ house:"233",amount: 0 },
-{ house:"234",amount: 0 },
-{ house:"235",amount: 1500 },
-{ house:"236",amount: 0 },
-{ house:"237",amount: 0 },
-{ house:"238",amount: 0 },
-{ house:"239",amount: 0 },
-{ house:"240",amount: 0 },
-{ house:"241",amount: 1500 },
-{ house:"242",amount: 1500 },
-{ house:"243",amount: 1500 },
-{ house:"244",amount: 1500 },
-{ house:"245",amount: 1500 },
-{ house:"246",amount: 0 },
-{ house:"247",amount: 1500 },
-{ house:"248",amount: 1500 },
-{ house:"249",amount: 1500 },
-{ house:"250",amount: 0 },
-{ house:"251",amount: 1500 },
-{ house:"252",amount: 0 },
-{ house:"253",amount: 1500 },
-{ house:"254",amount: 1500 },
-{ house:"255",amount: 0 },
-{ house:"256",amount: 0 },
-{ house:"257",amount: 1500 },
-{ house:"258",amount: 0 },
-{ house:"259",amount: 0 },
-        // Add more houses as needed
+        { house:"1", amount: 1500 }, { house:"2", amount: 1500 },
+        { house:"3", amount: 1500 }, { house:"4", amount: 0 },
+        { house:"5", amount: 0 }, { house:"6", amount: 0 },
+        { house:"7", amount: 0 }, { house:"8", amount: 1500 },
+        { house:"9", amount: 1500 }, { house:"10", amount: 1500 },
+        { house:"11", amount: 0 }, { house:"12", amount: 1500 },
+        { house:"13", amount: 0 }, { house:"14", amount: 1500 },
+        { house:"15", amount: 1500 }, { house:"16", amount: 1500 },
+        { house:"17", amount: 0 }, { house:"18", amount: 0 },
+        { house:"19", amount: 0 }, { house:"20", amount: 1500 },
+        { house:"21", amount: 1500 }, { house:"22", amount: 1500 },
+        { house:"23", amount: 1500 }, { house:"24", amount: 0 },
+        { house:"25", amount: 1500 }, { house:"26", amount: 0 },
+        { house:"27", amount: 1500 }, { house:"28", amount: 1500 },
+        { house:"29", amount: 0 }, { house:"30", amount: 0 },
+        { house:"31", amount: 0 }, { house:"32", amount: 1500 },
+        { house:"33", amount: 1500 }, { house:"34", amount: 0 },
+        { house:"35", amount: 1500 }, { house:"36", amount: 0 },
+        { house:"37", amount: 0 }, { house:"38", amount: 1500 },
+        { house:"39", amount: 1500 }, { house:"40", amount: 0 },
+        { house:"41", amount: 0 }, { house:"42", amount: 0 },
+        { house:"43", amount: 0 }, { house:"44", amount: 0 },
+        { house:"45", amount: 0 }, { house:"46", amount: 0 },
+        { house:"47", amount: 1500 }, { house:"48", amount: 0 },
+        { house:"49", amount: 0 }, { house:"50", amount: 1500 },
+        { house:"51", amount: 0 }, { house:"52", amount: 0 },
+        { house:"53", amount: 0 }, { house:"54", amount: 1500 },
+        { house:"55", amount: 0 }, { house:"56", amount: 0 },
+        { house:"57", amount: 1500 }, { house:"58", amount: 0 },
+        { house:"59", amount: 0 }, { house:"60", amount: 1500 },
+        { house:"61", amount: 0 }, { house:"62", amount: 0 },
+        { house:"63", amount: 1500 }, { house:"64", amount: 1500 },
+        { house:"65", amount: 0 }, { house:"66", amount: 0 },
+        { house:"67", amount: 0 }, { house:"68", amount: 0 },
+        { house:"69", amount: 0 }, { house:"70", amount: 1500 },
+        { house:"71", amount: 1500 }, { house:"72", amount: 0 },
+        { house:"73", amount: 0 }, { house:"74", amount: 0 },
+        { house:"75", amount: 0 }, { house:"76", amount: 1500 },
+        { house:"77", amount: 1500 }, { house:"78", amount: 0 },
+        { house:"79", amount: 1500 }, { house:"80", amount: 0 },
+        { house:"81", amount: 1500 }, { house:"82", amount: 0 },
+        { house:"83", amount: 0 }, { house:"84", amount: 1500 },
+        { house:"85", amount: 0 }, { house:"86", amount: 1500 },
+        { house:"87", amount: 1500 }, { house:"88", amount: 1500 },
+        { house:"89", amount: 1500 }, { house:"90", amount: 0 },
+        { house:"91", amount: 1500 }, { house:"92", amount: 0 },
+        { house:"93", amount: 0 }, { house:"94", amount: 1500 },
+        { house:"95", amount: 0 }, { house:"96", amount: 0 },
+        { house:"97", amount: 1500 }, { house:"98", amount: 1500 },
+        { house:"99", amount: 0 }, { house:"100", amount: 0 },
+        { house:"101", amount: 1500 }, { house:"102", amount: 0 },
+        { house:"103", amount: 0 }, { house:"104", amount: 0 },
+        { house:"105", amount: 0 }, { house:"106", amount: 1500 },
+        { house:"107", amount: 0 }, { house:"108", amount: 0 },
+        { house:"109", amount: 0 }, { house:"110", amount: 0 },
+        { house:"111", amount: 0 }, { house:"112", amount: 1500 },
+        { house:"113", amount: 1500 }, { house:"114", amount: 0 },
+        { house:"115", amount: 0 }, { house:"116", amount: 0 },
+        { house:"117", amount: 1500 }, { house:"118", amount: 1500 },
+        { house:"119", amount: 0 }, { house:"120", amount: 1500 },
+        { house:"121", amount: 0 }, { house:"122", amount: 0 },
+        { house:"123", amount: 0 }, { house:"124", amount: 0 },
+        { house:"125", amount: 0 }, { house:"126", amount: 0 },
+        { house:"127", amount: 1500 }, { house:"128", amount: 0 },
+        { house:"129", amount: 0 }, { house:"130", amount: 1500 },
+        { house:"131", amount: 1500 }, { house:"132", amount: 0 },
+        { house:"133", amount: 1500 }, { house:"134", amount: 1500 },
+        { house:"135", amount: 1500 }, { house:"136", amount: 1500 },
+        { house:"137", amount: 1500 }, { house:"138", amount: 0 },
+        { house:"139", amount: 0 }, { house:"140", amount: 1500 },
+        { house:"141", amount: 0 }, { house:"142", amount: 0 },
+        { house:"143", amount: 1500 }, { house:"144", amount: 0 },
+        { house:"145", amount: 1500 }, { house:"146", amount: 0 },
+        { house:"147", amount: 1500 }, { house:"148", amount: 0 },
+        { house:"149", amount: 1500 }, { house:"150", amount: 1500 },
+        { house:"151", amount: 1500 }, { house:"152", amount: 1500 },
+        { house:"153", amount: 0 }, { house:"154", amount: 0 },
+        { house:"155", amount: 1500 }, { house:"156", amount: 1500 },
+        { house:"157", amount: 0 }, { house:"158", amount: 1500 },
+        { house:"159", amount: 1500 }, { house:"160", amount: 0 },
+        { house:"161", amount: 0 }, { house:"162", amount: 1500 },
+        { house:"163", amount: 0 }, { house:"164", amount: 0 },
+        { house:"165", amount: 0 }, { house:"166", amount: 1500 },
+        { house:"167", amount: 0 }, { house:"168", amount: 0 },
+        { house:"169", amount: 0 }, { house:"170", amount: 0 },
+        { house:"171", amount: 0 }, { house:"172", amount: 0 },
+        { house:"173", amount: 0 }, { house:"174", amount: 0 },
+        { house:"175", amount: 1500 }, { house:"176", amount: 1500 },
+        { house:"177", amount: 0 }, { house:"178", amount: 0 },
+        { house:"179", amount: 0 }, { house:"180", amount: 1500 },
+        { house:"181", amount: 0 }, { house:"182", amount: 0 },
+        { house:"183", amount: 1500 }, { house:"184", amount: 0 },
+        { house:"185", amount: 1500 }, { house:"186", amount: 1500 },
+        { house:"187", amount: 1500 }, { house:"188", amount: 0 },
+        { house:"189", amount: 0 }, { house:"190", amount: 0 },
+        { house:"191", amount: 0 }, { house:"192", amount: 0 },
+        { house:"193", amount: 0 }, { house:"194", amount: 0 },
+        { house:"195", amount: 1500 }, { house:"196", amount: 1500 },
+        { house:"197", amount: 0 }, { house:"198", amount: 0 },
+        { house:"199", amount: 1500 }, { house:"200", amount: 0 },
+        { house:"201", amount: 1500 }, { house:"202", amount: 0 },
+        { house:"203", amount: 0 }, { house:"204", amount: 0 },
+        { house:"205", amount: 0 }, { house:"206", amount: 1500 },
+        { house:"207", amount: 1500 }, { house:"208", amount: 1500 },
+        { house:"209", amount: 0 }, { house:"210", amount: 1500 },
+        { house:"211", amount: 0 }, { house:"212", amount: 1500 },
+        { house:"213", amount: 1500 }, { house:"214", amount: 1500 },
+        { house:"215", amount: 0 }, { house:"216", amount: 1500 },
+        { house:"217", amount: 1500 }, { house:"218", amount: 1500 },
+        { house:"219", amount: 1500 }, { house:"220", amount: 1500 },
+        { house:"221", amount: 0 }, { house:"222", amount: 0 },
+        { house:"223", amount: 0 }, { house:"224", amount: 0 },
+        { house:"225", amount: 1500 }, { house:"226", amount: 1500 },
+        { house:"227", amount: 0 }, { house:"228", amount: 0 },
+        { house:"229", amount: 1500 }, { house:"230", amount: 1500 },
+        { house:"231", amount: 1500 }, { house:"232", amount: 1500 },
+        { house:"233", amount: 0 }, { house:"234", amount: 0 },
+        { house:"235", amount: 1500 }, { house:"236", amount: 0 },
+        { house:"237", amount: 0 }, { house:"238", amount: 0 },
+        { house:"239", amount: 0 }, { house:"240", amount: 0 },
+        { house:"241", amount: 1500 }, { house:"242", amount: 1500 },
+        { house:"243", amount: 1500 }, { house:"244", amount: 1500 },
+        { house:"245", amount: 1500 }, { house:"246", amount: 0 },
+        { house:"247", amount: 1500 }, { house:"248", amount: 1500 },
+        { house:"249", amount: 1500 }, { house:"250", amount: 0 },
+        { house:"251", amount: 1500 }, { house:"252", amount: 0 },
+        { house:"253", amount: 1500 }, { house:"254", amount: 1500 },
+        { house:"255", amount: 0 }, { house:"256", amount: 0 },
+        { house:"257", amount: 1500 }, { house:"258", amount: 0 },
+        { house:"259", amount: 0 }
     ];
 
     // ============================================
@@ -502,6 +377,9 @@
     const registerBtn = document.getElementById('registerBtn');
     const registerMessage = document.getElementById('registerMessage');
     const qrBox = document.getElementById('qrBox');
+    const passCodeDisplay = document.getElementById('passCodeDisplay');
+    const passHouse = document.getElementById('passHouse');
+    const passFamily = document.getElementById('passFamily');
     
     const scanInput = document.getElementById('scanInput');
     const scanBtn = document.getElementById('scanBtn');
@@ -570,7 +448,7 @@
             await db.collection('events')
                 .doc(state.eventId)
                 .collection('registrations')
-                .doc(registration.house) // Use house number as document ID
+                .doc(registration.house)
                 .set(registration);
             return true;
         } catch (error) {
@@ -580,7 +458,7 @@
     }
 
     // ============================================
-    // 4. REGISTER HOUSE & GENERATE QR (FIXED - WITH SECURE QR)
+    // 4. REGISTER HOUSE (FIXED - NO QR LIBRARY)
     // ============================================
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -604,20 +482,17 @@
             return;
         }
         
-        // Check if already registered (check Firebase data)
+        // Check if already registered
         const existingReg = state.registrations.find(r => r.house === house);
         if (existingReg) {
             showMessage('registerMessage', `House ${house} is already registered for this event!`, 'error');
             return;
         }
         
-        // Generate SECURE pass ID (random + timestamp)
+        // Generate SECURE pass ID
         const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
         const timePart = Date.now().toString().slice(-4);
         const passId = `PASS-${randomPart}${timePart}`;
-        
-        // 🔒 SECURE: QR contains ONLY the pass ID (no house info!)
-        const qrCodeData = passId;
         
         // Registration object
         const registration = {
@@ -626,7 +501,6 @@
             mobile,
             family,
             passId,
-            qrCodeData,
             registeredAt: new Date().toISOString(),
             entered: false,
             entryTime: null
@@ -641,24 +515,17 @@
         const saved = await saveRegistrationToFirebase(registration);
         
         if (saved) {
-            // Add to local state
+            // ✅ Add to local state
             state.registrations.push(registration);
             
-            // Show QR
+            // ✅ Show success message
             showMessage('registerMessage', `✅ Registration successful for House ${house}!`, 'success');
             
+            // ✅ Show PASS CODE (no QR library needed!)
             qrBox.classList.remove('hidden');
-            document.getElementById('qrcode').innerHTML = '';
-            new QRCode(document.getElementById('qrcode'), {
-                text: qrCodeData, // 🔒 Only pass ID, no house info!
-                width: 180,
-                height: 180,
-                colorDark: '#1e1814',
-                colorLight: '#ffffff'
-            });
-            
-            document.getElementById('passHouse').textContent = house;
-            document.getElementById('passId').textContent = passId;
+            passCodeDisplay.textContent = passId;
+            passHouse.textContent = house;
+            passFamily.textContent = family.length > 0 ? family.join(', ') : 'None';
             
             registerBtn.textContent = '✅ Registered!';
             
@@ -680,7 +547,7 @@
     });
 
     // ============================================
-    // 5. SCAN QR & VERIFY ENTRY (FIXED - SECURE)
+    // 5. SCAN QR & VERIFY ENTRY
     // ============================================
     scanBtn.addEventListener('click', async () => {
         const code = scanInput.value.trim();
@@ -689,22 +556,12 @@
             return;
         }
         
-        // 🔒 Find registration by pass ID (only matches passId)
         const reg = state.registrations.find(r => r.passId === code);
         
         if (!reg) {
             showScanResult('❌ INVALID QR - No matching registration found', 'invalid');
             return;
         }
-        
-        // ✅ Show house details (but only the scanner sees this)
-        const details = `
-            <p><strong>🏠 House:</strong> ${reg.house}</p>
-            <p><strong>👤 Resident:</strong> ${reg.name}</p>
-            <p><strong>📱 Mobile:</strong> ${reg.mobile}</p>
-            <p><strong>👨‍👩‍👦 Family:</strong> ${reg.family.join(', ') || 'None'}</p>
-            <p><strong>Status:</strong> ${reg.entered ? '❌ Already entered' : '✅ Valid - Not yet entered'}</p>
-        `;
         
         if (reg.entered) {
             showScanResult(`❌ ALREADY ENTERED - House ${reg.house} entered at ${reg.entryTime}`, 'invalid');
@@ -715,16 +572,12 @@
         reg.entered = true;
         reg.entryTime = new Date().toLocaleTimeString();
         
-        // Update in Firebase
         await saveRegistrationToFirebase(reg);
         
         showScanResult(`✅ VALID ENTRY - House ${reg.house} (${reg.name}) - Welcome!`, 'valid');
         
-        // Update admin
         updateAdminDashboard();
         loadRecentEntries();
-        
-        // Clear input
         scanInput.value = '';
     });
     
@@ -742,7 +595,7 @@
     }
 
     // ============================================
-    // 6. ADMIN DASHBOARD (LIVE FROM FIREBASE)
+    // 6. ADMIN DASHBOARD
     // ============================================
     function updateAdminDashboard() {
         const totalHouses = PAID_HOUSES.length;
@@ -755,7 +608,6 @@
         statRegistered.textContent = registered;
         statEntered.textContent = entered;
         
-        // House status list
         if (houseStatusList) {
             let html = '';
             PAID_HOUSES.forEach(ph => {
@@ -828,7 +680,7 @@
     }
 
     // ============================================
-    // 9. DOWNLOAD REPORT (FROM FIREBASE DATA)
+    // 9. DOWNLOAD REPORT
     // ============================================
     document.getElementById('downloadBtn')?.addEventListener('click', () => {
         let csv = 'House,Resident,Family,Registered,Entered,EntryTime,PassID\n';
@@ -870,7 +722,7 @@
     });
 
     // ============================================
-    // 11. REAL-TIME LISTENER (LIVE UPDATES)
+    // 11. REAL-TIME LISTENER
     // ============================================
     function setupRealtimeListener() {
         db.collection('events')
@@ -893,7 +745,6 @@
     // 12. INITIALIZATION
     // ============================================
     window.addEventListener('load', async () => {
-        // Check online status
         const updateStatus = () => {
             const statusEl = document.getElementById('onlineStatus');
             if (navigator.onLine) {
@@ -908,13 +759,8 @@
         window.addEventListener('online', updateStatus);
         window.addEventListener('offline', updateStatus);
         
-        // Load data from Firebase
         await loadRegistrations();
-        
-        // Setup real-time listener
         setupRealtimeListener();
-        
-        // Auto-focus house input
         houseInput.focus();
         
         console.log('🎟️ Society Pass Manager started!');
