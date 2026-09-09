@@ -9,6 +9,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     
+    <!-- QR Scanner -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    
     <!-- SheetJS for Excel parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -38,13 +41,12 @@
             box-shadow: 0 8px 40px rgba(0,0,0,0.08);
         }
 
+        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0ebe6;
+            margin-bottom: 8px;
         }
         
         .header .society-name {
@@ -63,6 +65,19 @@
             letter-spacing: 0.5px;
         }
 
+        /* Offline Ready Badge */
+        .offline-badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        /* Status Bar */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -76,12 +91,8 @@
             color: #2e7d32;
             font-weight: 600;
         }
-        
-        .status-bar .offline {
-            color: #c62828;
-            font-weight: 600;
-        }
 
+        /* Event Card */
         .event-card {
             background: #faf6f0;
             border-radius: 16px;
@@ -119,6 +130,44 @@
             margin-top: 6px;
         }
 
+        /* Tabs - Pill Style */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin: 16px 0;
+            background: #f0ebe6;
+            border-radius: 30px;
+            padding: 4px;
+        }
+        
+        .tabs button {
+            flex: 1;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            background: transparent;
+            color: #6b5a4e;
+            transition: 0.2s;
+        }
+        
+        .tabs button.active {
+            background: #1e1814;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Password Gate */
         .password-gate {
             background: #faf6f0;
             border-radius: 16px;
@@ -199,44 +248,8 @@
             text-align: center;
         }
 
-        .tabs {
-            display: flex;
-            gap: 6px;
-            margin: 16px 0;
-            background: #f0ebe6;
-            border-radius: 14px;
-            padding: 4px;
-        }
-        
-        .tabs button {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            background: transparent;
-            color: #6b5a4e;
-            transition: 0.2s;
-        }
-        
-        .tabs button.active {
-            background: white;
-            color: #1e1814;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-
         /* ============================================
-           REGISTRATION FORM - UPDATED
+           REGISTRATION FORM
            ============================================ */
         .form-group {
             margin-bottom: 16px;
@@ -272,7 +285,6 @@
             box-shadow: 0 0 0 3px rgba(180, 95, 58, 0.15);
         }
 
-        /* Quick Select Buttons */
         .quick-select {
             display: flex;
             flex-wrap: wrap;
@@ -296,7 +308,7 @@
             color: #b45f3a;
         }
 
-        /* Family Member Count */
+        /* Family Member Counter - STARTS AT 0 */
         .member-counter {
             display: flex;
             align-items: center;
@@ -353,7 +365,7 @@
             color: #b45f3a;
         }
 
-        /* Food Preference - Card Style */
+        /* Food Preference */
         .food-options {
             display: flex;
             flex-direction: column;
@@ -414,8 +426,7 @@
             font-size: 12px;
             color: #6b5a4e;
         }
-        
-        /* Swaminarayan Count - shown when needed */
+
         .swaminarayan-section {
             margin-top: 10px;
             padding: 12px 16px;
@@ -450,7 +461,6 @@
             font-size: 16px;
         }
 
-        /* Catering Summary */
         .catering-summary {
             background: #faf6f0;
             border-radius: 12px;
@@ -480,7 +490,170 @@
         }
 
         /* ============================================
-           ADMIN DASHBOARD
+           SCANNER - Camera & Live Data
+           ============================================ */
+        .scanner-container {
+            background: #1e1814;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .scanner-container .scanner-title {
+            color: #f5e6d3;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .scanner-container .scanner-title .gate-badge {
+            background: #b45f3a;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        #scanner-video {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: #0a0a0a;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b5a4e;
+            font-size: 14px;
+        }
+        
+        #scanner-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .scanner-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .scanner-controls button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .scanner-controls .scan-btn {
+            background: #b45f3a;
+            color: white;
+        }
+        
+        .scanner-controls .scan-btn:active {
+            transform: scale(0.97);
+        }
+        
+        .scanner-controls .scan-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .scanner-controls .upload-btn {
+            background: #f0ebe6;
+            color: #6b5a4e;
+        }
+        
+        .scanner-controls .upload-btn:active {
+            transform: scale(0.97);
+        }
+        
+        .manual-input {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .manual-input input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #d6cdc4;
+            border-radius: 12px;
+            font-size: 14px;
+            background: white;
+        }
+        
+        .manual-input button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            background: #1e1814;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Scanner Result - Live Data Display */
+        .scanner-live-data {
+            background: #faf6f0;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-top: 12px;
+            display: none;
+        }
+        
+        .scanner-live-data.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .scanner-live-data .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 14px;
+            border-bottom: 1px solid #f0ebe6;
+        }
+        
+        .scanner-live-data .data-row:last-child {
+            border-bottom: none;
+        }
+        
+        .scanner-live-data .data-row .label {
+            color: #6b5a4e;
+        }
+        
+        .scanner-live-data .data-row .value {
+            font-weight: 600;
+            color: #1e1814;
+        }
+        
+        .scanner-live-data .status-valid {
+            color: #2e7d32;
+            font-weight: 700;
+        }
+        
+        .scanner-live-data .status-invalid {
+            color: #c62828;
+            font-weight: 700;
+        }
+
+        /* ============================================
+           ADMIN DASHBOARD - Dark KPI Cards
            ============================================ */
         .kpi-grid {
             display: grid;
@@ -506,12 +679,19 @@
         .kpi-card .number.orange { color: #ff9800; }
         .kpi-card .number.red { color: #ef5350; }
         .kpi-card .number.blue { color: #42a5f5; }
+        .kpi-card .number.gold { color: #ffd700; }
         
         .kpi-card .label {
             font-size: 11px;
             color: #9a887a;
             margin-top: 4px;
             font-weight: 500;
+        }
+        
+        .kpi-card .sub {
+            font-size: 10px;
+            color: #6b5a4e;
+            margin-top: 2px;
         }
 
         /* Excel Upload */
@@ -656,59 +836,6 @@
         .house-item .status.registered { color: #ff9800; }
         .house-item .status.entered { color: #2e7d32; }
 
-        /* Scanner */
-        .scanner-box {
-            background: #faf6f0;
-            border-radius: 14px;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .scanner-box input {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #d6cdc4;
-            border-radius: 12px;
-            font-size: 16px;
-            text-align: center;
-            margin: 12px 0;
-            background: white;
-        }
-        
-        .scanner-box .scan-btn {
-            width: 100%;
-            padding: 14px;
-            background: #b45f3a;
-            color: white;
-            border: none;
-            border-radius: 60px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        
-        .scanner-result {
-            margin-top: 12px;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: 600;
-            display: none;
-        }
-        
-        .scanner-result.valid {
-            display: block;
-            background: #e8f5e9;
-            border: 2px solid #4caf50;
-            color: #1e5a24;
-        }
-        
-        .scanner-result.invalid {
-            display: block;
-            background: #ffebee;
-            border: 2px solid #ef5350;
-            color: #b71c1c;
-        }
-
         /* Pass Display */
         .pass-box {
             text-align: center;
@@ -798,6 +925,19 @@
             color: #6b5a4e;
             cursor: pointer;
         }
+
+        /* Footer */
+        .footer {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 2px solid #f0ebe6;
+            text-align: center;
+        }
+        
+        .footer .text-sm {
+            font-size: 11px;
+            color: #9a887a;
+        }
     </style>
 </head>
 <body>
@@ -805,9 +945,12 @@
 <div class="app">
     <!-- Header -->
     <div class="header">
-        <span class="society-name">🏘️ Shree Balaji Heights CHS</span>
+        <span class="society-name">🏘️ TAKSH DIVINE</span>
         <span class="code-badge">Code: GM2026</span>
     </div>
+
+    <!-- Offline Ready -->
+    <div class="offline-badge">⚡ OFFLINE READY</div>
 
     <!-- Status Bar -->
     <div class="status-bar">
@@ -853,7 +996,6 @@
     <!-- ==================== TAB 1: RESIDENT PORTAL ==================== -->
     <div id="tab-resident" class="tab-content active" style="display:none;">
         <form id="registerForm">
-            <!-- House Number -->
             <div class="form-group">
                 <label>🏠 House Number (1 to 259) *</label>
                 <p class="hint">ONLY NUMBERS 1 TO 259 (NO A OR B)</p>
@@ -868,13 +1010,11 @@
                 </div>
             </div>
 
-            <!-- Primary Resident Name -->
             <div class="form-group">
                 <label>👤 Primary Resident Name *</label>
                 <input type="text" id="nameInput" placeholder="e.g. Shrikunj Patel" required />
             </div>
 
-            <!-- Attending Family Members - Counter Style -->
             <div class="form-group">
                 <label>👨‍👩‍👦 Attending Family Members (Dinner Count) *</label>
                 <p class="hint">Tap the + button to add each attending family member.</p>
@@ -892,7 +1032,6 @@
                 <p class="hint" style="margin-top:4px;">Volunteers scan this pass at the gate to admit your entire family for dinner and venue entry.</p>
             </div>
 
-            <!-- Food Preference -->
             <div class="form-group">
                 <label>🍽️ Prasad / Dinner Dietary Preference</label>
                 <p class="hint">100% Pure Veg</p>
@@ -922,14 +1061,12 @@
                 </div>
             </div>
 
-            <!-- Swaminarayan Count -->
             <div class="swaminarayan-section" id="swaminarayanSection">
                 <label>🟡 Swaminarayan / Jain count (No Onion & Garlic)</label>
                 <p class="hint">Enter number of people who prefer Swaminarayan/Jain food</p>
                 <input type="number" id="swaminarayanCountInput" value="0" min="0" />
             </div>
 
-            <!-- Catering Summary -->
             <div class="catering-summary" id="cateringSummary">
                 <div class="row">
                     <span class="label">Catering Allocation:</span>
@@ -937,7 +1074,6 @@
                 </div>
             </div>
 
-            <!-- Mobile Number -->
             <div class="form-group">
                 <label>📱 Mobile Number (Optional)</label>
                 <input type="tel" id="mobileInput" placeholder="e.g. 9876543210" />
@@ -952,25 +1088,70 @@
             <h3 style="font-size: 18px; color: #1e1814;">🎟️ Your Digital Pass</h3>
             <div class="pass-code" id="passCodeDisplay">---</div>
             <div class="pass-detail"><strong>House:</strong> <span id="passHouse">---</span></div>
-            <div class="pass-detail"><strong>Family:</strong> <span id="passFamilyCount">---</span></div>
+            <div class="pass-detail"><strong>Family Members:</strong> <span id="passFamilyCount">---</span></div>
             <div class="pass-detail"><strong>Food:</strong> <span id="passFood">---</span></div>
-            <div class="pass-detail"><strong>Members:</strong> <span id="passMemberCount">---</span></div>
+            <div class="pass-detail"><strong>Total Persons:</strong> <span id="passMemberCount">---</span></div>
             <div class="valid-badge">✅ Valid (Not yet entered)</div>
             <p class="text-sm mt-8">Show this code at the gate for entry</p>
         </div>
     </div>
 
-    <!-- ==================== TAB 2: GATE SCANNER ==================== -->
+    <!-- ==================== TAB 2: SCANNER ==================== -->
     <div id="tab-scanner" class="tab-content" style="display:none;">
-        <div class="scanner-box">
-            <p style="font-weight: 600; font-size: 16px;">📸 Scan QR Code</p>
-            <p class="text-sm">Enter the pass ID from the resident's QR</p>
-            <input type="text" id="scanInput" placeholder="Enter pass ID (e.g., PASS-ABC123456)" />
-            <button class="scan-btn" id="scanBtn">🔍 Verify Entry</button>
+        <!-- Scanner Container - Dark Background -->
+        <div class="scanner-container">
+            <div class="scanner-title">
+                <span>📸 Volunteer QR Scanner</span>
+                <span class="gate-badge">Active Gate: GM2026</span>
+            </div>
+            
+            <!-- Live Scanner Preview -->
+            <div id="scanner-video">
+                <span>📷 Camera Offline<br><span style="font-size:12px;color:#9a887a;">Tap below to activate</span></span>
+            </div>
+            
+            <!-- Scanner Controls -->
+            <div class="scanner-controls">
+                <button class="scan-btn" id="startScannerBtn" onclick="startScanner()">📷 Start Camera Scanner</button>
+            </div>
+            
+            <!-- Manual Input -->
+            <div class="manual-input">
+                <input type="text" id="scanInput" placeholder="Enter pass code manually..." />
+                <button onclick="manualScan()">Verify</button>
+            </div>
         </div>
-        
-        <div id="scanResult" class="scanner-result"></div>
-        
+
+        <!-- Live Scanner Result -->
+        <div id="scannerLiveData" class="scanner-live-data">
+            <div class="data-row">
+                <span class="label">🏠 House</span>
+                <span class="value" id="scanHouse">---</span>
+            </div>
+            <div class="data-row">
+                <span class="label">👤 Resident</span>
+                <span class="value" id="scanName">---</span>
+            </div>
+            <div class="data-row">
+                <span class="label">👨‍👩‍👦 Family Members</span>
+                <span class="value" id="scanFamily">---</span>
+            </div>
+            <div class="data-row">
+                <span class="label">🍽️ Food Preference</span>
+                <span class="value" id="scanFood">---</span>
+            </div>
+            <div class="data-row">
+                <span class="label">👥 Total Persons</span>
+                <span class="value" id="scanTotal">---</span>
+            </div>
+            <div class="data-row">
+                <span class="label">📋 Status</span>
+                <span class="value" id="scanStatus">---</span>
+            </div>
+            <button class="unlock-btn" id="admitBtn" style="margin-top:12px; display:none;" onclick="admitScanned()">✅ Admit Family</button>
+        </div>
+
+        <!-- Recent Entries -->
         <div style="margin-top: 16px;">
             <h3 style="font-size: 14px; margin-bottom: 8px;">⏱️ Recent Entries</h3>
             <div id="recentEntries">
@@ -996,8 +1177,9 @@
                 <div class="label">📝 Total Registered</div>
             </div>
             <div class="kpi-card">
-                <div class="number" id="statHousesIn">0</div>
+                <div class="number gold" id="statHousesIn">0</div>
                 <div class="label">🏠 Houses In</div>
+                <div class="sub" id="statHousesSub">0 / 106 Flats</div>
             </div>
         </div>
 
@@ -1014,7 +1196,7 @@
             <div class="file-name" id="fileName">No file selected</div>
             <div class="upload-status" id="uploadStatus"></div>
             
-            <button class="scan-btn" onclick="processExcelFile()" style="margin-top:10px; background:#1e1814;" id="processExcelBtn">
+            <button class="scan-btn" onclick="processExcelFile()" style="margin-top:10px; background:#1e1814; border:none; border-radius:30px; padding:12px 24px; color:white; font-weight:600; cursor:pointer; width:100%;" id="processExcelBtn">
                 🔄 Process & Update Houses
             </button>
         </div>
@@ -1078,8 +1260,9 @@
     </div>
 
     <!-- Footer -->
-    <div style="margin-top: 16px; padding-top: 12px; border-top: 2px solid #f0ebe6; text-align: center;">
-        <p class="text-sm">🔒 All data stored securely in Firebase Cloud</p>
+    <div class="footer">
+        <p class="text-sm">🔒 TAKSH DIVINE • Ganesh Mahotsav 2026</p>
+        <p class="text-sm">Offline-First Residential Pass & Gate Verification</p>
         <p class="text-sm" id="footerStats">0 houses registered • 0 entries</p>
     </div>
 </div>
@@ -1101,9 +1284,12 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 // ============================================
-// 📋 PAID HOUSES LIST - Loaded from Firebase
+// 📋 PAID HOUSES LIST
 // ============================================
 let PAID_HOUSES = [];
+let html5QrCode = null;
+let scannedRegistration = null;
+let isScannerRunning = false;
 
 // ============================================
 // APP STATE
@@ -1115,7 +1301,7 @@ const state = {
     isLoading: false,
     housesLoaded: false,
     foodPreference: 'regular',
-    familyCount: 0,
+    familyCount: 0,  // STARTS AT 0
     totalMembers: 1
 };
 
@@ -1154,14 +1340,16 @@ const cateringAllocation = document.getElementById('cateringAllocation');
 const swaminarayanSection = document.getElementById('swaminarayanSection');
 
 const scanInput = document.getElementById('scanInput');
-const scanBtn = document.getElementById('scanBtn');
 const scanResult = document.getElementById('scanResult');
 const recentEntries = document.getElementById('recentEntries');
+const scannerLiveData = document.getElementById('scannerLiveData');
+const startScannerBtn = document.getElementById('startScannerBtn');
 
 const statAdmitted = document.getElementById('statAdmitted');
 const statPending = document.getElementById('statPending');
 const statRegistered = document.getElementById('statRegistered');
 const statHousesIn = document.getElementById('statHousesIn');
+const statHousesSub = document.getElementById('statHousesSub');
 const statTotalHouses = document.getElementById('statTotalHouses');
 const statPassesIssued = document.getElementById('statPassesIssued');
 const houseStatusList = document.getElementById('houseStatusList');
@@ -1178,8 +1366,17 @@ const excelFileInput = document.getElementById('excelFile');
 const fileNameDisplay = document.getElementById('fileName');
 const uploadStatus = document.getElementById('uploadStatus');
 
+// Scanner display elements
+const scanHouse = document.getElementById('scanHouse');
+const scanName = document.getElementById('scanName');
+const scanFamily = document.getElementById('scanFamily');
+const scanFood = document.getElementById('scanFood');
+const scanTotal = document.getElementById('scanTotal');
+const scanStatus = document.getElementById('scanStatus');
+const admitBtn = document.getElementById('admitBtn');
+
 // ============================================
-// 1. FAMILY MEMBER COUNTER
+// 1. FAMILY MEMBER COUNTER - STARTS AT 0
 // ============================================
 function changeFamilyCount(delta) {
     state.familyCount = Math.max(0, state.familyCount + delta);
@@ -1197,7 +1394,7 @@ function quickSelect(house) {
 }
 
 // ============================================
-// 3. FOOD PREFERENCE SELECTION
+// 3. FOOD PREFERENCE
 // ============================================
 function selectFood(el) {
     document.querySelectorAll('.food-option').forEach(opt => opt.classList.remove('selected'));
@@ -1259,9 +1456,6 @@ async function loadHousesFromFirebase() {
     }
 }
 
-// ============================================
-// 5. GENERATE FALLBACK HOUSES (1-259)
-// ============================================
 function generateFallbackHouses() {
     PAID_HOUSES = [];
     for (let i = 1; i <= 259; i++) {
@@ -1285,41 +1479,17 @@ function generateFallbackHouses() {
     }
 }
 
-// ============================================
-// 6. UPDATE HOUSE DISPLAY
-// ============================================
 function updateHouseDisplay() {
     const paidCount = PAID_HOUSES.filter(h => h.amount > 0).length;
     const totalCount = PAID_HOUSES.length;
     verifiedBadge.textContent = `✅ ${paidCount} Verified Houses Pre-Approved`;
     houseCount.textContent = `🏠 ${totalCount} Houses`;
     statTotalHouses.textContent = paidCount;
+    statHousesSub.textContent = `0 / ${paidCount} Flats`;
 }
 
 // ============================================
-// 7. SAVE HOUSES TO FIREBASE
-// ============================================
-async function saveHousesToFirebase() {
-    try {
-        const batch = db.batch();
-        const housesRef = db.collection('events').doc(state.eventId).collection('houses');
-        
-        PAID_HOUSES.forEach(house => {
-            const docRef = housesRef.doc(house.house);
-            batch.set(docRef, house);
-        });
-        
-        await batch.commit();
-        console.log(`✅ Saved ${PAID_HOUSES.length} houses to Firebase`);
-        return true;
-    } catch (error) {
-        console.error('Error saving houses:', error);
-        return false;
-    }
-}
-
-// ============================================
-// 8. EXCEL FILE HANDLING
+// 5. EXCEL FILE PROCESSING
 // ============================================
 excelFileInput.addEventListener('change', function(e) {
     if (this.files && this.files[0]) {
@@ -1333,9 +1503,6 @@ excelFileInput.addEventListener('change', function(e) {
     }
 });
 
-// ============================================
-// 9. PROCESS EXCEL FILE
-// ============================================
 async function processExcelFile() {
     const fileInput = document.getElementById('excelFile');
     const file = fileInput.files[0];
@@ -1359,7 +1526,6 @@ async function processExcelFile() {
         
         const newHouses = [];
         let processed = 0;
-        let skipped = 0;
         
         jsonData.forEach(row => {
             const houseKeys = Object.keys(row).filter(k => 
@@ -1380,11 +1546,7 @@ async function processExcelFile() {
                 if (houseNo && !isNaN(amount)) {
                     newHouses.push({ house: houseNo, amount: amount });
                     processed++;
-                } else {
-                    skipped++;
                 }
-            } else {
-                skipped++;
             }
         });
         
@@ -1404,12 +1566,11 @@ async function processExcelFile() {
         updateAdminDashboard();
         
         uploadStatus.className = 'upload-status success';
-        uploadStatus.textContent = `✅ Successfully imported ${processed} houses (${skipped} rows skipped)`;
+        uploadStatus.textContent = `✅ Successfully imported ${processed} houses`;
         uploadStatus.style.display = 'block';
         
         fileInput.value = '';
         fileNameDisplay.textContent = 'No file selected';
-        
         loadRegistrations();
         
     } catch (error) {
@@ -1423,8 +1584,27 @@ async function processExcelFile() {
     btn.disabled = false;
 }
 
+async function saveHousesToFirebase() {
+    try {
+        const batch = db.batch();
+        const housesRef = db.collection('events').doc(state.eventId).collection('houses');
+        
+        PAID_HOUSES.forEach(house => {
+            const docRef = housesRef.doc(house.house);
+            batch.set(docRef, house);
+        });
+        
+        await batch.commit();
+        console.log(`✅ Saved ${PAID_HOUSES.length} houses to Firebase`);
+        return true;
+    } catch (error) {
+        console.error('Error saving houses:', error);
+        return false;
+    }
+}
+
 // ============================================
-// 10. PASSWORD GATE
+// 6. PASSWORD GATE
 // ============================================
 const CORRECT_PASSWORD = 'Ganesh@2026';
 
@@ -1464,7 +1644,7 @@ function unlockPortal() {
 }
 
 // ============================================
-// 11. TAB SWITCHING
+// 7. TAB SWITCHING
 // ============================================
 document.querySelectorAll('.tabs button').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -1481,7 +1661,7 @@ document.querySelectorAll('.tabs button').forEach(tab => {
 });
 
 // ============================================
-// 12. FIREBASE - LOAD REGISTRATIONS
+// 8. FIREBASE - LOAD REGISTRATIONS
 // ============================================
 async function loadRegistrations() {
     try {
@@ -1504,9 +1684,6 @@ async function loadRegistrations() {
     }
 }
 
-// ============================================
-// 13. FIREBASE - SAVE REGISTRATION
-// ============================================
 async function saveRegistrationToFirebase(registration) {
     try {
         await db.collection('events')
@@ -1522,7 +1699,7 @@ async function saveRegistrationToFirebase(registration) {
 }
 
 // ============================================
-// 14. REGISTER HOUSE (FIXED PAYMENT LOGIC)
+// 9. REGISTER HOUSE
 // ============================================
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1533,14 +1710,9 @@ registerForm.addEventListener('submit', async (e) => {
     const name = nameInput.value.trim();
     const mobile = mobileInput.value.trim();
     
-    // Get food preference
     const selectedFood = document.querySelector('.food-option.selected');
     const foodPreference = selectedFood ? selectedFood.dataset.value : 'regular';
-    
-    // Get Swaminarayan count
     const swaminarayanCount = parseInt(swaminarayanCountInput.value) || 0;
-    
-    // Calculate members
     const totalMembers = state.totalMembers;
     const regularCount = Math.max(0, totalMembers - swaminarayanCount);
     
@@ -1549,19 +1721,14 @@ registerForm.addEventListener('submit', async (e) => {
         return;
     }
     
-    // 🔍 CRITICAL: Check if house is in paid list
     const paidHouse = PAID_HOUSES.find(h => h.house === house);
     
-    // If house not found in list
     if (!paidHouse) {
         showMessage('registerMessage', 
             `❌ House ${house} is not found in the society list.\n\nPlease contact the committee to add your house.`, 
             'error');
         return;
     }
-    
-    // ✅ CHECK PAYMENT - AMOUNT > 0 MEANS PAID
-    console.log(`🔍 House ${house}: Amount = ${paidHouse.amount}`);
     
     if (paidHouse.amount <= 0) {
         showMessage('registerMessage', 
@@ -1570,14 +1737,12 @@ registerForm.addEventListener('submit', async (e) => {
         return;
     }
     
-    // Check if already registered
     const existingReg = state.registrations.find(r => r.house === house);
     if (existingReg) {
         showMessage('registerMessage', `❌ House ${house} is already registered for this event!`, 'error');
         return;
     }
     
-    // Generate pass ID
     const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
     const timePart = Date.now().toString().slice(-4);
     const passId = `PASS-${randomPart}${timePart}`;
@@ -1621,7 +1786,6 @@ registerForm.addEventListener('submit', async (e) => {
         
         updateAdminDashboard();
         
-        // Reset form
         houseInput.value = '';
         nameInput.value = '';
         mobileInput.value = '';
@@ -1640,49 +1804,144 @@ registerForm.addEventListener('submit', async (e) => {
 });
 
 // ============================================
-// 15. SCANNER
+// 10. QR SCANNER - Camera & Manual
 // ============================================
-scanBtn.addEventListener('click', async () => {
-    const code = scanInput.value.trim();
-    if (!code) {
-        showScanResult('Please enter a pass ID', 'invalid');
-        return;
+async function startScanner() {
+    const scannerDiv = document.getElementById('scanner-video');
+    
+    try {
+        if (html5QrCode) {
+            await html5QrCode.stop();
+            html5QrCode = null;
+        }
+        
+        startScannerBtn.textContent = '⏳ Starting Camera...';
+        startScannerBtn.disabled = true;
+        
+        html5QrCode = new Html5Qrcode("scanner-video");
+        
+        const config = {
+            fps: 10,
+            qrbox: { width: 250, height: 250 }
+        };
+        
+        await html5QrCode.start(
+            { facingMode: "environment" },
+            config,
+            onScanSuccess,
+            onScanError
+        );
+        
+        startScannerBtn.textContent = '📷 Camera Active';
+        startScannerBtn.style.background = '#2e7d32';
+        isScannerRunning = true;
+        
+    } catch (error) {
+        console.error('Camera error:', error);
+        startScannerBtn.textContent = '📷 Start Camera Scanner';
+        startScannerBtn.disabled = false;
+        scannerDiv.innerHTML = `
+            <span>❌ Camera unavailable<br>
+            <span style="font-size:12px;color:#9a887a;">${error.message || 'Please allow camera access'}</span>
+            </span>
+        `;
+    }
+}
+
+function onScanSuccess(decodedText, decodedResult) {
+    // Stop scanner after successful scan to prevent multiple scans
+    if (html5QrCode && isScannerRunning) {
+        html5QrCode.stop();
+        isScannerRunning = false;
+        startScannerBtn.textContent = '📷 Rescan';
+        startScannerBtn.style.background = '#b45f3a';
+        startScannerBtn.disabled = false;
     }
     
+    // Process the scanned code
+    processScannedCode(decodedText);
+}
+
+function onScanError(err) {
+    // Ignore errors - they happen continuously during scanning
+}
+
+function manualScan() {
+    const code = scanInput.value.trim();
+    if (!code) {
+        showScannerResult('Please enter a pass ID', false);
+        return;
+    }
+    processScannedCode(code);
+    scanInput.value = '';
+}
+
+function processScannedCode(code) {
+    // Find registration by pass ID
     const reg = state.registrations.find(r => r.passId === code);
     
     if (!reg) {
-        showScanResult('❌ Invalid QR - No matching registration found', 'invalid');
+        showScannerResult('❌ Invalid QR - No matching registration found', false);
         return;
     }
     
     if (reg.entered) {
-        showScanResult(`❌ Already entered at ${reg.entryTime}`, 'invalid');
+        showScannerResult(`❌ Already entered at ${reg.entryTime}`, false);
         return;
     }
     
+    // Show live data
+    scannedRegistration = reg;
+    scannerLiveData.classList.add('show');
+    scanHouse.textContent = reg.house;
+    scanName.textContent = reg.name;
+    scanFamily.textContent = reg.familyCount || 0;
+    scanFood.textContent = reg.foodPreference === 'regular' ? 'Regular Pure Veg' : 
+                           reg.foodPreference === 'swaminarayan' ? 'Swaminarayan/Jain' : 'Mixed';
+    scanTotal.textContent = reg.totalMembers || 1;
+    scanStatus.textContent = '✅ Valid - Not yet entered';
+    scanStatus.style.color = '#2e7d32';
+    
+    admitBtn.style.display = 'block';
+    admitBtn.textContent = `✅ Admit Family (${reg.totalMembers || 1} persons)`;
+}
+
+function showScannerResult(message, isValid) {
+    scannerLiveData.classList.add('show');
+    scanStatus.textContent = message;
+    scanStatus.style.color = isValid ? '#2e7d32' : '#c62828';
+    admitBtn.style.display = 'none';
+}
+
+async function admitScanned() {
+    if (!scannedRegistration) return;
+    
+    const reg = scannedRegistration;
+    
+    // Mark as entered
     reg.entered = true;
     reg.entryTime = new Date().toLocaleTimeString();
     await saveRegistrationToFirebase(reg);
     
-    showScanResult(`✅ VALID ENTRY - House ${reg.house} (${reg.name})\n\nMembers: ${reg.totalMembers} (${reg.swaminarayanCount} Jain, ${reg.regularCount} Regular)`, 'valid');
+    scanStatus.textContent = `✅ ENTRY GRANTED - ${reg.totalMembers || 1} persons admitted`;
+    scanStatus.style.color = '#2e7d32';
+    admitBtn.style.display = 'none';
     
     updateAdminDashboard();
     loadRecentEntries();
-    scanInput.value = '';
-});
-
-function showScanResult(message, type) {
-    scanResult.textContent = message;
-    scanResult.className = 'scanner-result ' + type;
-    scanResult.style.display = 'block';
+    
+    // Reset scanner state
     setTimeout(() => {
-        scanResult.style.display = 'none';
-    }, 6000);
+        scannerLiveData.classList.remove('show');
+        scannedRegistration = null;
+        if (html5QrCode && !isScannerRunning) {
+            startScanner();
+        }
+    }, 3000);
 }
 
 // ============================================
-// 16. ADMIN DASHBOARD
+// 11. ADMIN DASHBOARD
 // ============================================
 function updateAdminDashboard() {
     const paidHouses = PAID_HOUSES.filter(h => h.amount > 0).length;
@@ -1694,16 +1953,15 @@ function updateAdminDashboard() {
     statPending.textContent = pending;
     statRegistered.textContent = registered;
     statHousesIn.textContent = entered;
+    statHousesSub.textContent = `${entered} / ${paidHouses} Flats`;
     statTotalHouses.textContent = paidHouses;
     statPassesIssued.textContent = registered;
     
     footerStats.textContent = `${registered} houses registered • ${entered} entries`;
     
     // Catering calculations
-    let jainMeals = 0;
-    let regularMeals = 0;
-    let jainAdmitted = 0;
-    let regularAdmitted = 0;
+    let jainMeals = 0, regularMeals = 0;
+    let jainAdmitted = 0, regularAdmitted = 0;
     
     state.registrations.forEach(r => {
         const jainCount = r.swaminarayanCount || 0;
@@ -1733,22 +1991,18 @@ function updateAdminDashboard() {
         if (reg?.entered) { statusText = '✅ Entered'; statusClass = 'entered'; }
         else if (reg) { statusText = '📝 Registered'; statusClass = 'registered'; }
         
-        const foodIcon = reg?.foodPreference === 'swaminarayan' ? '🟡' : 
-                         reg?.foodPreference === 'mixed' ? '🔄' : '🟢';
-        const members = reg?.totalMembers || 0;
-        
         html += `
             <div class="house-item">
                 <span>🏠 House ${ph.house}</span>
-                <span class="status ${statusClass}">${statusText} ${foodIcon} ${members > 0 ? members : ''}</span>
+                <span class="status ${statusClass}">${statusText}</span>
             </div>
         `;
     });
-    houseStatusList.innerHTML = html || '<p class="text-sm">No houses found. Upload an Excel file to import houses.</p>';
+    houseStatusList.innerHTML = html || '<p class="text-sm">No houses found. Upload Excel file to import.</p>';
 }
 
 // ============================================
-// 17. RECENT ENTRIES
+// 12. RECENT ENTRIES
 // ============================================
 function loadRecentEntries() {
     const entries = state.registrations.filter(r => r.entered).slice(-5).reverse();
@@ -1770,7 +2024,7 @@ function loadRecentEntries() {
 }
 
 // ============================================
-// 18. UTILITY FUNCTIONS
+// 13. UTILITY FUNCTIONS
 // ============================================
 function showMessage(id, text, type) {
     const el = document.getElementById(id);
@@ -1783,7 +2037,7 @@ function showMessage(id, text, type) {
 }
 
 // ============================================
-// 19. ADMIN ACTIONS
+// 14. ADMIN ACTIONS
 // ============================================
 function exportCSV() {
     let csv = 'House,Amount,Resident,Family Members,Total Members,Food Preference,Jain Count,Regular Count,Registered,Entered,EntryTime,PassID\n';
@@ -1836,7 +2090,7 @@ function resetEvent() {
 }
 
 // ============================================
-// 20. REAL-TIME LISTENER
+// 15. REAL-TIME LISTENER
 // ============================================
 function setupRealtimeListener() {
     db.collection('events')
@@ -1856,7 +2110,7 @@ function setupRealtimeListener() {
 }
 
 // ============================================
-// 21. INITIALIZATION
+// 16. INITIALIZATION
 // ============================================
 window.addEventListener('load', () => {
     const updateStatus = () => {
