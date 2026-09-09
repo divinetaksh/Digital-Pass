@@ -254,6 +254,194 @@
         }
 
         /* ============================================
+           REGISTRATION FORM - Food Preferences
+           ============================================ */
+        .form-group {
+            margin-bottom: 14px;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #2b1f17;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #d6cdc4;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            transition: 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            border-color: #b45f3a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(180, 95, 58, 0.15);
+        }
+        
+        .family-member-input {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        
+        .family-member-input input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid #d6cdc4;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        
+        .family-member-input .remove-btn {
+            background: #ffebee;
+            color: #c62828;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .add-member-btn {
+            background: #f0ebe6;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b5a4e;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        /* Food Preference Cards */
+        .food-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        
+        .food-option {
+            padding: 12px 16px;
+            border: 2px solid #d6cdc4;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .food-option:hover {
+            border-color: #b45f3a;
+        }
+        
+        .food-option.selected {
+            border-color: #b45f3a;
+            background: #faf6f0;
+        }
+        
+        .food-option .radio {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #d6cdc4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .food-option.selected .radio {
+            border-color: #b45f3a;
+        }
+        
+        .food-option.selected .radio::after {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #b45f3a;
+        }
+        
+        .food-option .food-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1e1814;
+        }
+        
+        .food-option .food-sub {
+            font-size: 12px;
+            color: #6b5a4e;
+        }
+        
+        .swaminarayan-count {
+            margin-top: 10px;
+            padding: 12px;
+            background: #faf6f0;
+            border-radius: 12px;
+            display: none;
+        }
+        
+        .swaminarayan-count.show {
+            display: block;
+        }
+        
+        .swaminarayan-count label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #2b1f17;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .swaminarayan-count input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #d6cdc4;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+        
+        .catering-summary {
+            background: #faf6f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-top: 10px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .catering-summary.show {
+            display: block;
+        }
+        
+        .catering-summary .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+        
+        .catering-summary .row .label {
+            color: #6b5a4e;
+        }
+        
+        .catering-summary .row .value {
+            font-weight: 600;
+            color: #1e1814;
+        }
+
+        /* ============================================
            ADMIN DASHBOARD - Dark KPI Cards
            ============================================ */
         .kpi-grid {
@@ -300,7 +488,7 @@
         }
 
         /* ============================================
-           EXCEL UPLOAD SECTION
+           EXCEL UPLOAD
            ============================================ */
         .excel-upload {
             background: #faf6f0;
@@ -689,32 +877,93 @@
     <!-- ==================== TAB 1: RESIDENT PORTAL ==================== -->
     <div id="tab-resident" class="tab-content active" style="display:none;">
         <form id="registerForm">
-            <div style="margin-bottom: 12px;">
-                <label style="font-weight: 600; font-size: 14px; color: #2b1f17; display: block; margin-bottom: 4px;">🏠 House Number</label>
-                <input type="text" id="houseInput" placeholder="Enter your house number" style="width:100%;padding:12px 14px;border:2px solid #d6cdc4;border-radius:12px;font-size:16px;" required />
+            <!-- House Number -->
+            <div class="form-group">
+                <label>🏠 House Number (1 to 259) *</label>
+                <input type="text" id="houseInput" placeholder="ONLY NUMBERS 1 TO 259 (NO A OR B)" required />
             </div>
-            <div style="margin-bottom: 12px;">
-                <label style="font-weight: 600; font-size: 14px; color: #2b1f17; display: block; margin-bottom: 4px;">👤 Resident Name</label>
-                <input type="text" id="nameInput" placeholder="Full name" style="width:100%;padding:12px 14px;border:2px solid #d6cdc4;border-radius:12px;font-size:16px;" required />
+
+            <!-- Resident Name -->
+            <div class="form-group">
+                <label>👤 Primary Resident Name *</label>
+                <input type="text" id="nameInput" placeholder="e.g. Shrikunj Patel" required />
             </div>
-            <div style="margin-bottom: 12px;">
-                <label style="font-weight: 600; font-size: 14px; color: #2b1f17; display: block; margin-bottom: 4px;">📱 Mobile Number</label>
-                <input type="tel" id="mobileInput" placeholder="9876543210" style="width:100%;padding:12px 14px;border:2px solid #d6cdc4;border-radius:12px;font-size:16px;" required />
+
+            <!-- Family Members -->
+            <div class="form-group">
+                <label>👨‍👩‍👦 Attending Family Members (Dinner Count) *</label>
+                <p class="text-sm" style="margin-bottom: 8px;">Tap the + button to add each attending family member.</p>
+                <div id="familyMembersContainer">
+                    <div class="family-member-input">
+                        <input type="text" placeholder="Member name" class="family-input" />
+                        <button type="button" class="remove-btn" onclick="removeFamilyMember(this)" style="display:none;">✕</button>
+                    </div>
+                </div>
+                <button type="button" class="add-member-btn" onclick="addFamilyMember()">+ Add Family Member</button>
             </div>
-            <div style="margin-bottom: 12px;">
-                <label style="font-weight: 600; font-size: 14px; color: #2b1f17; display: block; margin-bottom: 4px;">👨‍👩‍👦 Family Members (comma separated)</label>
-                <input type="text" id="familyInput" placeholder="e.g., Priya, Aarav" style="width:100%;padding:12px 14px;border:2px solid #d6cdc4;border-radius:12px;font-size:16px;" />
+
+            <!-- Food Preference -->
+            <div class="form-group">
+                <label>🍽️ Prasad / Dinner Dietary Preference</label>
+                <p class="text-sm" style="margin-bottom: 8px;">100% Pure Veg</p>
+                <div class="food-options">
+                    <div class="food-option selected" data-value="regular" onclick="selectFood(this)">
+                        <div class="radio"></div>
+                        <div>
+                            <div class="food-label">Regular Pure Veg</div>
+                            <div class="food-sub">All Regular</div>
+                        </div>
+                    </div>
+                    <div class="food-option" data-value="swaminarayan" onclick="selectFood(this)">
+                        <div class="radio"></div>
+                        <div>
+                            <div class="food-label">Swaminarayan / Jain</div>
+                            <div class="food-sub">No Onion & Garlic</div>
+                        </div>
+                    </div>
+                    <div class="food-option" data-value="mixed" onclick="selectFood(this)">
+                        <div class="radio"></div>
+                        <div>
+                            <div class="food-label">Mixed Dietary</div>
+                            <div class="food-sub">Split counts</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <button type="submit" class="unlock-btn" id="registerBtn">🎟️ Generate Digital Pass</button>
+
+            <!-- Swaminarayan Count (shown when mixed or swaminarayan selected) -->
+            <div class="swaminarayan-count" id="swaminarayanCount">
+                <label>🟡 Swaminarayan / Jain count (No Onion & Garlic)</label>
+                <input type="number" id="swaminarayanCountInput" value="0" min="0" />
+            </div>
+
+            <!-- Catering Summary -->
+            <div class="catering-summary" id="cateringSummary">
+                <div class="row">
+                    <span class="label">Catering Allocation:</span>
+                    <span class="value" id="cateringAllocation">0 Swaminarayan/Jain + 0 Regular</span>
+                </div>
+            </div>
+
+            <!-- Mobile Number -->
+            <div class="form-group">
+                <label>📱 Mobile Number (Optional)</label>
+                <input type="tel" id="mobileInput" placeholder="e.g. 9876543210" />
+            </div>
+
+            <button type="submit" class="unlock-btn" id="registerBtn">✅ Verify & Generate Digital Pass</button>
         </form>
 
         <div id="registerMessage" class="message"></div>
 
         <div id="passBox" class="pass-box hidden">
             <h3 style="font-size: 18px; color: #1e1814;">🎟️ Your Digital Pass</h3>
+            <p class="text-sm" style="margin-bottom: 8px;">Volunteers scan this pass at the gate to admit your entire family for dinner and venue entry.</p>
             <div class="pass-code" id="passCodeDisplay">---</div>
             <div class="pass-detail"><strong>House:</strong> <span id="passHouse">---</span></div>
             <div class="pass-detail"><strong>Family:</strong> <span id="passFamily">---</span></div>
+            <div class="pass-detail"><strong>Food:</strong> <span id="passFood">---</span></div>
+            <div class="pass-detail"><strong>Members:</strong> <span id="passMemberCount">---</span></div>
             <div class="valid-badge">✅ Valid (Not yet entered)</div>
             <p class="text-sm mt-8">Show this code at the gate for entry</p>
         </div>
@@ -741,7 +990,7 @@
 
     <!-- ==================== TAB 3: ADMIN DASHBOARD ==================== -->
     <div id="tab-admin" class="tab-content" style="display:none;">
-        <!-- KPI Cards - Dark Theme -->
+        <!-- KPI Cards -->
         <div class="kpi-grid">
             <div class="kpi-card">
                 <div class="number green" id="statAdmitted">0</div>
@@ -761,9 +1010,7 @@
             </div>
         </div>
 
-        <!-- ============================================
-           EXCEL UPLOAD SECTION - NEW!
-           ============================================ -->
+        <!-- Excel Upload -->
         <div class="excel-upload">
             <div class="upload-title">📊 Update Houses from Excel</div>
             <div class="upload-subtitle">Upload an Excel file with columns: <strong>HOUSE NO.</strong> and <strong>AMOUNT</strong></div>
@@ -877,7 +1124,9 @@ const state = {
     unlocked: false,
     registrations: [],
     isLoading: false,
-    housesLoaded: false
+    housesLoaded: false,
+    foodPreference: 'regular',
+    familyMembers: ['']
 };
 
 // ============================================
@@ -900,13 +1149,18 @@ const registerForm = document.getElementById('registerForm');
 const houseInput = document.getElementById('houseInput');
 const nameInput = document.getElementById('nameInput');
 const mobileInput = document.getElementById('mobileInput');
-const familyInput = document.getElementById('familyInput');
 const registerBtn = document.getElementById('registerBtn');
 const registerMessage = document.getElementById('registerMessage');
 const passBox = document.getElementById('passBox');
 const passCodeDisplay = document.getElementById('passCodeDisplay');
 const passHouse = document.getElementById('passHouse');
 const passFamily = document.getElementById('passFamily');
+const passFood = document.getElementById('passFood');
+const passMemberCount = document.getElementById('passMemberCount');
+const familyMembersContainer = document.getElementById('familyMembersContainer');
+const swaminarayanCountInput = document.getElementById('swaminarayanCountInput');
+const cateringSummary = document.getElementById('cateringSummary');
+const cateringAllocation = document.getElementById('cateringAllocation');
 
 // Scanner
 const scanInput = document.getElementById('scanInput');
@@ -938,7 +1192,76 @@ const fileNameDisplay = document.getElementById('fileName');
 const uploadStatus = document.getElementById('uploadStatus');
 
 // ============================================
-// 1. LOAD HOUSES FROM FIREBASE
+// 1. FAMILY MEMBERS MANAGEMENT
+// ============================================
+function addFamilyMember() {
+    const container = document.getElementById('familyMembersContainer');
+    const div = document.createElement('div');
+    div.className = 'family-member-input';
+    div.innerHTML = `
+        <input type="text" placeholder="Member name" class="family-input" />
+        <button type="button" class="remove-btn" onclick="removeFamilyMember(this)">✕</button>
+    `;
+    container.appendChild(div);
+    updateMemberCount();
+}
+
+function removeFamilyMember(btn) {
+    const container = document.getElementById('familyMembersContainer');
+    if (container.children.length > 1) {
+        btn.parentElement.remove();
+        updateMemberCount();
+    }
+}
+
+function updateMemberCount() {
+    const inputs = document.querySelectorAll('.family-input');
+    const count = inputs.filter(inp => inp.value.trim() !== '').length;
+    const total = count + 1; // +1 for primary resident
+    document.getElementById('cateringAllocation').textContent = 
+        `${count} family members + 1 primary = ${total} total`;
+}
+
+// ============================================
+// 2. FOOD PREFERENCE SELECTION
+// ============================================
+function selectFood(el) {
+    document.querySelectorAll('.food-option').forEach(opt => opt.classList.remove('selected'));
+    el.classList.add('selected');
+    
+    const value = el.dataset.value;
+    state.foodPreference = value;
+    
+    const swaminarayanDiv = document.getElementById('swaminarayanCount');
+    const summary = document.getElementById('cateringSummary');
+    
+    if (value === 'swaminarayan' || value === 'mixed') {
+        swaminarayanDiv.classList.add('show');
+        summary.classList.add('show');
+    } else {
+        swaminarayanDiv.classList.remove('show');
+        summary.classList.remove('show');
+    }
+    
+    updateCateringSummary();
+}
+
+function updateCateringSummary() {
+    const inputs = document.querySelectorAll('.family-input');
+    const familyCount = inputs.filter(inp => inp.value.trim() !== '').length;
+    const total = familyCount + 1;
+    const swaminarayanCount = parseInt(swaminarayanCountInput.value) || 0;
+    const regularCount = total - swaminarayanCount;
+    
+    document.getElementById('cateringAllocation').textContent = 
+        `${swaminarayanCount} Swaminarayan/Jain + ${regularCount} Regular`;
+}
+
+// Listen for changes in Swaminarayan count
+swaminarayanCountInput.addEventListener('input', updateCateringSummary);
+
+// ============================================
+// 3. LOAD HOUSES FROM FIREBASE
 // ============================================
 async function loadHousesFromFirebase() {
     try {
@@ -952,7 +1275,6 @@ async function loadHousesFromFirebase() {
             PAID_HOUSES.push(doc.data());
         });
         
-        // If no houses in Firebase, use fallback
         if (PAID_HOUSES.length === 0) {
             console.log('No houses in Firebase, using fallback data');
             generateFallbackHouses();
@@ -964,21 +1286,18 @@ async function loadHousesFromFirebase() {
         return true;
     } catch (error) {
         console.error('Error loading houses:', error);
-        // Use fallback if Firebase fails
         generateFallbackHouses();
         return false;
     }
 }
 
 // ============================================
-// 2. GENERATE FALLBACK HOUSES (1-259)
+// 4. GENERATE FALLBACK HOUSES
 // ============================================
 function generateFallbackHouses() {
     PAID_HOUSES = [];
     for (let i = 1; i <= 259; i++) {
-        // Default: all houses are paid (amount: 1500)
         let amount = 1500;
-        // Mark some as unpaid based on your list
         const unpaidList = ['4','5','6','7','11','13','17','18','19','24','26','29','30','31',
             '34','36','37','40','41','42','43','44','45','46','48','49','51','52','53',
             '55','56','58','59','61','62','65','66','67','68','69','72','73','74','75',
@@ -999,7 +1318,7 @@ function generateFallbackHouses() {
 }
 
 // ============================================
-// 3. UPDATE HOUSE DISPLAY
+// 5. UPDATE HOUSE DISPLAY
 // ============================================
 function updateHouseDisplay() {
     const paidCount = PAID_HOUSES.filter(h => h.amount > 0).length;
@@ -1010,7 +1329,7 @@ function updateHouseDisplay() {
 }
 
 // ============================================
-// 4. SAVE HOUSES TO FIREBASE
+// 6. SAVE HOUSES TO FIREBASE
 // ============================================
 async function saveHousesToFirebase() {
     try {
@@ -1032,7 +1351,7 @@ async function saveHousesToFirebase() {
 }
 
 // ============================================
-// 5. EXCEL FILE HANDLING
+// 7. EXCEL FILE HANDLING
 // ============================================
 excelFileInput.addEventListener('change', function(e) {
     if (this.files && this.files[0]) {
@@ -1047,7 +1366,7 @@ excelFileInput.addEventListener('change', function(e) {
 });
 
 // ============================================
-// 6. PROCESS EXCEL FILE
+// 8. PROCESS EXCEL FILE
 // ============================================
 async function processExcelFile() {
     const fileInput = document.getElementById('excelFile');
@@ -1070,13 +1389,11 @@ async function processExcelFile() {
         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(firstSheet);
         
-        // Parse the data
         const newHouses = [];
         let processed = 0;
         let skipped = 0;
         
         jsonData.forEach(row => {
-            // Try to find HOUSE NO. and AMOUNT columns (case insensitive)
             const houseKeys = Object.keys(row).filter(k => 
                 k.toLowerCase().includes('house') || 
                 k.toLowerCase().includes('flat') || 
@@ -1112,13 +1429,9 @@ async function processExcelFile() {
             return;
         }
         
-        // Replace PAID_HOUSES with new data
         PAID_HOUSES = newHouses;
-        
-        // Save to Firebase
         await saveHousesToFirebase();
         
-        // Update UI
         updateHouseDisplay();
         updateAdminDashboard();
         
@@ -1126,11 +1439,9 @@ async function processExcelFile() {
         uploadStatus.textContent = `✅ Successfully imported ${processed} houses (${skipped} rows skipped)`;
         uploadStatus.style.display = 'block';
         
-        // Clear file input
         fileInput.value = '';
         fileNameDisplay.textContent = 'No file selected';
         
-        // Refresh house list
         loadRegistrations();
         
     } catch (error) {
@@ -1145,7 +1456,7 @@ async function processExcelFile() {
 }
 
 // ============================================
-// 7. PASSWORD GATE
+// 9. PASSWORD GATE
 // ============================================
 const CORRECT_PASSWORD = 'Ganesh@2026';
 
@@ -1168,15 +1479,12 @@ passwordInput.addEventListener('keydown', (e) => {
 });
 
 function unlockPortal() {
-    // Hide password gate
     document.querySelector('.password-gate').style.display = 'none';
     document.querySelector('.event-card .verified-badge').textContent = '✅ Portal Unlocked';
     
-    // Show tabs
     tabsContainer.style.display = 'flex';
     tabResident.style.display = 'block';
     
-    // Load data
     loadHousesFromFirebase();
     loadRegistrations();
     setupRealtimeListener();
@@ -1188,7 +1496,7 @@ function unlockPortal() {
 }
 
 // ============================================
-// 8. TAB SWITCHING
+// 10. TAB SWITCHING
 // ============================================
 document.querySelectorAll('.tabs button').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -1205,7 +1513,7 @@ document.querySelectorAll('.tabs button').forEach(tab => {
 });
 
 // ============================================
-// 9. FIREBASE - LOAD REGISTRATIONS
+// 11. FIREBASE - LOAD REGISTRATIONS
 // ============================================
 async function loadRegistrations() {
     try {
@@ -1229,7 +1537,7 @@ async function loadRegistrations() {
 }
 
 // ============================================
-// 10. FIREBASE - SAVE REGISTRATION
+// 12. FIREBASE - SAVE REGISTRATION
 // ============================================
 async function saveRegistrationToFirebase(registration) {
     try {
@@ -1246,7 +1554,7 @@ async function saveRegistrationToFirebase(registration) {
 }
 
 // ============================================
-// 11. REGISTER HOUSE
+// 13. REGISTER HOUSE (WITH FOOD PREFERENCES)
 // ============================================
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1256,24 +1564,43 @@ registerForm.addEventListener('submit', async (e) => {
     const house = houseInput.value.trim().toUpperCase();
     const name = nameInput.value.trim();
     const mobile = mobileInput.value.trim();
-    const family = familyInput.value.trim().split(',').map(f => f.trim()).filter(f => f);
     
-    if (!house || !name || !mobile) {
+    // Get family members
+    const familyInputs = document.querySelectorAll('.family-input');
+    const family = familyInputs.map(inp => inp.value.trim()).filter(f => f !== '');
+    
+    // Get food preference
+    const selectedFood = document.querySelector('.food-option.selected');
+    const foodPreference = selectedFood ? selectedFood.dataset.value : 'regular';
+    
+    // Get Swaminarayan count
+    const swaminarayanCount = parseInt(swaminarayanCountInput.value) || 0;
+    
+    const totalMembers = family.length + 1; // +1 for primary resident
+    
+    if (!house || !name) {
         showMessage('registerMessage', 'Please fill in all required fields', 'error');
         return;
     }
     
     // Check if house is in paid list
     const paidHouse = PAID_HOUSES.find(h => h.house === house);
-    if (!paidHouse || paidHouse.amount <= 0) {
-        showMessage('registerMessage', `House ${house} is not verified. Please contact the committee.`, 'error');
+    if (!paidHouse) {
+        showMessage('registerMessage', `House ${house} is not found in the society list. Please contact the committee.`, 'error');
+        return;
+    }
+    
+    if (paidHouse.amount <= 0) {
+        showMessage('registerMessage', 
+            `❌ Festival Contribution Required (₹1,500)\n\nHouse ${house} has not submitted the society festival contribution. Pay Festival Contribution immediately to unlock your pass.\n\n💡 Already Paid? Please contact your committee coordinator to update your house number in the list.`, 
+            'error');
         return;
     }
     
     // Check if already registered
     const existingReg = state.registrations.find(r => r.house === house);
     if (existingReg) {
-        showMessage('registerMessage', `House ${house} is already registered!`, 'error');
+        showMessage('registerMessage', `House ${house} is already registered for this event!`, 'error');
         return;
     }
     
@@ -1285,15 +1612,17 @@ registerForm.addEventListener('submit', async (e) => {
     const registration = {
         house,
         name,
-        mobile,
+        mobile: mobile || '',
         family,
+        foodPreference,
+        swaminarayanCount,
+        regularCount: totalMembers - swaminarayanCount,
+        totalMembers,
         passId,
         registeredAt: new Date().toISOString(),
         entered: false,
         entryTime: null,
-        foodPreference: 'regular',
-        swaminarayanCount: 0,
-        memberCount: family.length + 1
+        amountPaid: paidHouse.amount
     };
     
     state.isLoading = true;
@@ -1311,6 +1640,9 @@ registerForm.addEventListener('submit', async (e) => {
         passCodeDisplay.textContent = passId;
         passHouse.textContent = house;
         passFamily.textContent = family.length > 0 ? family.join(', ') : 'None';
+        passFood.textContent = foodPreference === 'regular' ? 'Regular Pure Veg' : 
+                               foodPreference === 'swaminarayan' ? 'Swaminarayan/Jain' : 'Mixed';
+        passMemberCount.textContent = totalMembers;
         
         registerBtn.textContent = '✅ Registered!';
         
@@ -1319,10 +1651,10 @@ registerForm.addEventListener('submit', async (e) => {
         houseInput.value = '';
         nameInput.value = '';
         mobileInput.value = '';
-        familyInput.value = '';
+        document.querySelectorAll('.family-input').forEach(inp => inp.value = '');
     } else {
         showMessage('registerMessage', '❌ Failed to register. Please try again.', 'error');
-        registerBtn.textContent = '🎟️ Generate Digital Pass';
+        registerBtn.textContent = '✅ Verify & Generate Digital Pass';
         registerBtn.disabled = false;
     }
     
@@ -1330,7 +1662,7 @@ registerForm.addEventListener('submit', async (e) => {
 });
 
 // ============================================
-// 12. SCANNER
+// 14. SCANNER
 // ============================================
 scanBtn.addEventListener('click', async () => {
     const code = scanInput.value.trim();
@@ -1351,12 +1683,11 @@ scanBtn.addEventListener('click', async () => {
         return;
     }
     
-    // Mark as entered
     reg.entered = true;
     reg.entryTime = new Date().toLocaleTimeString();
     await saveRegistrationToFirebase(reg);
     
-    showScanResult(`✅ VALID ENTRY - House ${reg.house} (${reg.name}) - Welcome!`, 'valid');
+    showScanResult(`✅ VALID ENTRY - House ${reg.house} (${reg.name}) - Welcome!\n\nMembers: ${reg.totalMembers} (${reg.swaminarayanCount} Jain, ${reg.regularCount} Regular)`, 'valid');
     
     updateAdminDashboard();
     loadRecentEntries();
@@ -1369,11 +1700,11 @@ function showScanResult(message, type) {
     scanResult.style.display = 'block';
     setTimeout(() => {
         scanResult.style.display = 'none';
-    }, 5000);
+    }, 6000);
 }
 
 // ============================================
-// 13. ADMIN DASHBOARD
+// 15. ADMIN DASHBOARD
 // ============================================
 function updateAdminDashboard() {
     const paidHouses = PAID_HOUSES.filter(h => h.amount > 0).length;
@@ -1381,7 +1712,6 @@ function updateAdminDashboard() {
     const entered = state.registrations.filter(r => r.entered).length;
     const pending = registered - entered;
     
-    // KPI Cards
     statAdmitted.textContent = entered;
     statPending.textContent = pending;
     statRegistered.textContent = registered;
@@ -1389,21 +1719,27 @@ function updateAdminDashboard() {
     statTotalHouses.textContent = paidHouses;
     statPassesIssued.textContent = registered;
     
-    // Footer
     footerStats.textContent = `${registered} houses registered • ${entered} entries`;
     
-    // Catering
+    // Catering calculations
     let jainMeals = 0;
     let regularMeals = 0;
     let jainAdmitted = 0;
     let regularAdmitted = 0;
     
     state.registrations.forEach(r => {
-        const count = r.memberCount || (r.family ? r.family.length + 1 : 1);
-        if (r.foodPreference === 'swaminarayan_jain') {
-            jainMeals += count;
-            if (r.entered) jainAdmitted += count;
+        if (r.foodPreference === 'swaminarayan' || r.foodPreference === 'mixed') {
+            const jainCount = r.swaminarayanCount || 0;
+            const regularCount = r.regularCount || (r.totalMembers - jainCount);
+            jainMeals += jainCount;
+            regularMeals += regularCount;
+            if (r.entered) {
+                jainAdmitted += jainCount;
+                regularAdmitted += regularCount;
+            }
         } else {
+            // Regular only
+            const count = r.totalMembers || 1;
             regularMeals += count;
             if (r.entered) regularAdmitted += count;
         }
@@ -1426,10 +1762,14 @@ function updateAdminDashboard() {
         if (reg?.entered) { statusText = '✅ Entered'; statusClass = 'entered'; }
         else if (reg) { statusText = '📝 Registered'; statusClass = 'registered'; }
         
+        const foodIcon = reg?.foodPreference === 'swaminarayan' ? '🟡' : 
+                         reg?.foodPreference === 'mixed' ? '🔄' : '🟢';
+        const members = reg?.totalMembers || 0;
+        
         html += `
             <div class="house-item">
                 <span>🏠 House ${ph.house}</span>
-                <span class="status ${statusClass}">${statusText}</span>
+                <span class="status ${statusClass}">${statusText} ${foodIcon} ${members > 0 ? members : ''}</span>
             </div>
         `;
     });
@@ -1437,7 +1777,7 @@ function updateAdminDashboard() {
 }
 
 // ============================================
-// 14. RECENT ENTRIES
+// 16. RECENT ENTRIES
 // ============================================
 function loadRecentEntries() {
     const entries = state.registrations.filter(r => r.entered).slice(-5).reverse();
@@ -1459,7 +1799,7 @@ function loadRecentEntries() {
 }
 
 // ============================================
-// 15. UTILITY FUNCTIONS
+// 17. UTILITY FUNCTIONS
 // ============================================
 function showMessage(id, text, type) {
     const el = document.getElementById(id);
@@ -1468,22 +1808,26 @@ function showMessage(id, text, type) {
     el.style.display = 'block';
     setTimeout(() => {
         el.style.display = 'none';
-    }, 5000);
+    }, 6000);
 }
 
 // ============================================
-// 16. ADMIN ACTIONS
+// 18. ADMIN ACTIONS
 // ============================================
 function exportCSV() {
-    let csv = 'House,Amount,Resident,Family,Registered,Entered,EntryTime,PassID\n';
+    let csv = 'House,Amount,Resident,Family,Food Preference,Jain Count,Regular Count,Total Members,Registered,Entered,EntryTime,PassID\n';
     PAID_HOUSES.forEach(ph => {
         const reg = state.registrations.find(r => r.house === ph.house);
         const name = reg?.name || 'Not Registered';
         const family = reg?.family?.join('; ') || '';
+        const foodPref = reg?.foodPreference || '-';
+        const jainCount = reg?.swaminarayanCount || 0;
+        const regularCount = reg?.regularCount || 0;
+        const totalMembers = reg?.totalMembers || 0;
         const entered = reg?.entered ? 'Yes' : 'No';
         const entryTime = reg?.entryTime || '';
         const passId = reg?.passId || '';
-        csv += `${ph.house},${ph.amount},${name},"${family}",${reg ? 'Yes' : 'No'},${entered},"${entryTime}","${passId}"\n`;
+        csv += `${ph.house},${ph.amount},${name},"${family}",${foodPref},${jainCount},${regularCount},${totalMembers},${reg ? 'Yes' : 'No'},${entered},"${entryTime}","${passId}"\n`;
     });
     
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -1521,7 +1865,7 @@ function resetEvent() {
 }
 
 // ============================================
-// 17. REAL-TIME LISTENER
+// 19. REAL-TIME LISTENER
 // ============================================
 function setupRealtimeListener() {
     db.collection('events')
@@ -1541,10 +1885,9 @@ function setupRealtimeListener() {
 }
 
 // ============================================
-// 18. INITIALIZATION
+// 20. INITIALIZATION
 // ============================================
 window.addEventListener('load', () => {
-    // Online/Offline status
     const updateStatus = () => {
         const statusEl = document.getElementById('onlineStatus');
         if (navigator.onLine) {
@@ -1559,11 +1902,10 @@ window.addEventListener('load', () => {
     window.addEventListener('online', updateStatus);
     window.addEventListener('offline', updateStatus);
     
-    // Pre-fill password
     passwordInput.value = CORRECT_PASSWORD;
     
-    console.log('🎟️ GM2026 Society Pass Manager loaded');
-    console.log('📊 Excel import ready - Upload .xlsx files to update houses');
+    console.log('🎟️ GM2026 Society Pass Manager loaded (with Food Preferences)');
+    console.log('🏠 Houses:', PAID_HOUSES.filter(h => h.amount > 0).length, 'paid out of', PAID_HOUSES.length);
 });
 </script>
 </body>
