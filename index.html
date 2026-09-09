@@ -65,17 +65,6 @@
             letter-spacing: 0.5px;
         }
 
-        .offline-badge {
-            display: inline-block;
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 2px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -521,7 +510,7 @@
         .catering-summary .row .value { font-weight: 600; color: #1e1814; }
 
         /* ============================================
-           ADMIN KPI CARDS - MATCHING SCREENSHOT
+           ADMIN KPI CARDS
            ============================================ */
         .kpi-header {
             display: flex;
@@ -957,47 +946,6 @@
             font-size: 11px;
             color: #9a887a;
         }
-
-        /* Event Selector */
-        .event-selector {
-            display: flex;
-            gap: 8px;
-            margin: 8px 0;
-            flex-wrap: wrap;
-        }
-        
-        .event-selector button {
-            padding: 6px 14px;
-            border: 2px solid #d6cdc4;
-            border-radius: 20px;
-            background: white;
-            font-size: 12px;
-            font-weight: 600;
-            color: #6b5a4e;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        
-        .event-selector button.active {
-            border-color: #b45f3a;
-            background: #faf6f0;
-            color: #b45f3a;
-        }
-        
-        .event-selector button:hover {
-            border-color: #b45f3a;
-        }
-        
-        .add-event-btn {
-            padding: 6px 14px;
-            border: 2px dashed #b45f3a;
-            border-radius: 20px;
-            background: transparent;
-            font-size: 12px;
-            font-weight: 600;
-            color: #b45f3a;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -1008,8 +956,6 @@
         <span class="society-name">🏘️ TAKSH DIVINE</span>
         <span class="code-badge">Code: GM2026</span>
     </div>
-
-    <div class="offline-badge">⚡ OFFLINE READY</div>
 
     <div class="status-bar">
         <span id="onlineStatus" class="online">● Online</span>
@@ -1087,7 +1033,7 @@
                     </div>
                     <div class="food-option" data-value="swaminarayan" onclick="selectFood(this)">
                         <span class="food-icon">🟡</span>
-                        <span class="food-label">Swaminarayan / Jain</span>
+                        <span class="food-label">Swaminarayan</span>
                         <span class="food-sub">No Onion & Garlic</span>
                     </div>
                     <div class="food-option" data-value="mixed" onclick="selectFood(this)">
@@ -1099,15 +1045,15 @@
             </div>
 
             <div class="swaminarayan-section" id="swaminarayanSection">
-                <label>🟡 Swaminarayan / Jain count (No Onion & Garlic)</label>
-                <p class="hint">Enter number of people who prefer Swaminarayan/Jain food</p>
+                <label>🟡 Swaminarayan count (No Onion & Garlic)</label>
+                <p class="hint">Enter number of people who prefer Swaminarayan food</p>
                 <input type="number" id="swaminarayanCountInput" value="0" min="0" />
             </div>
 
             <div class="catering-summary" id="cateringSummary">
                 <div class="row">
                     <span class="label">Catering Allocation:</span>
-                    <span class="value" id="cateringAllocation">0 Swaminarayan/Jain + 0 Regular</span>
+                    <span class="value" id="cateringAllocation">0 Swaminarayan + 0 Regular</span>
                 </div>
             </div>
 
@@ -1168,15 +1114,6 @@
 
     <!-- ==================== TAB 3: ADMIN ==================== -->
     <div id="tab-admin" class="tab-content" style="display:none;">
-        <!-- Event Selector -->
-        <div style="margin-bottom:12px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                <span style="font-size:13px;font-weight:600;color:#1e1814;">📅 Select Event:</span>
-                <button class="add-event-btn" onclick="showAddEvent()">+ Add Event</button>
-            </div>
-            <div class="event-selector" id="eventSelector"></div>
-        </div>
-
         <!-- KPI Cards -->
         <div class="kpi-header">
             <span class="title">📊 REAL-TIME GATE ATTENDANCE & ADMISSION METRICS</span>
@@ -1221,7 +1158,7 @@
             <input type="file" id="excelFile" accept=".xlsx,.xls" />
             <div class="file-name" id="fileName">No file selected</div>
             <div class="upload-status" id="uploadStatus"></div>
-            <button class="scan-btn" onclick="processExcelFile()" style="margin-top:10px; background:#1e1814; border:none; border-radius:30px; padding:12px; color:white; font-weight:600; cursor:pointer; width:100%;">🔄 Process & Update Houses</button>
+            <button class="unlock-btn" onclick="processExcelFile()" style="margin-top:10px; background:#1e1814; border:none; border-radius:30px; padding:12px; color:white; font-weight:600; cursor:pointer; width:100%;" id="processExcelBtn">🔄 Process & Update Houses</button>
         </div>
 
         <!-- Catering -->
@@ -1229,10 +1166,10 @@
             <div class="section-title">🍽️ CATERING & DINNER PRASAD HEADCOUNT <span style="font-weight:400;font-size:11px;color:#6b5a4e;">(KITCHEN COMMITTEE)</span></div>
             
             <div class="catering-item">
-                <div class="item-title">1. SWAMINARAYAN / JAIN <span class="sub">(NO ONION & GARLIC)</span></div>
+                <div class="item-title">1. SWAMINARAYAN <span class="sub">(NO ONION & GARLIC)</span></div>
                 <div class="item-counts">
-                    <span class="count">Admitted / In: <span class="num orange" id="cateringJainAdmitted">0</span></span>
-                    <span class="count">Meals Registered: <span class="num" id="cateringJainRegistered">0</span></span>
+                    <span class="count">Admitted / In: <span class="num orange" id="cateringSwaminarayanAdmitted">0</span></span>
+                    <span class="count">Meals Registered: <span class="num" id="cateringSwaminarayanRegistered">0</span></span>
                 </div>
             </div>
             <div class="catering-item">
@@ -1288,35 +1225,6 @@
     </div>
 </div>
 
-<!-- ============================================
-     ADD EVENT POPUP
-     ============================================ -->
-<div class="password-popup" id="addEventPopup">
-    <div class="popup-box" style="text-align:left;">
-        <div class="icon" style="text-align:center;">📅</div>
-        <h3 style="text-align:center;">Add New Event</h3>
-        <div class="form-group" style="margin-top:12px;">
-            <label>Event Name *</label>
-            <input type="text" id="newEventName" placeholder="e.g. Navratri 2026" />
-        </div>
-        <div class="form-group">
-            <label>Event Date</label>
-            <input type="text" id="newEventDate" placeholder="e.g. 10-20 Oct 2026" />
-        </div>
-        <div class="form-group">
-            <label>Venue</label>
-            <input type="text" id="newEventVenue" placeholder="e.g. Clubhouse Lawn" />
-        </div>
-        <div class="form-group">
-            <label>Contribution Amount (₹)</label>
-            <input type="number" id="newEventContribution" placeholder="1500" />
-        </div>
-        <button class="popup-btn" onclick="createNewEvent()" style="margin-top:8px;">✅ Create Event</button>
-        <button class="popup-btn" onclick="closeAddEvent()" style="margin-top:8px;background:#f0ebe6;color:#6b5a4e;">Cancel</button>
-        <div class="popup-error" id="addEventError" style="display:none;text-align:center;">❌ Please fill in all required fields</div>
-    </div>
-</div>
-
 <script>
 // ============================================
 // 🔥 FIREBASE CONFIGURATION
@@ -1340,15 +1248,16 @@ let PAID_HOUSES = [];
 let html5QrCode = null;
 let scannedRegistration = null;
 let isScannerRunning = false;
+let cachedHouses = null;
+let cachedEventId = null;
 
 const state = {
     currentEventId: 'gm2026',
-    events: [],
     unlocked: false,
     registrations: [],
     isLoading: false,
     foodPreference: 'regular',
-    familyCount: 0,  // TOTAL persons including primary
+    familyCount: 0,
     totalPersons: 0
 };
 
@@ -1392,8 +1301,6 @@ const recentEntries = document.getElementById('recentEntries');
 const scannerLiveData = document.getElementById('scannerLiveData');
 const startScannerBtn = document.getElementById('startScannerBtn');
 
-const eventSelector = document.getElementById('eventSelector');
-
 const statAdmitted = document.getElementById('statAdmitted');
 const statPending = document.getElementById('statPending');
 const statRegistered = document.getElementById('statRegistered');
@@ -1402,7 +1309,6 @@ const statHousesSub = document.getElementById('statHousesSub');
 const statAdmittedPercent = document.getElementById('statAdmittedPercent');
 const statPendingPercent = document.getElementById('statPendingPercent');
 const statRegisteredPercent = document.getElementById('statRegisteredPercent');
-const statTotalHouses = document.getElementById('statTotalHouses');
 const statPassesIssued = document.getElementById('statPassesIssued');
 const houseStatusList = document.getElementById('houseStatusList');
 const footerStats = document.getElementById('footerStats');
@@ -1411,8 +1317,8 @@ const summaryAdmitted = document.getElementById('summaryAdmitted');
 const summaryPending = document.getElementById('summaryPending');
 const summaryHouses = document.getElementById('summaryHouses');
 
-const cateringJainAdmitted = document.getElementById('cateringJainAdmitted');
-const cateringJainRegistered = document.getElementById('cateringJainRegistered');
+const cateringSwaminarayanAdmitted = document.getElementById('cateringSwaminarayanAdmitted');
+const cateringSwaminarayanRegistered = document.getElementById('cateringSwaminarayanRegistered');
 const cateringRegularAdmitted = document.getElementById('cateringRegularAdmitted');
 const cateringRegularRegistered = document.getElementById('cateringRegularRegistered');
 
@@ -1432,7 +1338,7 @@ const eventDetails = document.getElementById('eventDetails');
 const eventContribution = document.getElementById('eventContribution');
 
 // ============================================
-// 1. FAMILY COUNTER - STARTS AT 0 (TOTAL PERSONS)
+// 1. FAMILY COUNTER - STARTS AT 0
 // ============================================
 function changeFamilyCount(delta) {
     state.familyCount = Math.max(0, state.familyCount + delta);
@@ -1476,20 +1382,27 @@ function updateCateringSummary() {
     const regularCount = Math.max(0, total - swaminarayanCount);
     
     if (state.foodPreference === 'regular') {
-        cateringAllocation.textContent = `0 Swaminarayan/Jain + ${total} Regular`;
+        cateringAllocation.textContent = `0 Swaminarayan + ${total} Regular`;
     } else if (state.foodPreference === 'swaminarayan') {
-        cateringAllocation.textContent = `${total} Swaminarayan/Jain + 0 Regular`;
+        cateringAllocation.textContent = `${total} Swaminarayan + 0 Regular`;
     } else {
-        cateringAllocation.textContent = `${swaminarayanCount} Swaminarayan/Jain + ${regularCount} Regular`;
+        cateringAllocation.textContent = `${swaminarayanCount} Swaminarayan + ${regularCount} Regular`;
     }
 }
 
 swaminarayanCountInput.addEventListener('input', updateCateringSummary);
 
 // ============================================
-// 4. LOAD HOUSES FROM FIREBASE
+// 4. LOAD HOUSES FROM FIREBASE (CACHED)
 // ============================================
 async function loadHousesFromFirebase(eventId) {
+    if (cachedHouses && cachedEventId === eventId) {
+        PAID_HOUSES = cachedHouses;
+        updateHouseDisplay();
+        updateAdminDashboard();
+        return true;
+    }
+    
     try {
         const snapshot = await db.collection('events')
             .doc(eventId || state.currentEventId)
@@ -1504,6 +1417,9 @@ async function loadHousesFromFirebase(eventId) {
         if (PAID_HOUSES.length === 0) {
             generateFallbackHouses();
         }
+        
+        cachedHouses = PAID_HOUSES;
+        cachedEventId = eventId || state.currentEventId;
         
         updateHouseDisplay();
         updateAdminDashboard();
@@ -1546,13 +1462,13 @@ function updateHouseDisplay() {
 }
 
 // ============================================
-// 5. EXCEL FILE PROCESSING
+// 5. EXCEL FILE PROCESSING (OPTIMIZED)
 // ============================================
 excelFileInput.addEventListener('change', function(e) {
     if (this.files && this.files[0]) {
         fileNameDisplay.textContent = `📄 ${this.files[0].name}`;
         uploadStatus.className = 'upload-status info';
-        uploadStatus.textContent = `📄 File selected. Click "Process & Update Houses" to import.`;
+        uploadStatus.textContent = '📄 File selected. Click "Process & Update Houses" to import.';
         uploadStatus.style.display = 'block';
     }
 });
@@ -1566,15 +1482,20 @@ async function processExcelFile() {
         return;
     }
     
-    const btn = document.querySelector('#processExcelBtn');
+    const btn = document.getElementById('processExcelBtn');
     btn.textContent = '⏳ Processing...';
     btn.disabled = true;
+    uploadStatus.className = 'upload-status info';
+    uploadStatus.textContent = '📊 Reading Excel file...';
+    uploadStatus.style.display = 'block';
     
     try {
         const data = await file.arrayBuffer();
         const workbook = XLSX.read(data, { type: 'array' });
         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+        
+        uploadStatus.textContent = `📊 Processing ${jsonData.length} rows...`;
         
         const newHouses = [];
         jsonData.forEach(row => {
@@ -1597,48 +1518,44 @@ async function processExcelFile() {
         if (newHouses.length === 0) {
             uploadStatus.className = 'upload-status error';
             uploadStatus.textContent = '❌ No valid data found. Please ensure columns are: HOUSE NO. and AMOUNT';
-            uploadStatus.style.display = 'block';
+            btn.textContent = '🔄 Process & Update Houses';
+            btn.disabled = false;
             return;
         }
         
+        uploadStatus.textContent = `📤 Saving ${newHouses.length} houses to Firebase...`;
+        
+        // BATCH WRITE - FAST
         PAID_HOUSES = newHouses;
-        await saveHousesToFirebase(state.currentEventId);
+        const batch = db.batch();
+        const housesRef = db.collection('events').doc(state.currentEventId).collection('houses');
+        PAID_HOUSES.forEach(house => {
+            const docRef = housesRef.doc(house.house);
+            batch.set(docRef, house);
+        });
+        await batch.commit();
+        
+        cachedHouses = PAID_HOUSES;
+        cachedEventId = state.currentEventId;
         
         updateHouseDisplay();
         updateAdminDashboard();
         
         uploadStatus.className = 'upload-status success';
         uploadStatus.textContent = `✅ Successfully imported ${newHouses.length} houses`;
-        uploadStatus.style.display = 'block';
         
         excelFileInput.value = '';
         fileNameDisplay.textContent = 'No file selected';
         loadRegistrations(state.currentEventId);
         
     } catch (error) {
+        console.error('Excel processing error:', error);
         uploadStatus.className = 'upload-status error';
         uploadStatus.textContent = `❌ Error: ${error.message}`;
-        uploadStatus.style.display = 'block';
     }
     
     btn.textContent = '🔄 Process & Update Houses';
     btn.disabled = false;
-}
-
-async function saveHousesToFirebase(eventId) {
-    try {
-        const batch = db.batch();
-        const housesRef = db.collection('events').doc(eventId || state.currentEventId).collection('houses');
-        PAID_HOUSES.forEach(house => {
-            const docRef = housesRef.doc(house.house);
-            batch.set(docRef, house);
-        });
-        await batch.commit();
-        return true;
-    } catch (error) {
-        console.error('Error saving houses:', error);
-        return false;
-    }
 }
 
 // ============================================
@@ -1669,7 +1586,6 @@ function unlockPortal() {
     
     loadHousesFromFirebase(state.currentEventId);
     loadRegistrations(state.currentEventId);
-    loadEvents();
     setupRealtimeListener();
     
     showMessage('mainMessage', '🔓 Portal unlocked! You can now register for the event.', 'success');
@@ -1705,7 +1621,7 @@ function switchTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
     document.getElementById('tab-' + tabName).style.display = 'block';
     
-    if (tabName === 'admin') { updateAdminDashboard(); loadEvents(); }
+    if (tabName === 'admin') { updateAdminDashboard(); }
     if (tabName === 'scanner') loadRecentEntries();
 }
 
@@ -1872,7 +1788,7 @@ registerForm.addEventListener('submit', async (e) => {
         passHouse.textContent = house;
         passMemberCount.textContent = totalPersons;
         passFood.textContent = foodPreference === 'regular' ? 'Regular Pure Veg' : 
-                               foodPreference === 'swaminarayan' ? 'Swaminarayan/Jain' : 'Mixed';
+                               foodPreference === 'swaminarayan' ? 'Swaminarayan' : 'Mixed';
         
         registerBtn.textContent = '✅ Registered!';
         updateAdminDashboard();
@@ -1972,7 +1888,7 @@ function processScannedCode(code) {
     scanName.textContent = reg.name;
     scanTotal.textContent = reg.totalPersons || 1;
     scanFood.textContent = reg.foodPreference === 'regular' ? 'Regular Pure Veg' : 
-                           reg.foodPreference === 'swaminarayan' ? 'Swaminarayan/Jain' : 'Mixed';
+                           reg.foodPreference === 'swaminarayan' ? 'Swaminarayan' : 'Mixed';
     scanStatus.textContent = '✅ Valid - Not yet entered';
     scanStatus.style.color = '#2e7d32';
     
@@ -2011,7 +1927,7 @@ async function admitScanned() {
 }
 
 // ============================================
-// 12. ADMIN DASHBOARD
+// 12. ADMIN DASHBOARD (OPTIMIZED)
 // ============================================
 function updateAdminDashboard() {
     const paidHouses = PAID_HOUSES.filter(h => h.amount > 0).length;
@@ -2037,131 +1953,47 @@ function updateAdminDashboard() {
     summaryAdmitted.textContent = entered;
     summaryPending.textContent = pending;
     summaryHouses.textContent = `${entered} / ${paidHouses}`;
-    
     footerStats.textContent = `${registered} houses registered • ${entered} entries`;
     
-    // Catering
-    let jainMeals = 0, regularMeals = 0, jainAdmitted = 0, regularAdmitted = 0;
+    // Catering - BOTH Swaminarayan AND Regular
+    let swaminarayanMeals = 0, regularMeals = 0;
+    let swaminarayanAdmitted = 0, regularAdmitted = 0;
+    
     state.registrations.forEach(r => {
-        const jainCount = r.swaminarayanCount || 0;
-        const regularCount = r.regularCount || (r.totalPersons - jainCount);
-        jainMeals += jainCount;
+        const swaminarayanCount = r.swaminarayanCount || 0;
+        const regularCount = r.regularCount || (r.totalPersons - swaminarayanCount);
+        swaminarayanMeals += swaminarayanCount;
         regularMeals += regularCount;
         if (r.entered) {
-            jainAdmitted += jainCount;
+            swaminarayanAdmitted += swaminarayanCount;
             regularAdmitted += regularCount;
         }
     });
     
-    cateringJainAdmitted.textContent = jainAdmitted;
-    cateringJainRegistered.textContent = jainMeals;
+    cateringSwaminarayanAdmitted.textContent = swaminarayanAdmitted;
+    cateringSwaminarayanRegistered.textContent = swaminarayanMeals;
     cateringRegularAdmitted.textContent = regularAdmitted;
     cateringRegularRegistered.textContent = regularMeals;
     
-    // House list
-    let html = '';
-    const sortedHouses = PAID_HOUSES.filter(h => h.amount > 0).sort((a, b) => Number(a.house) - Number(b.house));
-    sortedHouses.forEach(ph => {
-        const reg = state.registrations.find(r => r.house === ph.house);
-        let statusText = '⏳ Pending';
-        let statusClass = 'pending';
-        if (reg?.entered) { statusText = '✅ Entered'; statusClass = 'entered'; }
-        else if (reg) { statusText = '📝 Registered'; statusClass = 'registered'; }
-        html += `<div class="house-item"><span>🏠 House ${ph.house}</span><span class="status ${statusClass}">${statusText}</span></div>`;
-    });
-    houseStatusList.innerHTML = html || '<p class="text-sm">No houses found.</p>';
-}
-
-// ============================================
-// 13. EVENT MANAGEMENT
-// ============================================
-async function loadEvents() {
-    try {
-        const snapshot = await db.collection('events').get();
-        state.events = [];
-        snapshot.forEach(doc => {
-            state.events.push({ id: doc.id, ...doc.data() });
+    // House list - only if Admin tab is visible
+    const adminTab = document.getElementById('tab-admin');
+    if (adminTab.style.display !== 'none') {
+        let html = '';
+        const sortedHouses = PAID_HOUSES.filter(h => h.amount > 0).sort((a, b) => Number(a.house) - Number(b.house));
+        sortedHouses.forEach(ph => {
+            const reg = state.registrations.find(r => r.house === ph.house);
+            let statusText = '⏳ Pending';
+            let statusClass = 'pending';
+            if (reg?.entered) { statusText = '✅ Entered'; statusClass = 'entered'; }
+            else if (reg) { statusText = '📝 Registered'; statusClass = 'registered'; }
+            html += `<div class="house-item"><span>🏠 House ${ph.house}</span><span class="status ${statusClass}">${statusText}</span></div>`;
         });
-        renderEventSelector();
-    } catch (error) {
-        console.error('Error loading events:', error);
-    }
-}
-
-function renderEventSelector() {
-    let html = '';
-    state.events.forEach(ev => {
-        const active = ev.id === state.currentEventId ? 'active' : '';
-        html += `<button class="${active}" onclick="switchEvent('${ev.id}')">${ev.name || ev.id}</button>`;
-    });
-    html += `<button class="add-event-btn" onclick="showAddEvent()">+ Add</button>`;
-    eventSelector.innerHTML = html || '<p class="text-sm">No events found</p>';
-}
-
-async function switchEvent(eventId) {
-    state.currentEventId = eventId;
-    const event = state.events.find(e => e.id === eventId);
-    if (event) {
-        eventNameDisplay.textContent = event.name || eventId;
-        eventDetails.textContent = event.venue ? `📍 ${event.venue} • ${event.date || ''}` : '';
-        eventContribution.textContent = `Contribution: ₹${event.contribution || '1,500'}`;
-        kpiEventName.textContent = event.name || eventId;
-    }
-    await loadHousesFromFirebase(eventId);
-    await loadRegistrations(eventId);
-    renderEventSelector();
-    updateAdminDashboard();
-}
-
-function showAddEvent() {
-    document.getElementById('addEventPopup').classList.add('show');
-    document.getElementById('addEventError').style.display = 'none';
-    document.getElementById('newEventName').value = '';
-    document.getElementById('newEventDate').value = '';
-    document.getElementById('newEventVenue').value = '';
-    document.getElementById('newEventContribution').value = '';
-}
-
-function closeAddEvent() {
-    document.getElementById('addEventPopup').classList.remove('show');
-}
-
-async function createNewEvent() {
-    const name = document.getElementById('newEventName').value.trim();
-    const date = document.getElementById('newEventDate').value.trim();
-    const venue = document.getElementById('newEventVenue').value.trim();
-    const contribution = parseInt(document.getElementById('newEventContribution').value) || 1500;
-    
-    if (!name) {
-        document.getElementById('addEventError').style.display = 'block';
-        return;
-    }
-    
-    const eventId = name.toLowerCase().replace(/\s/g, '') + Date.now().toString().slice(-4);
-    
-    try {
-        await db.collection('events').doc(eventId).set({
-            id: eventId,
-            name: name,
-            date: date || 'TBD',
-            venue: venue || 'TBD',
-            contribution: contribution,
-            createdAt: new Date().toISOString()
-        });
-        
-        closeAddEvent();
-        await loadEvents();
-        await switchEvent(eventId);
-        showMessage('mainMessage', `✅ Event "${name}" created successfully!`, 'success');
-        setTimeout(() => { mainMessage.style.display = 'none'; }, 3000);
-    } catch (error) {
-        document.getElementById('addEventError').textContent = `❌ Error: ${error.message}`;
-        document.getElementById('addEventError').style.display = 'block';
+        houseStatusList.innerHTML = html || '<p class="text-sm">No houses found.</p>';
     }
 }
 
 // ============================================
-// 14. RECENT ENTRIES
+// 13. RECENT ENTRIES
 // ============================================
 function loadRecentEntries() {
     const entries = state.registrations.filter(r => r.entered).slice(-5).reverse();
@@ -2177,7 +2009,7 @@ function loadRecentEntries() {
 }
 
 // ============================================
-// 15. UTILITY FUNCTIONS
+// 14. UTILITY FUNCTIONS
 // ============================================
 function showMessage(id, text, type) {
     const el = document.getElementById(id);
@@ -2188,21 +2020,21 @@ function showMessage(id, text, type) {
 }
 
 // ============================================
-// 16. ADMIN ACTIONS
+// 15. ADMIN ACTIONS
 // ============================================
 function exportCSV() {
-    let csv = 'House,Amount,Resident,Total Persons,Food Preference,Jain Count,Regular Count,Registered,Entered,EntryTime,PassID\n';
+    let csv = 'House,Amount,Resident,Total Persons,Food Preference,Swaminarayan Count,Regular Count,Registered,Entered,EntryTime,PassID\n';
     PAID_HOUSES.forEach(ph => {
         const reg = state.registrations.find(r => r.house === ph.house);
         const name = reg?.name || 'Not Registered';
         const total = reg?.totalPersons || 0;
         const foodPref = reg?.foodPreference || '-';
-        const jainCount = reg?.swaminarayanCount || 0;
+        const swaminarayanCount = reg?.swaminarayanCount || 0;
         const regularCount = reg?.regularCount || 0;
         const entered = reg?.entered ? 'Yes' : 'No';
         const entryTime = reg?.entryTime || '';
         const passId = reg?.passId || '';
-        csv += `${ph.house},${ph.amount},${name},${total},${foodPref},${jainCount},${regularCount},${reg ? 'Yes' : 'No'},${entered},"${entryTime}","${passId}"\n`;
+        csv += `${ph.house},${ph.amount},${name},${total},${foodPref},${swaminarayanCount},${regularCount},${reg ? 'Yes' : 'No'},${entered},"${entryTime}","${passId}"\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -2214,6 +2046,8 @@ function exportCSV() {
 }
 
 function syncData() {
+    cachedHouses = null;
+    cachedEventId = null;
     loadHousesFromFirebase(state.currentEventId);
     loadRegistrations(state.currentEventId);
     showMessage('mainMessage', '✅ Data synced!', 'success');
@@ -2236,7 +2070,7 @@ function resetEvent() {
 }
 
 // ============================================
-// 17. REAL-TIME LISTENER
+// 16. REAL-TIME LISTENER
 // ============================================
 function setupRealtimeListener() {
     db.collection('events')
@@ -2255,7 +2089,7 @@ function setupRealtimeListener() {
 }
 
 // ============================================
-// 18. INITIALIZATION
+// 17. INITIALIZATION
 // ============================================
 window.addEventListener('load', () => {
     const updateStatus = () => {
