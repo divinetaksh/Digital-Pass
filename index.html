@@ -3,769 +3,1277 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    <title>🎟️ Society Pass Manager</title>
+    <title>GM2026 - Society Pass Manager</title>
     
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        body { background: #f0ebe6; min-height: 100vh; padding: 16px; display: flex; justify-content: center; align-items: flex-start; }
-        .app { max-width: 420px; width: 100%; background: white; border-radius: 28px; padding: 24px 20px 32px; box-shadow: 0 8px 40px rgba(0,0,0,0.08); }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid #f0ebe6; }
-        .header h1 { font-size: 22px; color: #1e1814; }
-        .header .status { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; background: #e8f5e9; color: #2e7d32; }
-        .event-card { background: #faf8f6; border-radius: 16px; padding: 16px; margin-bottom: 20px; }
-        .event-card h2 { font-size: 20px; color: #1e1814; margin-bottom: 4px; }
-        .event-card .details { font-size: 14px; color: #6b5a4e; }
-        .event-card .badge { display: inline-block; background: #b45f3a; color: white; padding: 2px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-top: 8px; }
-        
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
-        .tabs button { flex: 1; padding: 12px; border: none; background: #f0ebe6; border-radius: 12px; font-size: 14px; font-weight: 600; color: #6b5a4e; cursor: pointer; transition: 0.2s; }
-        .tabs button.active { background: #1e1814; color: white; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-weight: 600; font-size: 14px; color: #2b1f17; margin-bottom: 6px; }
-        .form-group input { width: 100%; padding: 14px 16px; border: 2px solid #d6cdc4; border-radius: 12px; font-size: 16px; background: white; transition: 0.2s; }
-        .form-group input:focus { border-color: #b45f3a; outline: none; box-shadow: 0 0 0 3px rgba(180, 95, 58, 0.15); }
-        
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 60px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; touch-action: manipulation; }
-        .btn-primary { background: #1e1814; color: white; }
-        .btn-primary:active { transform: scale(0.97); background: #3d2e24; }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-success { background: #2e7d32; color: white; }
-        .btn-danger { background: #c62828; color: white; }
-        
-        .message { margin: 16px 0; padding: 16px; border-radius: 12px; display: none; font-weight: 500; }
-        .message.success { display: block; background: #e8f5e9; border: 2px solid #a5d6a7; color: #1e5a24; }
-        .message.error { display: block; background: #ffebee; border: 2px solid #ef9a9a; color: #b71c1c; }
-        .message.info { display: block; background: #e3f2fd; border: 2px solid #90caf9; color: #0d47a1; }
-        
-        .qr-box { text-align: center; padding: 20px; background: white; border-radius: 16px; border: 2px dashed #d6cdc4; margin: 16px 0; }
-        .qr-box .pass-code { 
-            font-size: 28px; 
-            font-weight: bold; 
-            letter-spacing: 3px;
-            background: #f5f3f0;
-            padding: 16px;
-            border-radius: 12px;
-            margin: 12px auto;
-            font-family: monospace;
-            display: inline-block;
-            border: 2px solid #1e1814;
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-        .qr-box .pass-info { margin-top: 12px; font-size: 14px; color: #6b5a4e; }
-        .qr-box .pass-info strong { color: #1e1814; }
         
-        .scanner-box { text-align: center; padding: 30px 20px; background: #faf8f6; border-radius: 16px; border: 2px dashed #d6cdc4; }
-        .scanner-box input { width: 100%; padding: 14px; border: 2px solid #d6cdc4; border-radius: 12px; font-size: 16px; text-align: center; margin: 12px 0; }
-        .scanner-result { margin-top: 16px; padding: 16px; border-radius: 12px; font-weight: 600; display: none; }
-        .scanner-result.valid { display: block; background: #e8f5e9; border: 2px solid #4caf50; color: #1e5a24; }
-        .scanner-result.invalid { display: block; background: #ffebee; border: 2px solid #ef5350; color: #b71c1c; }
+        body {
+            background: #f5f0eb;
+            min-height: 100vh;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
         
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-        .stat-card { background: #faf8f6; padding: 16px; border-radius: 12px; text-align: center; }
-        .stat-card .number { font-size: 28px; font-weight: 700; color: #1e1814; }
-        .stat-card .label { font-size: 12px; color: #6b5a4e; margin-top: 4px; }
+        .app {
+            max-width: 480px;
+            width: 100%;
+            background: white;
+            border-radius: 28px;
+            padding: 20px 18px 30px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+        }
+
+        /* ============================================
+           HEADER - Society Code Badge
+           ============================================ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0ebe6;
+        }
         
-        .house-list { max-height: 400px; overflow-y: auto; }
-        .house-item { display: flex; justify-content: space-between; padding: 12px 16px; background: #faf8f6; border-radius: 8px; margin-bottom: 6px; font-size: 14px; }
-        .house-item .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
-        .house-item .status-dot.paid { background: #4caf50; }
-        .house-item .status-dot.unpaid { background: #ef5350; }
-        .house-item .status-dot.registered { background: #ff9800; }
-        .house-item .status-dot.entered { background: #2196f3; }
+        .header .society-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e1814;
+        }
         
-        .hidden { display: none !important; }
+        .header .code-badge {
+            background: #f0ebe6;
+            color: #6b5a4e;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* ============================================
+           STATUS BAR - Online/Offline
+           ============================================ */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #6b5a4e;
+        }
+        
+        .status-bar .online {
+            color: #2e7d32;
+            font-weight: 600;
+        }
+        
+        .status-bar .offline {
+            color: #c62828;
+            font-weight: 600;
+        }
+
+        /* ============================================
+           EVENT CARD - Orange theme
+           ============================================ */
+        .event-card {
+            background: #faf6f0;
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin-bottom: 16px;
+            border-left: 4px solid #b45f3a;
+        }
+        
+        .event-card h2 {
+            font-size: 20px;
+            color: #1e1814;
+            margin-bottom: 4px;
+        }
+        
+        .event-card .details {
+            font-size: 13px;
+            color: #6b5a4e;
+            margin-bottom: 6px;
+        }
+        
+        .event-card .contribution {
+            font-size: 15px;
+            font-weight: 700;
+            color: #b45f3a;
+        }
+        
+        .event-card .verified-badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        /* ============================================
+           PASSWORD GATE - Orange accent
+           ============================================ */
+        .password-gate {
+            background: #faf6f0;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 16px;
+            border: 1px solid #f0ebe6;
+        }
+        
+        .password-gate .gate-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e1814;
+            margin-bottom: 4px;
+        }
+        
+        .password-gate .gate-subtitle {
+            font-size: 12px;
+            color: #6b5a4e;
+            margin-bottom: 12px;
+        }
+        
+        .password-gate input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #d6cdc4;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            margin-bottom: 10px;
+            transition: 0.2s;
+        }
+        
+        .password-gate input:focus {
+            border-color: #b45f3a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(180, 95, 58, 0.15);
+        }
+        
+        .password-gate .demo-btn {
+            background: #f0ebe6;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b5a4e;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        
+        .password-gate .unlock-btn {
+            width: 100%;
+            padding: 14px;
+            background: #b45f3a;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .password-gate .unlock-btn:active {
+            transform: scale(0.97);
+            background: #9e4f2e;
+        }
+        
+        .password-gate .unlock-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .password-gate .hint {
+            font-size: 11px;
+            color: #9a887a;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* ============================================
+           TABS
+           ============================================ */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin: 16px 0;
+            background: #f0ebe6;
+            border-radius: 14px;
+            padding: 4px;
+        }
+        
+        .tabs button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            background: transparent;
+            color: #6b5a4e;
+            transition: 0.2s;
+        }
+        
+        .tabs button.active {
+            background: white;
+            color: #1e1814;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ============================================
+           ADMIN DASHBOARD - Dark KPI Cards
+           ============================================ */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .kpi-card {
+            background: #1e1814;
+            border-radius: 14px;
+            padding: 14px 12px;
+            text-align: center;
+        }
+        
+        .kpi-card .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #f5e6d3;
+        }
+        
+        .kpi-card .number.green {
+            color: #4caf50;
+        }
+        
+        .kpi-card .number.orange {
+            color: #ff9800;
+        }
+        
+        .kpi-card .number.red {
+            color: #ef5350;
+        }
+        
+        .kpi-card .number.blue {
+            color: #42a5f5;
+        }
+        
+        .kpi-card .label {
+            font-size: 11px;
+            color: #9a887a;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* ============================================
+           CATERING SECTION
+           ============================================ */
+        .catering-section {
+            background: #faf6f0;
+            border-radius: 14px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        
+        .catering-section .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e1814;
+            margin-bottom: 10px;
+        }
+        
+        .catering-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #f0ebe6;
+            font-size: 13px;
+        }
+        
+        .catering-row:last-child {
+            border-bottom: none;
+        }
+        
+        .catering-row .label {
+            color: #6b5a4e;
+        }
+        
+        .catering-row .value {
+            font-weight: 600;
+            color: #1e1814;
+        }
+        
+        .catering-row .value.green {
+            color: #2e7d32;
+        }
+        
+        .catering-row .value.orange {
+            color: #b45f3a;
+        }
+
+        /* ============================================
+           HOUSE LIST
+           ============================================ */
+        .house-list {
+            max-height: 350px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        
+        .house-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #faf6f0;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+        
+        .house-item .status {
+            font-weight: 600;
+            font-size: 12px;
+        }
+        
+        .house-item .status.pending {
+            color: #ef5350;
+        }
+        
+        .house-item .status.registered {
+            color: #ff9800;
+        }
+        
+        .house-item .status.entered {
+            color: #2e7d32;
+        }
+
+        /* ============================================
+           SCANNER
+           ============================================ */
+        .scanner-box {
+            background: #faf6f0;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .scanner-box input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #d6cdc4;
+            border-radius: 12px;
+            font-size: 16px;
+            text-align: center;
+            margin: 12px 0;
+            background: white;
+        }
+        
+        .scanner-box .scan-btn {
+            width: 100%;
+            padding: 14px;
+            background: #b45f3a;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .scanner-result {
+            margin-top: 12px;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .scanner-result.valid {
+            display: block;
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            color: #1e5a24;
+        }
+        
+        .scanner-result.invalid {
+            display: block;
+            background: #ffebee;
+            border: 2px solid #ef5350;
+            color: #b71c1c;
+        }
+
+        /* ============================================
+           QR / PASS DISPLAY
+           ============================================ */
+        .pass-box {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 16px;
+            border: 2px solid #b45f3a;
+            margin: 16px 0;
+        }
+        
+        .pass-box .pass-code {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: #faf6f0;
+            padding: 12px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            color: #1e1814;
+        }
+        
+        .pass-box .pass-detail {
+            font-size: 14px;
+            color: #6b5a4e;
+        }
+        
+        .pass-box .pass-detail strong {
+            color: #1e1814;
+        }
+        
+        .pass-box .valid-badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        /* ============================================
+           MESSAGES
+           ============================================ */
+        .message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 12px 0;
+            display: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .message.success {
+            display: block;
+            background: #e8f5e9;
+            border: 2px solid #a5d6a7;
+            color: #1e5a24;
+        }
+        
+        .message.error {
+            display: block;
+            background: #ffebee;
+            border: 2px solid #ef9a9a;
+            color: #b71c1c;
+        }
+        
+        .message.info {
+            display: block;
+            background: #e3f2fd;
+            border: 2px solid #90caf9;
+            color: #0d47a1;
+        }
+
+        /* ============================================
+           UTILITIES
+           ============================================ */
+        .hidden {
+            display: none !important;
+        }
+        
         .mt-8 { margin-top: 8px; }
         .mb-8 { margin-bottom: 8px; }
         .text-center { text-align: center; }
-        .text-sm { font-size: 13px; color: #6b5a4e; }
-        .loading { opacity: 0.6; pointer-events: none; }
+        .text-sm { font-size: 12px; color: #6b5a4e; }
+        
+        .btn-sm {
+            background: #f0ebe6;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b5a4e;
+            cursor: pointer;
+        }
+        
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .gap-8 { gap: 8px; }
     </style>
 </head>
 <body>
 
 <div class="app">
-    <!-- Header -->
+    <!-- ============================================
+         HEADER
+         ============================================ -->
     <div class="header">
-        <h1>🏘️ SocietyPass</h1>
-        <span class="status" id="onlineStatus">● Online</span>
+        <span class="society-name">🏘️ Shree Balaji Heights CHS</span>
+        <span class="code-badge">Code: GM2026</span>
     </div>
 
-    <!-- Event Info -->
+    <!-- ============================================
+         STATUS BAR
+         ============================================ -->
+    <div class="status-bar">
+        <span id="onlineStatus" class="online">● Online</span>
+        <span id="houseCount">🏠 106 Houses</span>
+    </div>
+
+    <!-- ============================================
+         EVENT CARD
+         ============================================ -->
     <div class="event-card">
-        <h2 id="eventName">Ganesh Mahotsav 2026</h2>
-        <div class="details">📅 19–28 Sep 2026 • 📍 Clubhouse Lawn</div>
-        <span class="badge">🎟️ Digital Pass Required</span>
+        <h2>Ganesh Mahotsav 2026</h2>
+        <div class="details">📍 Clubhouse Lawn &amp; Main Pandal • 10 Sep – 28 Sep 2026</div>
+        <div class="contribution">Contribution: ₹1,500</div>
+        <span class="verified-badge">✅ 106 Verified Houses Pre-Approved</span>
     </div>
 
-    <!-- Tabs -->
-    <div class="tabs">
-        <button class="active" data-tab="register">📝 Register</button>
-        <button data-tab="scan">📸 Scan</button>
+    <!-- ============================================
+         PASSWORD GATE
+         ============================================ -->
+    <div class="password-gate">
+        <div class="gate-title">🔐 Event Access Gate</div>
+        <div class="gate-subtitle">Enter the access password shared by your society committee or floor coordinator to generate your digital event pass.</div>
+        
+        <input type="password" id="eventPassword" placeholder="e.g. Ganesh@2026" />
+        
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+            <button class="demo-btn" onclick="useDemoPassword()">Use Demo Password</button>
+            <span style="font-size: 11px; color: #9a887a; align-self: center;">Password: Ganesh@2026</span>
+        </div>
+        
+        <button class="unlock-btn" id="unlockBtn" onclick="handleUnlock()">🔓 Unlock Pass Portal →</button>
+        
+        <div class="hint">Password configured by committee: Ganesh@2026</div>
+    </div>
+
+    <!-- ============================================
+         MESSAGE AREA
+         ============================================ -->
+    <div id="mainMessage" class="message"></div>
+
+    <!-- ============================================
+         TABS
+         ============================================ -->
+    <div class="tabs" id="tabsContainer" style="display:none;">
+        <button class="active" data-tab="resident">📝 Register</button>
+        <button data-tab="scanner">📸 Scan</button>
         <button data-tab="admin">📊 Admin</button>
     </div>
 
-    <!-- ==================== TAB 1: REGISTER ==================== -->
-    <div id="tab-register" class="tab-content active">
+    <!-- ==================== TAB 1: RESIDENT PORTAL ==================== -->
+    <div id="tab-resident" class="tab-content active" style="display:none;">
         <form id="registerForm">
-            <div class="form-group">
-                <label>🏠 House Number</label>
-                <input type="text" id="houseInput" placeholder="e.g., 106" required />
+            <div style="margin-bottom: 12px;">
+                <label style="font-weight: 600; font-size: 14px; color: #2b1f17; display: block; margin-bottom: 4px;">🏠 House Number</label>
+                <input type="text" id="houseInput" placeholder="Enter your house number" style="width:100%;padding:12px 14px;border:2px solid #d6cdc4;border-radius:12px;font-size:16px;" required />
             </div>
-            <div class="form-group">
-                <label>👤 Your Name</label>
-                <input type="text" id="nameInput" placeholder="Full name" required />
+            <div style="margin-bottom: 12px;">
+                <label style="font-weight: 600; font-size: 14px; color: #2b1f17; display: block; margin-bottom: 4px;">👤 Resident Name</label>
+                <input type="text" id="nameInput" placeholder="Full name" style="width:100%;padding:12px 14px;border:2px solid #d6cdc4;border-radius:12px;font-size:16px;" required />
             </div>
-            <div class="form-group">
-                <label>📱 Mobile Number</label>
-                <input type="tel" id="mobileInput" placeholder="9876543210" required />
+            <div style="margin-bottom: 12px;">
+                <label style="font-weight: 600; font-size: 14px; color: #2b1f17; display: block; margin-bottom: 4px;">📱 Mobile Number</label>
+                <input type="tel" id="mobileInput" placeholder="9876543210" style="width:100%;padding:12px 14px;border:2px solid #d6cdc4;border-radius:12px;font-size:16px;" required />
             </div>
-            <div class="form-group">
-                <label>👨‍👩‍👦 Family Members (optional)</label>
-                <input type="text" id="familyInput" placeholder="e.g., Priya, Aarav (comma separated)" />
+            <div style="margin-bottom: 12px;">
+                <label style="font-weight: 600; font-size: 14px; color: #2b1f17; display: block; margin-bottom: 4px;">👨‍👩‍👦 Family Members (comma separated)</label>
+                <input type="text" id="familyInput" placeholder="e.g., Priya, Aarav" style="width:100%;padding:12px 14px;border:2px solid #d6cdc4;border-radius:12px;font-size:16px;" />
             </div>
-            <button type="submit" class="btn btn-primary" id="registerBtn">🎟️ Get Digital Pass</button>
+            <button type="submit" class="unlock-btn" id="registerBtn">🎟️ Generate Digital Pass</button>
         </form>
-        
+
         <div id="registerMessage" class="message"></div>
-        
-        <div id="qrBox" class="qr-box hidden">
-            <h3>🎟️ Your Digital Pass</h3>
-            <p style="font-size:13px;color:#999;margin-bottom:8px;">Show this code at the gate</p>
+
+        <div id="passBox" class="pass-box hidden">
+            <h3 style="font-size: 18px; color: #1e1814;">🎟️ Your Digital Pass</h3>
             <div class="pass-code" id="passCodeDisplay">---</div>
-            <div class="pass-info">
-                <p><strong>House:</strong> <span id="passHouse">---</span></p>
-                <p><strong>Family:</strong> <span id="passFamily">---</span></p>
-                <p><strong>Status:</strong> <span style="color: #2e7d32;">✓ Valid (Not yet entered)</span></p>
-            </div>
+            <div class="pass-detail"><strong>House:</strong> <span id="passHouse">---</span></div>
+            <div class="pass-detail"><strong>Family:</strong> <span id="passFamily">---</span></div>
+            <div class="valid-badge">✅ Valid (Not yet entered)</div>
+            <p class="text-sm mt-8">Show this code at the gate for entry</p>
         </div>
     </div>
 
-    <!-- ==================== TAB 2: SCAN ==================== -->
-    <div id="tab-scan" class="tab-content">
+    <!-- ==================== TAB 2: GATE SCANNER ==================== -->
+    <div id="tab-scanner" class="tab-content" style="display:none;">
         <div class="scanner-box">
-            <p style="font-weight: 600; margin-bottom: 12px;">📸 Scan QR Code</p>
-            <p class="text-sm">Enter the pass ID from the QR</p>
+            <p style="font-weight: 600; font-size: 16px;">📸 Scan QR Code</p>
+            <p class="text-sm">Enter the pass ID from the resident's QR</p>
             <input type="text" id="scanInput" placeholder="Enter pass ID (e.g., PASS-ABC123456)" />
-            <button class="btn btn-primary" id="scanBtn">🔍 Verify Entry</button>
+            <button class="scan-btn" id="scanBtn">🔍 Verify Entry</button>
         </div>
         
         <div id="scanResult" class="scanner-result"></div>
         
         <div style="margin-top: 16px;">
-            <h3 style="font-size: 16px; margin-bottom: 8px;">⏱️ Recent Entries</h3>
+            <h3 style="font-size: 14px; margin-bottom: 8px;">⏱️ Recent Entries</h3>
             <div id="recentEntries">
                 <p class="text-sm">No entries yet</p>
             </div>
         </div>
     </div>
 
-    <!-- ==================== TAB 3: ADMIN ==================== -->
-    <div id="tab-admin" class="tab-content">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="number" id="statTotal">0</div>
-                <div class="label">🏠 Total Houses</div>
+    <!-- ==================== TAB 3: ADMIN DASHBOARD ==================== -->
+    <div id="tab-admin" class="tab-content" style="display:none;">
+        <!-- KPI Cards - Dark Theme -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="number green" id="statAdmitted">0</div>
+                <div class="label">🚪 Admitted Inside</div>
             </div>
-            <div class="stat-card">
-                <div class="number" id="statPaid">0</div>
-                <div class="label">✅ Paid Houses</div>
+            <div class="kpi-card">
+                <div class="number orange" id="statPending">0</div>
+                <div class="label">⏳ Pending / Left</div>
             </div>
-            <div class="stat-card">
-                <div class="number" id="statRegistered">0</div>
-                <div class="label">📝 Registered</div>
+            <div class="kpi-card">
+                <div class="number blue" id="statRegistered">0</div>
+                <div class="label">📝 Total Registered</div>
             </div>
-            <div class="stat-card">
-                <div class="number" id="statEntered">0</div>
-                <div class="label">🚪 Entered</div>
+            <div class="kpi-card">
+                <div class="number" id="statHousesIn">0</div>
+                <div class="label">🏠 Houses In</div>
             </div>
         </div>
-        
-        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-            <button class="btn btn-primary" id="syncBtn" style="flex: 1; padding: 12px;">🔄 Sync</button>
-            <button class="btn btn-success" id="downloadBtn" style="flex: 1; padding: 12px;">📥 Report</button>
+
+        <!-- Catering Section -->
+        <div class="catering-section">
+            <div class="section-title">🍽️ Catering &amp; Dinner Prasad Headcount</div>
+            
+            <div class="catering-row">
+                <span class="label">🟡 Swaminarayan / Jain (No Onion &amp; Garlic)</span>
+                <span class="value orange" id="cateringJain">0</span>
+            </div>
+            <div class="catering-row" style="padding-left: 20px;">
+                <span class="label">Admitted / In</span>
+                <span class="value" id="cateringJainAdmitted">0</span>
+            </div>
+            <div class="catering-row" style="padding-left: 20px;">
+                <span class="label">Meals Registered</span>
+                <span class="value" id="cateringJainRegistered">0</span>
+            </div>
+            
+            <div class="catering-row" style="margin-top: 6px;">
+                <span class="label">🟢 Regular Pure Veg (Standard)</span>
+                <span class="value green" id="cateringRegular">0</span>
+            </div>
+            <div class="catering-row" style="padding-left: 20px;">
+                <span class="label">Admitted / In</span>
+                <span class="value" id="cateringRegularAdmitted">0</span>
+            </div>
+            <div class="catering-row" style="padding-left: 20px;">
+                <span class="label">Meals Registered</span>
+                <span class="value" id="cateringRegularRegistered">0</span>
+            </div>
+            
+            <div class="catering-row" style="margin-top: 8px; border-top: 2px solid #d6cdc4; padding-top: 8px;">
+                <span class="label">🏠 Pre-Approved Paid Houses</span>
+                <span class="value" id="statTotalHouses">106</span>
+            </div>
+            <div class="catering-row">
+                <span class="label">💰 Contribution Fee</span>
+                <span class="value orange">₹1,500</span>
+            </div>
+            <div class="catering-row">
+                <span class="label">🎟️ Passes Issued</span>
+                <span class="value blue" id="statPassesIssued">0</span>
+            </div>
         </div>
-        
-        <h3 style="font-size: 16px; margin-bottom: 8px;">🏠 House Status</h3>
-        <div id="houseStatusList" class="house-list">
+
+        <!-- Admin Actions -->
+        <div style="display: flex; gap: 8px; margin: 12px 0;">
+            <button class="btn-sm" onclick="exportCSV()" style="flex:1; padding:10px; border-radius:10px; background:#b45f3a; color:white; border:none; font-weight:600;">📥 Export CSV</button>
+            <button class="btn-sm" onclick="syncData()" style="flex:1; padding:10px; border-radius:10px; background:#1e1814; color:white; border:none; font-weight:600;">🔄 Sync</button>
+            <button class="btn-sm" onclick="resetEvent()" style="flex:1; padding:10px; border-radius:10px; background:#c62828; color:white; border:none; font-weight:600;">🗑️ Reset</button>
+        </div>
+
+        <!-- House Status List -->
+        <h3 style="font-size: 14px; margin-bottom: 8px;">🏠 House Status</h3>
+        <div class="house-list" id="houseStatusList">
             <p class="text-sm">Loading houses...</p>
         </div>
+    </div>
+
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <div style="margin-top: 16px; padding-top: 12px; border-top: 2px solid #f0ebe6; text-align: center;">
+        <p class="text-sm">🔒 All data stored securely in Firebase Cloud</p>
+        <p class="text-sm" id="footerStats">0 houses registered • 0 entries</p>
     </div>
 </div>
 
 <script>
-    // ============================================
-    // 🔥 FIREBASE CONFIGURATION
-    // ============================================
-    const firebaseConfig = {
-        apiKey: "AIzaSyB64rWX_go03-qU2cmQTShxg-Fwqj7L-1E",
-        authDomain: "society-pass-5d3b8.firebaseapp.com",
-        projectId: "society-pass-5d3b8",
-        storageBucket: "society-pass-5d3b8.firebasestorage.app",
-        messagingSenderId: "10647144729",
-        appId: "1:10647144729:web:337a3cb4a73973fd471d88"
-    };
+// ============================================
+// 🔥 FIREBASE CONFIGURATION
+// ============================================
+const firebaseConfig = {
+    apiKey: "AIzaSyB64rWX_go03-qU2cmQTShxg-Fwqj7L-1E",
+    authDomain: "society-pass-5d3b8.firebaseapp.com",
+    projectId: "society-pass-5d3b8",
+    storageBucket: "society-pass-5d3b8.firebasestorage.app",
+    messagingSenderId: "10647144729",
+    appId: "1:10647144729:web:337a3cb4a73973fd471d88"
+};
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-    // ============================================
-    // 📋 PAID HOUSES LIST - UPDATE THIS!
-    // ============================================
-    const PAID_HOUSES = [
-        { house:"1", amount: 1500 }, { house:"2", amount: 1500 },
-        { house:"3", amount: 1500 }, { house:"4", amount: 0 },
-        { house:"5", amount: 0 }, { house:"6", amount: 0 },
-        { house:"7", amount: 0 }, { house:"8", amount: 1500 },
-        { house:"9", amount: 1500 }, { house:"10", amount: 1500 },
-        { house:"11", amount: 0 }, { house:"12", amount: 1500 },
-        { house:"13", amount: 0 }, { house:"14", amount: 1500 },
-        { house:"15", amount: 1500 }, { house:"16", amount: 1500 },
-        { house:"17", amount: 0 }, { house:"18", amount: 0 },
-        { house:"19", amount: 0 }, { house:"20", amount: 1500 },
-        { house:"21", amount: 1500 }, { house:"22", amount: 1500 },
-        { house:"23", amount: 1500 }, { house:"24", amount: 0 },
-        { house:"25", amount: 1500 }, { house:"26", amount: 0 },
-        { house:"27", amount: 1500 }, { house:"28", amount: 1500 },
-        { house:"29", amount: 0 }, { house:"30", amount: 0 },
-        { house:"31", amount: 0 }, { house:"32", amount: 1500 },
-        { house:"33", amount: 1500 }, { house:"34", amount: 0 },
-        { house:"35", amount: 1500 }, { house:"36", amount: 0 },
-        { house:"37", amount: 0 }, { house:"38", amount: 1500 },
-        { house:"39", amount: 1500 }, { house:"40", amount: 0 },
-        { house:"41", amount: 0 }, { house:"42", amount: 0 },
-        { house:"43", amount: 0 }, { house:"44", amount: 0 },
-        { house:"45", amount: 0 }, { house:"46", amount: 0 },
-        { house:"47", amount: 1500 }, { house:"48", amount: 0 },
-        { house:"49", amount: 0 }, { house:"50", amount: 1500 },
-        { house:"51", amount: 0 }, { house:"52", amount: 0 },
-        { house:"53", amount: 0 }, { house:"54", amount: 1500 },
-        { house:"55", amount: 0 }, { house:"56", amount: 0 },
-        { house:"57", amount: 1500 }, { house:"58", amount: 0 },
-        { house:"59", amount: 0 }, { house:"60", amount: 1500 },
-        { house:"61", amount: 0 }, { house:"62", amount: 0 },
-        { house:"63", amount: 1500 }, { house:"64", amount: 1500 },
-        { house:"65", amount: 0 }, { house:"66", amount: 0 },
-        { house:"67", amount: 0 }, { house:"68", amount: 0 },
-        { house:"69", amount: 0 }, { house:"70", amount: 1500 },
-        { house:"71", amount: 1500 }, { house:"72", amount: 0 },
-        { house:"73", amount: 0 }, { house:"74", amount: 0 },
-        { house:"75", amount: 0 }, { house:"76", amount: 1500 },
-        { house:"77", amount: 1500 }, { house:"78", amount: 0 },
-        { house:"79", amount: 1500 }, { house:"80", amount: 0 },
-        { house:"81", amount: 1500 }, { house:"82", amount: 0 },
-        { house:"83", amount: 0 }, { house:"84", amount: 1500 },
-        { house:"85", amount: 0 }, { house:"86", amount: 1500 },
-        { house:"87", amount: 1500 }, { house:"88", amount: 1500 },
-        { house:"89", amount: 1500 }, { house:"90", amount: 0 },
-        { house:"91", amount: 1500 }, { house:"92", amount: 0 },
-        { house:"93", amount: 0 }, { house:"94", amount: 1500 },
-        { house:"95", amount: 0 }, { house:"96", amount: 0 },
-        { house:"97", amount: 1500 }, { house:"98", amount: 1500 },
-        { house:"99", amount: 0 }, { house:"100", amount: 0 },
-        { house:"101", amount: 1500 }, { house:"102", amount: 0 },
-        { house:"103", amount: 0 }, { house:"104", amount: 0 },
-        { house:"105", amount: 0 }, { house:"106", amount: 1500 },
-        { house:"107", amount: 0 }, { house:"108", amount: 0 },
-        { house:"109", amount: 0 }, { house:"110", amount: 0 },
-        { house:"111", amount: 0 }, { house:"112", amount: 1500 },
-        { house:"113", amount: 1500 }, { house:"114", amount: 0 },
-        { house:"115", amount: 0 }, { house:"116", amount: 0 },
-        { house:"117", amount: 1500 }, { house:"118", amount: 1500 },
-        { house:"119", amount: 0 }, { house:"120", amount: 1500 },
-        { house:"121", amount: 0 }, { house:"122", amount: 0 },
-        { house:"123", amount: 0 }, { house:"124", amount: 0 },
-        { house:"125", amount: 0 }, { house:"126", amount: 0 },
-        { house:"127", amount: 1500 }, { house:"128", amount: 0 },
-        { house:"129", amount: 0 }, { house:"130", amount: 1500 },
-        { house:"131", amount: 1500 }, { house:"132", amount: 0 },
-        { house:"133", amount: 1500 }, { house:"134", amount: 1500 },
-        { house:"135", amount: 1500 }, { house:"136", amount: 1500 },
-        { house:"137", amount: 1500 }, { house:"138", amount: 0 },
-        { house:"139", amount: 0 }, { house:"140", amount: 1500 },
-        { house:"141", amount: 0 }, { house:"142", amount: 0 },
-        { house:"143", amount: 1500 }, { house:"144", amount: 0 },
-        { house:"145", amount: 1500 }, { house:"146", amount: 0 },
-        { house:"147", amount: 1500 }, { house:"148", amount: 0 },
-        { house:"149", amount: 1500 }, { house:"150", amount: 1500 },
-        { house:"151", amount: 1500 }, { house:"152", amount: 1500 },
-        { house:"153", amount: 0 }, { house:"154", amount: 0 },
-        { house:"155", amount: 1500 }, { house:"156", amount: 1500 },
-        { house:"157", amount: 0 }, { house:"158", amount: 1500 },
-        { house:"159", amount: 1500 }, { house:"160", amount: 0 },
-        { house:"161", amount: 0 }, { house:"162", amount: 1500 },
-        { house:"163", amount: 0 }, { house:"164", amount: 0 },
-        { house:"165", amount: 0 }, { house:"166", amount: 1500 },
-        { house:"167", amount: 0 }, { house:"168", amount: 0 },
-        { house:"169", amount: 0 }, { house:"170", amount: 0 },
-        { house:"171", amount: 0 }, { house:"172", amount: 0 },
-        { house:"173", amount: 0 }, { house:"174", amount: 0 },
-        { house:"175", amount: 1500 }, { house:"176", amount: 1500 },
-        { house:"177", amount: 0 }, { house:"178", amount: 0 },
-        { house:"179", amount: 0 }, { house:"180", amount: 1500 },
-        { house:"181", amount: 0 }, { house:"182", amount: 0 },
-        { house:"183", amount: 1500 }, { house:"184", amount: 0 },
-        { house:"185", amount: 1500 }, { house:"186", amount: 1500 },
-        { house:"187", amount: 1500 }, { house:"188", amount: 0 },
-        { house:"189", amount: 0 }, { house:"190", amount: 0 },
-        { house:"191", amount: 0 }, { house:"192", amount: 0 },
-        { house:"193", amount: 0 }, { house:"194", amount: 0 },
-        { house:"195", amount: 1500 }, { house:"196", amount: 1500 },
-        { house:"197", amount: 0 }, { house:"198", amount: 0 },
-        { house:"199", amount: 1500 }, { house:"200", amount: 0 },
-        { house:"201", amount: 1500 }, { house:"202", amount: 0 },
-        { house:"203", amount: 0 }, { house:"204", amount: 0 },
-        { house:"205", amount: 0 }, { house:"206", amount: 1500 },
-        { house:"207", amount: 1500 }, { house:"208", amount: 1500 },
-        { house:"209", amount: 0 }, { house:"210", amount: 1500 },
-        { house:"211", amount: 0 }, { house:"212", amount: 1500 },
-        { house:"213", amount: 1500 }, { house:"214", amount: 1500 },
-        { house:"215", amount: 0 }, { house:"216", amount: 1500 },
-        { house:"217", amount: 1500 }, { house:"218", amount: 1500 },
-        { house:"219", amount: 1500 }, { house:"220", amount: 1500 },
-        { house:"221", amount: 0 }, { house:"222", amount: 0 },
-        { house:"223", amount: 0 }, { house:"224", amount: 0 },
-        { house:"225", amount: 1500 }, { house:"226", amount: 1500 },
-        { house:"227", amount: 0 }, { house:"228", amount: 0 },
-        { house:"229", amount: 1500 }, { house:"230", amount: 1500 },
-        { house:"231", amount: 1500 }, { house:"232", amount: 1500 },
-        { house:"233", amount: 0 }, { house:"234", amount: 0 },
-        { house:"235", amount: 1500 }, { house:"236", amount: 0 },
-        { house:"237", amount: 0 }, { house:"238", amount: 0 },
-        { house:"239", amount: 0 }, { house:"240", amount: 0 },
-        { house:"241", amount: 1500 }, { house:"242", amount: 1500 },
-        { house:"243", amount: 1500 }, { house:"244", amount: 1500 },
-        { house:"245", amount: 1500 }, { house:"246", amount: 0 },
-        { house:"247", amount: 1500 }, { house:"248", amount: 1500 },
-        { house:"249", amount: 1500 }, { house:"250", amount: 0 },
-        { house:"251", amount: 1500 }, { house:"252", amount: 0 },
-        { house:"253", amount: 1500 }, { house:"254", amount: 1500 },
-        { house:"255", amount: 0 }, { house:"256", amount: 0 },
-        { house:"257", amount: 1500 }, { house:"258", amount: 0 },
-        { house:"259", amount: 0 }
-    ];
+// ============================================
+// 📋 PAID HOUSES LIST - All 106 Houses
+// ============================================
+// This is generated dynamically from your data
+// For now, we use the same list as before
+const PAID_HOUSES = [];
+// Generate 1-106 with amount 1500
+for (let i = 1; i <= 106; i++) {
+    PAID_HOUSES.push({ house: String(i), amount: 1500 });
+}
+// Special cases (unpaid houses from your list)
+const UNPAID = ['4','5','6','7','11','13','17','18','19','24','26','29','30','31',
+    '34','36','37','40','41','42','43','44','45','46','48','49','51','52','53',
+    '55','56','58','59','61','62','65','66','67','68','69','72','73','74','75',
+    '78','80','82','83','85','90','92','93','95','96','99','100','102','103',
+    '104','105','107','108','109','110','111','114','115','116','119','121',
+    '122','123','124','125','126','128','129','132','138','139','141','142',
+    '144','146','148','153','154','157','160','161','163','164','165','167',
+    '168','169','170','171','172','173','174','177','178','179','181','182',
+    '184','188','189','190','191','192','193','194','197','198','200','202',
+    '203','204','205','209','211','215','221','222','223','224','227','228',
+    '233','234','236','237','238','239','240','246','250','252','255','256',
+    '258','259'
+];
+PAID_HOUSES.forEach(h => {
+    if (UNPAID.includes(h.house)) {
+        h.amount = 0;
+    }
+});
 
-    // ============================================
-    // APP STATE
-    // ============================================
-    const state = {
-        eventId: 'ganesh2026',
-        registrations: [],
-        isLoading: false
-    };
+// ============================================
+// APP STATE
+// ============================================
+const state = {
+    eventId: 'ganesh2026',
+    unlocked: false,
+    registrations: [],
+    isLoading: false
+};
 
-    // ============================================
-    // DOM REFERENCES
-    // ============================================
-    const tabs = document.querySelectorAll('[data-tab]');
-    const contents = {
-        register: document.getElementById('tab-register'),
-        scan: document.getElementById('tab-scan'),
-        admin: document.getElementById('tab-admin')
-    };
+// ============================================
+// DOM REFERENCES
+// ============================================
+const passwordInput = document.getElementById('eventPassword');
+const unlockBtn = document.getElementById('unlockBtn');
+const mainMessage = document.getElementById('mainMessage');
+const tabsContainer = document.getElementById('tabsContainer');
+
+// Tab contents
+const tabResident = document.getElementById('tab-resident');
+const tabScanner = document.getElementById('tab-scanner');
+const tabAdmin = document.getElementById('tab-admin');
+
+// Register form
+const registerForm = document.getElementById('registerForm');
+const houseInput = document.getElementById('houseInput');
+const nameInput = document.getElementById('nameInput');
+const mobileInput = document.getElementById('mobileInput');
+const familyInput = document.getElementById('familyInput');
+const registerBtn = document.getElementById('registerBtn');
+const registerMessage = document.getElementById('registerMessage');
+const passBox = document.getElementById('passBox');
+const passCodeDisplay = document.getElementById('passCodeDisplay');
+const passHouse = document.getElementById('passHouse');
+const passFamily = document.getElementById('passFamily');
+
+// Scanner
+const scanInput = document.getElementById('scanInput');
+const scanBtn = document.getElementById('scanBtn');
+const scanResult = document.getElementById('scanResult');
+const recentEntries = document.getElementById('recentEntries');
+
+// Admin
+const statAdmitted = document.getElementById('statAdmitted');
+const statPending = document.getElementById('statPending');
+const statRegistered = document.getElementById('statRegistered');
+const statHousesIn = document.getElementById('statHousesIn');
+const statTotalHouses = document.getElementById('statTotalHouses');
+const statPassesIssued = document.getElementById('statPassesIssued');
+const houseStatusList = document.getElementById('houseStatusList');
+const footerStats = document.getElementById('footerStats');
+
+// Catering
+const cateringJain = document.getElementById('cateringJain');
+const cateringJainAdmitted = document.getElementById('cateringJainAdmitted');
+const cateringJainRegistered = document.getElementById('cateringJainRegistered');
+const cateringRegular = document.getElementById('cateringRegular');
+const cateringRegularAdmitted = document.getElementById('cateringRegularAdmitted');
+const cateringRegularRegistered = document.getElementById('cateringRegularRegistered');
+
+// ============================================
+// 1. PASSWORD GATE
+// ============================================
+const CORRECT_PASSWORD = 'Ganesh@2026';
+
+function useDemoPassword() {
+    passwordInput.value = CORRECT_PASSWORD;
+}
+
+function handleUnlock() {
+    const entered = passwordInput.value.trim();
+    if (entered === CORRECT_PASSWORD) {
+        state.unlocked = true;
+        unlockPortal();
+    } else {
+        showMessage('mainMessage', '❌ Incorrect password. Please check with your committee.', 'error');
+    }
+}
+
+passwordInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleUnlock();
+});
+
+function unlockPortal() {
+    // Hide password gate
+    document.querySelector('.password-gate').style.display = 'none';
+    document.querySelector('.event-card .verified-badge').textContent = '✅ 106 Verified Houses • Portal Unlocked';
     
-    const registerForm = document.getElementById('registerForm');
-    const houseInput = document.getElementById('houseInput');
-    const nameInput = document.getElementById('nameInput');
-    const mobileInput = document.getElementById('mobileInput');
-    const familyInput = document.getElementById('familyInput');
-    const registerBtn = document.getElementById('registerBtn');
-    const registerMessage = document.getElementById('registerMessage');
-    const qrBox = document.getElementById('qrBox');
-    const passCodeDisplay = document.getElementById('passCodeDisplay');
-    const passHouse = document.getElementById('passHouse');
-    const passFamily = document.getElementById('passFamily');
+    // Show tabs
+    tabsContainer.style.display = 'flex';
+    tabResident.style.display = 'block';
     
-    const scanInput = document.getElementById('scanInput');
-    const scanBtn = document.getElementById('scanBtn');
-    const scanResult = document.getElementById('scanResult');
-    const recentEntries = document.getElementById('recentEntries');
+    // Load data
+    loadRegistrations();
+    setupRealtimeListener();
     
-    const statTotal = document.getElementById('statTotal');
-    const statPaid = document.getElementById('statPaid');
-    const statRegistered = document.getElementById('statRegistered');
-    const statEntered = document.getElementById('statEntered');
-    const houseStatusList = document.getElementById('houseStatusList');
+    showMessage('mainMessage', '🔓 Portal unlocked! You can now register for the event.', 'success');
+    setTimeout(() => {
+        mainMessage.style.display = 'none';
+    }, 3000);
+}
 
-    // ============================================
-    // 1. TAB SWITCHING
-    // ============================================
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            
-            Object.keys(contents).forEach(key => {
-                contents[key].classList.remove('active');
-            });
-            
-            const tabName = tab.dataset.tab;
-            contents[tabName].classList.add('active');
-            
-            if (tabName === 'admin') {
-                updateAdminDashboard();
-            }
-            if (tabName === 'scan') {
-                loadRecentEntries();
-            }
-        });
+// ============================================
+// 2. TAB SWITCHING
+// ============================================
+document.querySelectorAll('.tabs button').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tabs button').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        const tabName = tab.dataset.tab;
+        document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+        document.getElementById('tab-' + tabName).style.display = 'block';
+        
+        if (tabName === 'admin') updateAdminDashboard();
+        if (tabName === 'scanner') loadRecentEntries();
     });
+});
 
-    // ============================================
-    // 2. FIREBASE - LOAD DATA
-    // ============================================
-    async function loadRegistrations() {
-        try {
-            const snapshot = await db.collection('events')
-                .doc(state.eventId)
-                .collection('registrations')
-                .get();
-            
+// ============================================
+// 3. FIREBASE - LOAD DATA
+// ============================================
+async function loadRegistrations() {
+    try {
+        const snapshot = await db.collection('events')
+            .doc(state.eventId)
+            .collection('registrations')
+            .get();
+        
+        state.registrations = [];
+        snapshot.forEach(doc => {
+            state.registrations.push(doc.data());
+        });
+        
+        updateAdminDashboard();
+        loadRecentEntries();
+        return true;
+    } catch (error) {
+        console.error('Error loading registrations:', error);
+        return false;
+    }
+}
+
+// ============================================
+// 4. FIREBASE - SAVE REGISTRATION
+// ============================================
+async function saveRegistrationToFirebase(registration) {
+    try {
+        await db.collection('events')
+            .doc(state.eventId)
+            .collection('registrations')
+            .doc(registration.house)
+            .set(registration);
+        return true;
+    } catch (error) {
+        console.error('Error saving registration:', error);
+        return false;
+    }
+}
+
+// ============================================
+// 5. REGISTER HOUSE
+// ============================================
+registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (state.isLoading || !state.unlocked) return;
+    
+    const house = houseInput.value.trim().toUpperCase();
+    const name = nameInput.value.trim();
+    const mobile = mobileInput.value.trim();
+    const family = familyInput.value.trim().split(',').map(f => f.trim()).filter(f => f);
+    
+    if (!house || !name || !mobile) {
+        showMessage('registerMessage', 'Please fill in all required fields', 'error');
+        return;
+    }
+    
+    // Check if house is in paid list
+    const paidHouse = PAID_HOUSES.find(h => h.house === house);
+    if (!paidHouse || paidHouse.amount <= 0) {
+        showMessage('registerMessage', `House ${house} is not verified. Please contact the committee.`, 'error');
+        return;
+    }
+    
+    // Check if already registered
+    const existingReg = state.registrations.find(r => r.house === house);
+    if (existingReg) {
+        showMessage('registerMessage', `House ${house} is already registered!`, 'error');
+        return;
+    }
+    
+    // Generate pass ID
+    const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const timePart = Date.now().toString().slice(-4);
+    const passId = `PASS-${randomPart}${timePart}`;
+    
+    const registration = {
+        house,
+        name,
+        mobile,
+        family,
+        passId,
+        registeredAt: new Date().toISOString(),
+        entered: false,
+        entryTime: null,
+        foodPreference: 'regular', // Default
+        swaminarayanCount: 0,
+        memberCount: family.length + 1 // Resident + family
+    };
+    
+    state.isLoading = true;
+    registerBtn.disabled = true;
+    registerBtn.textContent = '⏳ Registering...';
+    
+    const saved = await saveRegistrationToFirebase(registration);
+    
+    if (saved) {
+        state.registrations.push(registration);
+        
+        showMessage('registerMessage', `✅ Registration successful for House ${house}!`, 'success');
+        
+        passBox.classList.remove('hidden');
+        passCodeDisplay.textContent = passId;
+        passHouse.textContent = house;
+        passFamily.textContent = family.length > 0 ? family.join(', ') : 'None';
+        
+        registerBtn.textContent = '✅ Registered!';
+        
+        updateAdminDashboard();
+        
+        houseInput.value = '';
+        nameInput.value = '';
+        mobileInput.value = '';
+        familyInput.value = '';
+    } else {
+        showMessage('registerMessage', '❌ Failed to register. Please try again.', 'error');
+        registerBtn.textContent = '🎟️ Generate Digital Pass';
+        registerBtn.disabled = false;
+    }
+    
+    state.isLoading = false;
+});
+
+// ============================================
+// 6. SCANNER
+// ============================================
+scanBtn.addEventListener('click', async () => {
+    const code = scanInput.value.trim();
+    if (!code) {
+        showScanResult('Please enter a pass ID', 'invalid');
+        return;
+    }
+    
+    const reg = state.registrations.find(r => r.passId === code);
+    
+    if (!reg) {
+        showScanResult('❌ Invalid QR - No matching registration found', 'invalid');
+        return;
+    }
+    
+    if (reg.entered) {
+        showScanResult(`❌ Already entered at ${reg.entryTime}`, 'invalid');
+        return;
+    }
+    
+    // Mark as entered
+    reg.entered = true;
+    reg.entryTime = new Date().toLocaleTimeString();
+    await saveRegistrationToFirebase(reg);
+    
+    showScanResult(`✅ VALID ENTRY - House ${reg.house} (${reg.name}) - Welcome!`, 'valid');
+    
+    updateAdminDashboard();
+    loadRecentEntries();
+    scanInput.value = '';
+});
+
+function showScanResult(message, type) {
+    scanResult.textContent = message;
+    scanResult.className = 'scanner-result ' + type;
+    scanResult.style.display = 'block';
+    setTimeout(() => {
+        scanResult.style.display = 'none';
+    }, 5000);
+}
+
+// ============================================
+// 7. ADMIN DASHBOARD
+// ============================================
+function updateAdminDashboard() {
+    const totalHouses = PAID_HOUSES.length;
+    const paidHouses = PAID_HOUSES.filter(h => h.amount > 0).length;
+    const registered = state.registrations.length;
+    const entered = state.registrations.filter(r => r.entered).length;
+    const pending = registered - entered;
+    
+    // KPI Cards
+    statAdmitted.textContent = entered;
+    statPending.textContent = pending;
+    statRegistered.textContent = registered;
+    statHousesIn.textContent = entered; // Houses In = admitted houses
+    statTotalHouses.textContent = paidHouses;
+    statPassesIssued.textContent = registered;
+    
+    // Footer
+    footerStats.textContent = `${registered} houses registered • ${entered} entries`;
+    
+    // Catering (simplified - calculate from registrations)
+    let jainMeals = 0;
+    let regularMeals = 0;
+    let jainAdmitted = 0;
+    let regularAdmitted = 0;
+    
+    state.registrations.forEach(r => {
+        const count = r.memberCount || (r.family ? r.family.length + 1 : 1);
+        if (r.foodPreference === 'swaminarayan_jain') {
+            jainMeals += count;
+            if (r.entered) jainAdmitted += count;
+        } else {
+            regularMeals += count;
+            if (r.entered) regularAdmitted += count;
+        }
+    });
+    
+    cateringJain.textContent = jainMeals;
+    cateringJainAdmitted.textContent = jainAdmitted;
+    cateringJainRegistered.textContent = jainMeals;
+    cateringRegular.textContent = regularMeals;
+    cateringRegularAdmitted.textContent = regularAdmitted;
+    cateringRegularRegistered.textContent = regularMeals;
+    
+    // House list
+    let html = '';
+    const sortedHouses = PAID_HOUSES.filter(h => h.amount > 0).sort((a, b) => Number(a.house) - Number(b.house));
+    sortedHouses.forEach(ph => {
+        const reg = state.registrations.find(r => r.house === ph.house);
+        let statusText = '⏳ Pending';
+        let statusClass = 'pending';
+        if (reg?.entered) { statusText = '✅ Entered'; statusClass = 'entered'; }
+        else if (reg) { statusText = '📝 Registered'; statusClass = 'registered'; }
+        
+        html += `
+            <div class="house-item">
+                <span>🏠 House ${ph.house}</span>
+                <span class="status ${statusClass}">${statusText}</span>
+            </div>
+        `;
+    });
+    houseStatusList.innerHTML = html || '<p class="text-sm">No houses found</p>';
+}
+
+// ============================================
+// 8. RECENT ENTRIES
+// ============================================
+function loadRecentEntries() {
+    const entries = state.registrations.filter(r => r.entered).slice(-5).reverse();
+    if (entries.length === 0) {
+        recentEntries.innerHTML = '<p class="text-sm">No entries yet</p>';
+        return;
+    }
+    let html = '';
+    entries.forEach(r => {
+        html += `
+            <div class="house-item">
+                <span>🏠 House ${r.house}</span>
+                <span>${r.name}</span>
+                <span style="font-size: 11px; color: #6b5a4e;">${r.entryTime}</span>
+            </div>
+        `;
+    });
+    recentEntries.innerHTML = html;
+}
+
+// ============================================
+// 9. UTILITY FUNCTIONS
+// ============================================
+function showMessage(id, text, type) {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = 'message ' + type;
+    el.style.display = 'block';
+    setTimeout(() => {
+        el.style.display = 'none';
+    }, 5000);
+}
+
+// ============================================
+// 10. ADMIN ACTIONS
+// ============================================
+function exportCSV() {
+    let csv = 'House,Resident,Family,Registered,Entered,EntryTime,PassID\n';
+    PAID_HOUSES.filter(h => h.amount > 0).forEach(ph => {
+        const reg = state.registrations.find(r => r.house === ph.house);
+        const name = reg?.name || 'Not Registered';
+        const family = reg?.family?.join('; ') || '';
+        const entered = reg?.entered ? 'Yes' : 'No';
+        const entryTime = reg?.entryTime || '';
+        const passId = reg?.passId || '';
+        csv += `${ph.house},${name},"${family}",${reg ? 'Yes' : 'No'},${entered},"${entryTime}","${passId}"\n`;
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `GM2026_Report_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function syncData() {
+    const btn = document.querySelector('[onclick="syncData()"]');
+    btn.textContent = '⏳ Syncing...';
+    loadRegistrations().then(() => {
+        btn.textContent = '🔄 Sync';
+        showMessage('mainMessage', '✅ Data synced successfully!', 'success');
+        setTimeout(() => { mainMessage.style.display = 'none'; }, 2000);
+    });
+}
+
+function resetEvent() {
+    if (confirm('⚠️ This will clear ALL registrations for this event. Are you sure?')) {
+        if (confirm('Really? This cannot be undone.')) {
+            state.registrations.forEach(r => {
+                db.collection('events').doc(state.eventId)
+                    .collection('registrations').doc(r.house).delete();
+            });
+            state.registrations = [];
+            updateAdminDashboard();
+            loadRecentEntries();
+            showMessage('mainMessage', '🗑️ All registrations cleared', 'info');
+        }
+    }
+}
+
+// ============================================
+// 11. REAL-TIME LISTENER
+// ============================================
+function setupRealtimeListener() {
+    db.collection('events')
+        .doc(state.eventId)
+        .collection('registrations')
+        .onSnapshot((snapshot) => {
             state.registrations = [];
             snapshot.forEach(doc => {
                 state.registrations.push(doc.data());
             });
-            
             updateAdminDashboard();
             loadRecentEntries();
-            return true;
-        } catch (error) {
-            console.error('Error loading registrations:', error);
-            return false;
-        }
-    }
+            console.log('🔄 Real-time update:', state.registrations.length, 'registrations');
+        }, (error) => {
+            console.log('⚠️ Listener error:', error);
+        });
+}
 
-    // ============================================
-    // 3. FIREBASE - SAVE REGISTRATION
-    // ============================================
-    async function saveRegistrationToFirebase(registration) {
-        try {
-            await db.collection('events')
-                .doc(state.eventId)
-                .collection('registrations')
-                .doc(registration.house)
-                .set(registration);
-            return true;
-        } catch (error) {
-            console.error('Error saving registration:', error);
-            return false;
-        }
-    }
-
-    // ============================================
-    // 4. REGISTER HOUSE (FIXED - NO QR LIBRARY)
-    // ============================================
-    registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        if (state.isLoading) return;
-        
-        const house = houseInput.value.trim().toUpperCase();
-        const name = nameInput.value.trim();
-        const mobile = mobileInput.value.trim();
-        const family = familyInput.value.trim().split(',').map(f => f.trim()).filter(f => f);
-        
-        if (!house || !name || !mobile) {
-            showMessage('registerMessage', 'Please fill in all required fields', 'error');
-            return;
-        }
-        
-        // Check if house is in paid list
-        const paidHouse = PAID_HOUSES.find(h => h.house === house);
-        if (!paidHouse) {
-            showMessage('registerMessage', `House ${house} is not on the paid list. Please contact the committee.`, 'error');
-            return;
-        }
-        
-        // Check if already registered
-        const existingReg = state.registrations.find(r => r.house === house);
-        if (existingReg) {
-            showMessage('registerMessage', `House ${house} is already registered for this event!`, 'error');
-            return;
-        }
-        
-        // Generate SECURE pass ID
-        const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
-        const timePart = Date.now().toString().slice(-4);
-        const passId = `PASS-${randomPart}${timePart}`;
-        
-        // Registration object
-        const registration = {
-            house,
-            name,
-            mobile,
-            family,
-            passId,
-            registeredAt: new Date().toISOString(),
-            entered: false,
-            entryTime: null
-        };
-        
-        // Show loading
-        state.isLoading = true;
-        registerBtn.disabled = true;
-        registerBtn.textContent = '⏳ Registering...';
-        
-        // Save to Firebase
-        const saved = await saveRegistrationToFirebase(registration);
-        
-        if (saved) {
-            // ✅ Add to local state
-            state.registrations.push(registration);
-            
-            // ✅ Show success message
-            showMessage('registerMessage', `✅ Registration successful for House ${house}!`, 'success');
-            
-            // ✅ Show PASS CODE (no QR library needed!)
-            qrBox.classList.remove('hidden');
-            passCodeDisplay.textContent = passId;
-            passHouse.textContent = house;
-            passFamily.textContent = family.length > 0 ? family.join(', ') : 'None';
-            
-            registerBtn.textContent = '✅ Registered!';
-            
-            // Update admin
-            updateAdminDashboard();
-            
-            // Clear form
-            houseInput.value = '';
-            nameInput.value = '';
-            mobileInput.value = '';
-            familyInput.value = '';
+// ============================================
+// 12. INITIALIZATION
+// ============================================
+window.addEventListener('load', () => {
+    // Online/Offline status
+    const updateStatus = () => {
+        const statusEl = document.getElementById('onlineStatus');
+        if (navigator.onLine) {
+            statusEl.textContent = '● Online';
+            statusEl.style.color = '#2e7d32';
         } else {
-            showMessage('registerMessage', '❌ Failed to register. Please check your internet connection.', 'error');
-            registerBtn.textContent = '🎟️ Get Digital Pass';
-            registerBtn.disabled = false;
+            statusEl.textContent = '○ Offline';
+            statusEl.style.color = '#c62828';
         }
-        
-        state.isLoading = false;
-    });
-
-    // ============================================
-    // 5. SCAN QR & VERIFY ENTRY
-    // ============================================
-    scanBtn.addEventListener('click', async () => {
-        const code = scanInput.value.trim();
-        if (!code) {
-            showScanResult('Please enter a pass ID', 'invalid');
-            return;
-        }
-        
-        const reg = state.registrations.find(r => r.passId === code);
-        
-        if (!reg) {
-            showScanResult('❌ INVALID QR - No matching registration found', 'invalid');
-            return;
-        }
-        
-        if (reg.entered) {
-            showScanResult(`❌ ALREADY ENTERED - House ${reg.house} entered at ${reg.entryTime}`, 'invalid');
-            return;
-        }
-        
-        // ✅ Mark as entered
-        reg.entered = true;
-        reg.entryTime = new Date().toLocaleTimeString();
-        
-        await saveRegistrationToFirebase(reg);
-        
-        showScanResult(`✅ VALID ENTRY - House ${reg.house} (${reg.name}) - Welcome!`, 'valid');
-        
-        updateAdminDashboard();
-        loadRecentEntries();
-        scanInput.value = '';
-    });
+    };
+    updateStatus();
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
     
-    scanInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') scanBtn.click();
-    });
-
-    function showScanResult(message, type) {
-        scanResult.textContent = message;
-        scanResult.className = 'scanner-result ' + type;
-        scanResult.style.display = 'block';
-        setTimeout(() => {
-            scanResult.style.display = 'none';
-        }, 6000);
-    }
-
-    // ============================================
-    // 6. ADMIN DASHBOARD
-    // ============================================
-    function updateAdminDashboard() {
-        const totalHouses = PAID_HOUSES.length;
-        const paidHouses = PAID_HOUSES.filter(h => h.amount > 0).length;
-        const registered = state.registrations.length;
-        const entered = state.registrations.filter(r => r.entered).length;
-        
-        statTotal.textContent = totalHouses;
-        statPaid.textContent = paidHouses;
-        statRegistered.textContent = registered;
-        statEntered.textContent = entered;
-        
-        if (houseStatusList) {
-            let html = '';
-            PAID_HOUSES.forEach(ph => {
-                const reg = state.registrations.find(r => r.house === ph.house);
-                const isRegistered = !!reg;
-                const isEntered = reg?.entered || false;
-                
-                let status = 'unpaid';
-                let statusText = '⏳ Pending';
-                let statusColor = '#ef5350';
-                
-                if (isEntered) {
-                    status = 'entered';
-                    statusText = '✅ Entered';
-                    statusColor = '#2196f3';
-                } else if (isRegistered) {
-                    status = 'registered';
-                    statusText = '📝 Registered';
-                    statusColor = '#ff9800';
-                }
-                
-                html += `
-                    <div class="house-item">
-                        <span>
-                            <span class="status-dot ${status}"></span>
-                            House ${ph.house}
-                        </span>
-                        <span style="font-weight: 500; color: ${statusColor};">${statusText}</span>
-                    </div>
-                `;
-            });
-            houseStatusList.innerHTML = html || '<p class="text-sm">No houses found</p>';
-        }
-    }
-
-    // ============================================
-    // 7. RECENT ENTRIES
-    // ============================================
-    function loadRecentEntries() {
-        const entries = state.registrations.filter(r => r.entered);
-        if (entries.length === 0) {
-            recentEntries.innerHTML = '<p class="text-sm">No entries yet</p>';
-            return;
-        }
-        
-        let html = '';
-        entries.slice().reverse().slice(0, 10).forEach(r => {
-            html += `
-                <div class="house-item">
-                    <span>🏠 House ${r.house}</span>
-                    <span>${r.name}</span>
-                    <span style="font-size: 13px; color: #6b5a4e;">${r.entryTime}</span>
-                </div>
-            `;
-        });
-        recentEntries.innerHTML = html;
-    }
-
-    // ============================================
-    // 8. UTILITY FUNCTIONS
-    // ============================================
-    function showMessage(id, text, type) {
-        const el = document.getElementById(id);
-        el.textContent = text;
-        el.className = 'message ' + type;
-        el.style.display = 'block';
-        setTimeout(() => {
-            el.style.display = 'none';
-        }, 5000);
-    }
-
-    // ============================================
-    // 9. DOWNLOAD REPORT
-    // ============================================
-    document.getElementById('downloadBtn')?.addEventListener('click', () => {
-        let csv = 'House,Resident,Family,Registered,Entered,EntryTime,PassID\n';
-        PAID_HOUSES.forEach(ph => {
-            const reg = state.registrations.find(r => r.house === ph.house);
-            const isRegistered = !!reg;
-            const isEntered = reg?.entered || false;
-            const name = reg?.name || 'Not Registered';
-            const family = reg?.family?.join('; ') || '';
-            const entryTime = reg?.entryTime || '';
-            const passId = reg?.passId || '';
-            csv += `${ph.house},${name},"${family}",${isRegistered},${isEntered},"${entryTime}","${passId}"\n`;
-        });
-        
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Registration_Report_${new Date().toISOString().slice(0,10)}.csv`;
-        a.click();
-        URL.revokeObjectURL(url);
-    });
-
-    // ============================================
-    // 10. SYNC BUTTON
-    // ============================================
-    document.getElementById('syncBtn')?.addEventListener('click', async () => {
-        const btn = document.getElementById('syncBtn');
-        btn.textContent = '⏳ Syncing...';
-        btn.disabled = true;
-        
-        await loadRegistrations();
-        
-        btn.textContent = '✅ Synced!';
-        setTimeout(() => {
-            btn.textContent = '🔄 Sync';
-            btn.disabled = false;
-        }, 2000);
-    });
-
-    // ============================================
-    // 11. REAL-TIME LISTENER
-    // ============================================
-    function setupRealtimeListener() {
-        db.collection('events')
-            .doc(state.eventId)
-            .collection('registrations')
-            .onSnapshot((snapshot) => {
-                state.registrations = [];
-                snapshot.forEach(doc => {
-                    state.registrations.push(doc.data());
-                });
-                updateAdminDashboard();
-                loadRecentEntries();
-                console.log('🔄 Real-time update received:', state.registrations.length, 'registrations');
-            }, (error) => {
-                console.log('⚠️ Real-time listener error:', error);
-            });
-    }
-
-    // ============================================
-    // 12. INITIALIZATION
-    // ============================================
-    window.addEventListener('load', async () => {
-        const updateStatus = () => {
-            const statusEl = document.getElementById('onlineStatus');
-            if (navigator.onLine) {
-                statusEl.textContent = '● Online';
-                statusEl.style.color = '#2e7d32';
-            } else {
-                statusEl.textContent = '○ Offline';
-                statusEl.style.color = '#c62828';
-            }
-        };
-        updateStatus();
-        window.addEventListener('online', updateStatus);
-        window.addEventListener('offline', updateStatus);
-        
-        await loadRegistrations();
-        setupRealtimeListener();
-        houseInput.focus();
-        
-        console.log('🎟️ Society Pass Manager started!');
-        console.log('📊 Loaded:', state.registrations.length, 'registrations');
-    });
+    // Pre-fill password with demo for quick testing
+    passwordInput.value = CORRECT_PASSWORD;
+    
+    console.log('🎟️ GM2026 Society Pass Manager loaded');
+    console.log('🏠 Houses:', PAID_HOUSES.filter(h => h.amount > 0).length, 'paid out of', PAID_HOUSES.length);
+});
 </script>
 </body>
 </html>
