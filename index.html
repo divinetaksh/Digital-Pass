@@ -321,29 +321,6 @@
             box-shadow: 0 0 0 3px rgba(180, 95, 58, 0.15);
         }
 
-        .quick-select {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 6px;
-        }
-        
-        .quick-select button {
-            padding: 4px 12px;
-            border: 1px solid #d6cdc4;
-            border-radius: 12px;
-            background: white;
-            font-size: 12px;
-            color: #6b5a4e;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        
-        .quick-select button:hover {
-            border-color: #b45f3a;
-            color: #b45f3a;
-        }
-
         .member-counter {
             display: flex;
             align-items: center;
@@ -973,16 +950,9 @@
     <div id="tab-resident" class="tab-content active" style="display:none;">
         <form id="registerForm">
             <div class="form-group">
-                <label>🏠 House Number (1 to 259) *</label>
-                <p class="hint">ONLY NUMBERS 1 TO 259 (NO A OR B)</p>
+                <label>🏠 House Number *</label>
+                <p class="hint">Enter your house number from the society list</p>
                 <input type="text" id="houseInput" placeholder="Enter your house number" required />
-                <div class="quick-select">
-                    <button type="button" onclick="quickSelect('101')">101</button>
-                    <button type="button" onclick="quickSelect('102')">102</button>
-                    <button type="button" onclick="quickSelect('201')">201</button>
-                    <button type="button" onclick="quickSelect('202')">202</button>
-                    <button type="button" onclick="quickSelect('301')">301</button>
-                </div>
             </div>
 
             <div class="form-group">
@@ -1324,10 +1294,6 @@ function changeFamilyCount(delta) {
     updateCateringSummary();
 }
 
-function quickSelect(house) {
-    houseInput.value = house;
-}
-
 // ============================================
 // 2. FOOD PREFERENCE
 // ============================================
@@ -1366,7 +1332,7 @@ function updateCateringSummary() {
 swaminarayanCountInput.addEventListener('input', updateCateringSummary);
 
 // ============================================
-// 3. LOAD HOUSES FROM FIREBASE (CACHED)
+// 3. LOAD HOUSES FROM FIREBASE (ONLY FROM EXCEL)
 // ============================================
 async function loadHousesFromFirebase(eventId) {
     if (cachedHouses && cachedEventId === eventId) {
@@ -1387,55 +1353,38 @@ async function loadHousesFromFirebase(eventId) {
             PAID_HOUSES.push(doc.data());
         });
         
-        if (PAID_HOUSES.length === 0) {
-            generateFallbackHouses();
-        }
-        
+        // NO FALLBACK - only from Firebase/Excel
         cachedHouses = PAID_HOUSES;
         cachedEventId = eventId || state.currentEventId;
         
         updateHouseDisplay();
         updateAdminDashboard();
+        
+        // If no houses found, show message
+        if (PAID_HOUSES.length === 0) {
+            showMessage('mainMessage', '📊 No houses found. Please upload an Excel file in the Admin tab.', 'info');
+        }
+        
         return true;
     } catch (error) {
         console.error('Error loading houses:', error);
-        generateFallbackHouses();
         return false;
-    }
-}
-
-function generateFallbackHouses() {
-    PAID_HOUSES = [];
-    for (let i = 1; i <= 259; i++) {
-        let amount = 1500;
-        const unpaidList = ['4','5','6','7','11','13','17','18','19','24','26','29','30','31',
-            '34','36','37','40','41','42','43','44','45','46','48','49','51','52','53',
-            '55','56','58','59','61','62','65','66','67','68','69','72','73','74','75',
-            '78','80','82','83','85','90','92','93','95','96','99','100','102','103',
-            '104','105','107','108','109','110','111','114','115','116','119','121',
-            '122','123','124','125','126','128','129','132','138','139','141','142',
-            '144','146','148','153','154','157','160','161','163','164','165','167',
-            '168','169','170','171','172','173','174','177','178','179','181','182',
-            '184','188','189','190','191','192','193','194','197','198','200','202',
-            '203','204','205','209','211','215','221','222','223','224','227','228',
-            '233','234','236','237','238','239','240','246','250','252','255','256',
-            '258','259'];
-        if (unpaidList.includes(String(i))) {
-            amount = 0;
-        }
-        PAID_HOUSES.push({ house: String(i), amount: amount });
     }
 }
 
 function updateHouseDisplay() {
     const paidCount = PAID_HOUSES.filter(h => h.amount > 0).length;
     const totalCount = PAID_HOUSES.length;
-    if (verifiedBadge) verifiedBadge.textContent = `✅ ${paidCount} Verified Houses Pre-Approved`;
-    if (houseCount) houseCount.textContent = `🏠 ${totalCount} Houses`;
+    if (verifiedBadge) {
+        verifiedBadge.textContent = totalCount > 0 ? `✅ ${paidCount} Verified Houses Pre-Approved` : '📊 Upload Excel to load houses';
+    }
+    if (houseCount) {
+        houseCount.textContent = totalCount > 0 ? `🏠 ${totalCount} Houses` : '🏠 No houses loaded';
+    }
 }
 
 // ============================================
-// 4. EXCEL FILE PROCESSING (OPTIMIZED)
+// 4. EXCEL FILE PROCESSING
 // ============================================
 excelFileInput.addEventListener('change', function(e) {
     if (this.files && this.files[0]) {
@@ -1707,9 +1656,10 @@ registerForm.addEventListener('submit', async (e) => {
         return;
     }
     
+    // Check if house exists in PAID_HOUSES (from Excel)
     const paidHouse = PAID_HOUSES.find(h => h.house === house);
     if (!paidHouse) {
-        showMessage('registerMessage', `❌ House ${house} is not found in the society list.`, 'error');
+        showMessage('registerMessage', `❌ House ${house} is not found in the society list.\n\nPlease contact the committee to add your house.`, 'error');
         return;
     }
     
@@ -1898,7 +1848,7 @@ async function admitScanned() {
 }
 
 // ============================================
-// 11. ADMIN DASHBOARD (FIXED - No missing elements)
+// 11. ADMIN DASHBOARD (FIXED - No errors)
 // ============================================
 function updateAdminDashboard() {
     const paidHouses = PAID_HOUSES.filter(h => h.amount > 0).length;
@@ -1909,7 +1859,7 @@ function updateAdminDashboard() {
     const admittedPercent = registered > 0 ? Math.round((entered / registered) * 100) : 0;
     const pendingPercent = registered > 0 ? Math.round((pending / registered) * 100) : 0;
     
-    // KPI Cards
+    // KPI Cards - with null checks
     if (statAdmitted) {
         statAdmitted.textContent = entered;
         statAdmittedPercent.textContent = admittedPercent + '%';
@@ -1921,7 +1871,6 @@ function updateAdminDashboard() {
         statHousesSub.textContent = `${entered} / ${paidHouses} Flats`;
     }
     
-    // Summary
     if (summaryAdmitted) {
         summaryAdmitted.textContent = entered;
         summaryPending.textContent = pending;
@@ -1959,15 +1908,19 @@ function updateAdminDashboard() {
     if (adminTab && adminTab.style.display !== 'none' && houseStatusList) {
         let html = '';
         const sortedHouses = PAID_HOUSES.filter(h => h.amount > 0).sort((a, b) => Number(a.house) - Number(b.house));
-        sortedHouses.forEach(ph => {
-            const reg = state.registrations.find(r => r.house === ph.house);
-            let statusText = '⏳ Pending';
-            let statusClass = 'pending';
-            if (reg?.entered) { statusText = '✅ Entered'; statusClass = 'entered'; }
-            else if (reg) { statusText = '📝 Registered'; statusClass = 'registered'; }
-            html += `<div class="house-item"><span>🏠 House ${ph.house}</span><span class="status ${statusClass}">${statusText}</span></div>`;
-        });
-        houseStatusList.innerHTML = html || '<p class="text-sm">No houses found.</p>';
+        if (sortedHouses.length === 0) {
+            html = '<p class="text-sm">📊 No houses loaded. Please upload an Excel file.</p>';
+        } else {
+            sortedHouses.forEach(ph => {
+                const reg = state.registrations.find(r => r.house === ph.house);
+                let statusText = '⏳ Pending';
+                let statusClass = 'pending';
+                if (reg?.entered) { statusText = '✅ Entered'; statusClass = 'entered'; }
+                else if (reg) { statusText = '📝 Registered'; statusClass = 'registered'; }
+                html += `<div class="house-item"><span>🏠 House ${ph.house}</span><span class="status ${statusClass}">${statusText}</span></div>`;
+            });
+        }
+        houseStatusList.innerHTML = html;
     }
 }
 
@@ -1992,6 +1945,7 @@ function loadRecentEntries() {
 // ============================================
 function showMessage(id, text, type) {
     const el = document.getElementById(id);
+    if (!el) return;
     el.textContent = text;
     el.className = 'message ' + type;
     el.style.display = 'block';
@@ -2073,15 +2027,17 @@ function setupRealtimeListener() {
 window.addEventListener('load', () => {
     const updateStatus = () => {
         const statusEl = document.getElementById('onlineStatus');
-        statusEl.textContent = navigator.onLine ? '● Online' : '○ Offline';
-        statusEl.style.color = navigator.onLine ? '#2e7d32' : '#c62828';
+        if (statusEl) {
+            statusEl.textContent = navigator.onLine ? '● Online' : '○ Offline';
+            statusEl.style.color = navigator.onLine ? '#2e7d32' : '#c62828';
+        }
     };
     updateStatus();
     window.addEventListener('online', updateStatus);
     window.addEventListener('offline', updateStatus);
     
     passwordInput.value = 'Ganesh@2026';
-    console.log('🎟️ GM2026 Society Pass Manager loaded');
+    console.log('🎟️ GM2026 Society Pass Manager loaded - Houses from Excel only');
 });
 </script>
 </body>
