@@ -41,7 +41,6 @@
             box-shadow: 0 8px 40px rgba(0,0,0,0.08);
         }
 
-        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -76,7 +75,6 @@
         
         .status-bar .online { color: #2e7d32; font-weight: 600; }
 
-        /* Event Card */
         .event-card {
             background: #faf6f0;
             border-radius: 16px;
@@ -114,7 +112,6 @@
             margin-top: 6px;
         }
 
-        /* Tabs */
         .tabs {
             display: flex;
             gap: 4px;
@@ -146,7 +143,6 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Password Gate */
         .password-gate {
             background: #faf6f0;
             border-radius: 16px;
@@ -209,7 +205,6 @@
             text-align: center;
         }
 
-        /* Password Popup */
         .password-popup {
             position: fixed;
             top: 0;
@@ -292,9 +287,6 @@
             display: none;
         }
 
-        /* ============================================
-           REGISTRATION FORM
-           ============================================ */
         .form-group {
             margin-bottom: 16px;
         }
@@ -352,7 +344,6 @@
             color: #b45f3a;
         }
 
-        /* Family Member Counter */
         .member-counter {
             display: flex;
             align-items: center;
@@ -410,7 +401,6 @@
             font-size: 20px;
         }
 
-        /* Food Preference - 3 Cards in Row */
         .food-options-row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -509,9 +499,6 @@
         .catering-summary .row .label { color: #6b5a4e; }
         .catering-summary .row .value { font-weight: 600; color: #1e1814; }
 
-        /* ============================================
-           ADMIN KPI CARDS
-           ============================================ */
         .kpi-header {
             display: flex;
             justify-content: space-between;
@@ -589,7 +576,6 @@
             color: #1e1814;
         }
 
-        /* Catering Section */
         .catering-section {
             background: #faf6f0;
             border-radius: 14px;
@@ -644,7 +630,6 @@
         .catering-section .catering-item .item-counts .count .num.green { color: #2e7d32; }
         .catering-section .catering-item .item-counts .count .num.orange { color: #b45f3a; }
 
-        /* Excel Upload */
         .excel-upload {
             background: #faf6f0;
             border-radius: 14px;
@@ -702,7 +687,6 @@
             color: #b71c1c;
         }
 
-        /* Scanner */
         .scanner-container {
             background: #1e1814;
             border-radius: 16px;
@@ -831,7 +815,6 @@
         .scanner-live-data .status-valid { color: #2e7d32; font-weight: 700; }
         .scanner-live-data .status-invalid { color: #c62828; font-weight: 700; }
 
-        /* House List */
         .house-list {
             max-height: 350px;
             overflow-y: auto;
@@ -857,7 +840,6 @@
         .house-item .status.registered { color: #ff9800; }
         .house-item .status.entered { color: #2e7d32; }
 
-        /* Pass Display */
         .pass-box {
             text-align: center;
             padding: 20px;
@@ -896,7 +878,6 @@
             margin-top: 8px;
         }
 
-        /* Messages */
         .message {
             padding: 12px 16px;
             border-radius: 12px;
@@ -1273,10 +1254,6 @@ const tabsContainer = document.getElementById('tabsContainer');
 const verifiedBadge = document.getElementById('verifiedBadge');
 const houseCount = document.getElementById('houseCount');
 
-const tabResident = document.getElementById('tab-resident');
-const tabScanner = document.getElementById('tab-scanner');
-const tabAdmin = document.getElementById('tab-admin');
-
 const registerForm = document.getElementById('registerForm');
 const houseInput = document.getElementById('houseInput');
 const nameInput = document.getElementById('nameInput');
@@ -1309,7 +1286,6 @@ const statHousesSub = document.getElementById('statHousesSub');
 const statAdmittedPercent = document.getElementById('statAdmittedPercent');
 const statPendingPercent = document.getElementById('statPendingPercent');
 const statRegisteredPercent = document.getElementById('statRegisteredPercent');
-const statPassesIssued = document.getElementById('statPassesIssued');
 const houseStatusList = document.getElementById('houseStatusList');
 const footerStats = document.getElementById('footerStats');
 const kpiEventName = document.getElementById('kpiEventName');
@@ -1348,15 +1324,12 @@ function changeFamilyCount(delta) {
     updateCateringSummary();
 }
 
-// ============================================
-// 2. QUICK SELECT
-// ============================================
 function quickSelect(house) {
     houseInput.value = house;
 }
 
 // ============================================
-// 3. FOOD PREFERENCE - 3 CARDS IN ROW
+// 2. FOOD PREFERENCE
 // ============================================
 function selectFood(el) {
     document.querySelectorAll('.food-option').forEach(opt => opt.classList.remove('selected'));
@@ -1393,7 +1366,7 @@ function updateCateringSummary() {
 swaminarayanCountInput.addEventListener('input', updateCateringSummary);
 
 // ============================================
-// 4. LOAD HOUSES FROM FIREBASE (CACHED)
+// 3. LOAD HOUSES FROM FIREBASE (CACHED)
 // ============================================
 async function loadHousesFromFirebase(eventId) {
     if (cachedHouses && cachedEventId === eventId) {
@@ -1457,12 +1430,12 @@ function generateFallbackHouses() {
 function updateHouseDisplay() {
     const paidCount = PAID_HOUSES.filter(h => h.amount > 0).length;
     const totalCount = PAID_HOUSES.length;
-    verifiedBadge.textContent = `✅ ${paidCount} Verified Houses Pre-Approved`;
-    houseCount.textContent = `🏠 ${totalCount} Houses`;
+    if (verifiedBadge) verifiedBadge.textContent = `✅ ${paidCount} Verified Houses Pre-Approved`;
+    if (houseCount) houseCount.textContent = `🏠 ${totalCount} Houses`;
 }
 
 // ============================================
-// 5. EXCEL FILE PROCESSING (OPTIMIZED)
+// 4. EXCEL FILE PROCESSING (OPTIMIZED)
 // ============================================
 excelFileInput.addEventListener('change', function(e) {
     if (this.files && this.files[0]) {
@@ -1525,7 +1498,6 @@ async function processExcelFile() {
         
         uploadStatus.textContent = `📤 Saving ${newHouses.length} houses to Firebase...`;
         
-        // BATCH WRITE - FAST
         PAID_HOUSES = newHouses;
         const batch = db.batch();
         const housesRef = db.collection('events').doc(state.currentEventId).collection('houses');
@@ -1559,7 +1531,7 @@ async function processExcelFile() {
 }
 
 // ============================================
-// 6. PASSWORD GATE
+// 5. PASSWORD GATE
 // ============================================
 const CORRECT_PASSWORD = 'Ganesh@2026';
 
@@ -1582,7 +1554,7 @@ function unlockPortal() {
     document.querySelector('.event-card .verified-badge').textContent = '✅ Portal Unlocked';
     
     tabsContainer.style.display = 'flex';
-    tabResident.style.display = 'block';
+    document.getElementById('tab-resident').style.display = 'block';
     
     loadHousesFromFirebase(state.currentEventId);
     loadRegistrations(state.currentEventId);
@@ -1593,7 +1565,7 @@ function unlockPortal() {
 }
 
 // ============================================
-// 7. TAB SWITCHING WITH PASSWORD PROTECTION
+// 6. TAB SWITCHING WITH PASSWORD PROTECTION
 // ============================================
 document.querySelectorAll('.tabs button').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -1626,7 +1598,7 @@ function switchTab(tabName) {
 }
 
 // ============================================
-// 8. PASSWORD VERIFICATION
+// 7. PASSWORD VERIFICATION
 // ============================================
 function verifyAdminPassword() {
     const input = document.getElementById('adminPasswordInput');
@@ -1670,7 +1642,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ============================================
-// 9. FIREBASE - LOAD REGISTRATIONS
+// 8. FIREBASE - LOAD REGISTRATIONS
 // ============================================
 async function loadRegistrations(eventId) {
     try {
@@ -1708,7 +1680,7 @@ async function saveRegistrationToFirebase(registration, eventId) {
 }
 
 // ============================================
-// 10. REGISTER HOUSE
+// 9. REGISTER HOUSE
 // ============================================
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1793,7 +1765,6 @@ registerForm.addEventListener('submit', async (e) => {
         registerBtn.textContent = '✅ Registered!';
         updateAdminDashboard();
         
-        // Reset form
         houseInput.value = '';
         nameInput.value = '';
         mobileInput.value = '';
@@ -1812,7 +1783,7 @@ registerForm.addEventListener('submit', async (e) => {
 });
 
 // ============================================
-// 11. QR SCANNER
+// 10. QR SCANNER
 // ============================================
 async function startScanner() {
     const scannerDiv = document.getElementById('scanner-video');
@@ -1927,7 +1898,7 @@ async function admitScanned() {
 }
 
 // ============================================
-// 12. ADMIN DASHBOARD (OPTIMIZED)
+// 11. ADMIN DASHBOARD (FIXED - No missing elements)
 // ============================================
 function updateAdminDashboard() {
     const paidHouses = PAID_HOUSES.filter(h => h.amount > 0).length;
@@ -1939,23 +1910,29 @@ function updateAdminDashboard() {
     const pendingPercent = registered > 0 ? Math.round((pending / registered) * 100) : 0;
     
     // KPI Cards
-    statAdmitted.textContent = entered;
-    statAdmittedPercent.textContent = admittedPercent + '%';
-    statPending.textContent = pending;
-    statPendingPercent.textContent = pendingPercent + '%';
-    statRegistered.textContent = registered;
-    statRegisteredPercent.textContent = registeredPercent + '%';
-    statHousesIn.textContent = entered;
-    statHousesSub.textContent = `${entered} / ${paidHouses} Flats`;
-    statPassesIssued.textContent = registered;
+    if (statAdmitted) {
+        statAdmitted.textContent = entered;
+        statAdmittedPercent.textContent = admittedPercent + '%';
+        statPending.textContent = pending;
+        statPendingPercent.textContent = pendingPercent + '%';
+        statRegistered.textContent = registered;
+        statRegisteredPercent.textContent = registeredPercent + '%';
+        statHousesIn.textContent = entered;
+        statHousesSub.textContent = `${entered} / ${paidHouses} Flats`;
+    }
     
     // Summary
-    summaryAdmitted.textContent = entered;
-    summaryPending.textContent = pending;
-    summaryHouses.textContent = `${entered} / ${paidHouses}`;
-    footerStats.textContent = `${registered} houses registered • ${entered} entries`;
+    if (summaryAdmitted) {
+        summaryAdmitted.textContent = entered;
+        summaryPending.textContent = pending;
+        summaryHouses.textContent = `${entered} / ${paidHouses}`;
+    }
     
-    // Catering - BOTH Swaminarayan AND Regular
+    if (footerStats) {
+        footerStats.textContent = `${registered} houses registered • ${entered} entries`;
+    }
+    
+    // Catering
     let swaminarayanMeals = 0, regularMeals = 0;
     let swaminarayanAdmitted = 0, regularAdmitted = 0;
     
@@ -1970,14 +1947,16 @@ function updateAdminDashboard() {
         }
     });
     
-    cateringSwaminarayanAdmitted.textContent = swaminarayanAdmitted;
-    cateringSwaminarayanRegistered.textContent = swaminarayanMeals;
-    cateringRegularAdmitted.textContent = regularAdmitted;
-    cateringRegularRegistered.textContent = regularMeals;
+    if (cateringSwaminarayanAdmitted) {
+        cateringSwaminarayanAdmitted.textContent = swaminarayanAdmitted;
+        cateringSwaminarayanRegistered.textContent = swaminarayanMeals;
+        cateringRegularAdmitted.textContent = regularAdmitted;
+        cateringRegularRegistered.textContent = regularMeals;
+    }
     
-    // House list - only if Admin tab is visible
+    // House list
     const adminTab = document.getElementById('tab-admin');
-    if (adminTab.style.display !== 'none') {
+    if (adminTab && adminTab.style.display !== 'none' && houseStatusList) {
         let html = '';
         const sortedHouses = PAID_HOUSES.filter(h => h.amount > 0).sort((a, b) => Number(a.house) - Number(b.house));
         sortedHouses.forEach(ph => {
@@ -1993,7 +1972,7 @@ function updateAdminDashboard() {
 }
 
 // ============================================
-// 13. RECENT ENTRIES
+// 12. RECENT ENTRIES
 // ============================================
 function loadRecentEntries() {
     const entries = state.registrations.filter(r => r.entered).slice(-5).reverse();
@@ -2009,7 +1988,7 @@ function loadRecentEntries() {
 }
 
 // ============================================
-// 14. UTILITY FUNCTIONS
+// 13. UTILITY FUNCTIONS
 // ============================================
 function showMessage(id, text, type) {
     const el = document.getElementById(id);
@@ -2020,7 +1999,7 @@ function showMessage(id, text, type) {
 }
 
 // ============================================
-// 15. ADMIN ACTIONS
+// 14. ADMIN ACTIONS
 // ============================================
 function exportCSV() {
     let csv = 'House,Amount,Resident,Total Persons,Food Preference,Swaminarayan Count,Regular Count,Registered,Entered,EntryTime,PassID\n';
@@ -2070,7 +2049,7 @@ function resetEvent() {
 }
 
 // ============================================
-// 16. REAL-TIME LISTENER
+// 15. REAL-TIME LISTENER
 // ============================================
 function setupRealtimeListener() {
     db.collection('events')
@@ -2089,7 +2068,7 @@ function setupRealtimeListener() {
 }
 
 // ============================================
-// 17. INITIALIZATION
+// 16. INITIALIZATION
 // ============================================
 window.addEventListener('load', () => {
     const updateStatus = () => {
